@@ -20,7 +20,7 @@ for (var i=0; i < items_arr.length; i++) {
 
     for (var j=0; j < levels_per_item; j++) {
         if (i==0 && j==0 || i>0) // hide all add buttons for item[0]
-            html += "<td><input type=\"button\" onclick=\"build( '" + items_arr[i] + "', "+ j +" );\" value=\"" + numberFormat(prestigeMultiplier() * calc(j)) +"\">";
+            html += "<td><input type=\"button\"  title='build " + numberFormat(prestigeMultiplier() * calc(j)) + ' ' + items_arr[i] + "' onclick=\"build( '" + items_arr[i] + "', "+ j +" );\" value=\"" + numberFormat(prestigeMultiplier() * calc(j)) +"\">";
         else
             html += "<td></td>";
 	}

@@ -20,20 +20,16 @@ function startUIUpdater() {
             
             //addMessage( [item, item_count_map[item] ] );
             
+            item_count_map[ item ] += adjust;
             if (i>0) {
-                //if(item_count_map[ prev ] >= (BASE * adjust) ) {
-                    item_count_map[ item ] += adjust;
-                    //item_count_map[ prev ] -= BASE * adjust;
-                //}
                 var newBuild = Math.floor( item_count_map[prev] / Math.pow(BASE,(i+1)) );
                 item_count_map[item] += newBuild;
                 getElement(prev+"_build_rate").value = numberFormat(newBuild) + '/s';
                 getElement(prev).value = numberFormat(item_count_map[prev]);
-            } else {
-                item_count_map[ item ] += adjust;
             }
+            
             getElement(item).value = numberFormat(item_count_map[item]);
-            console.log("adding", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value from', item);
+            //console.log("adding", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value from', item);
             total_value += item_count_map[item] * Math.pow(BASE, i+1-items_arr.length);
         }
        

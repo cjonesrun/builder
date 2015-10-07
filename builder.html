@@ -13,7 +13,8 @@
 	<head></head>
 	<body>
 		<div id='runnning_div'>
-			<p>Running <input type=text id="running" value=0>
+			<p>
+				Total Value <input type=text id='total_value' value="0.00">
 				<input type=button value='save' onclick='saveState()'>
 				<input type=button value='reset' onclick='reset()'>
 				<input type=button value='export' onclick='exportState()'>
@@ -26,6 +27,7 @@
 		<div id="items_div"></div>
 		<div id="timer_div">
 			<p>Timer <input type=text id="timer" value=1000> <input type=button value='set timer' on onclick='update_timer_interval();'></p>
+			<p>Running <input type=text id="running" value=0></p>
 		</div>
 		
 		<div id="notes">

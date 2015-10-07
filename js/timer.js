@@ -10,7 +10,8 @@ var cookie_save_timer;
 
 function startUIUpdater() {
     global_timer = setInterval(function(){ 
-    	
+    	var total_value = 0.0;
+
         for (var i=0; i < items_arr.length; i++) {
             var item = items_arr[i];
             var prev = prev_map[item];
@@ -32,8 +33,10 @@ function startUIUpdater() {
                 item_count_map[ item ] += adjust;
             }
             getElement(item).value = numberFormat(item_count_map[item]);
+            total_value += item_count_map[item] * Math.pow(BASE, 1-items_arr.length);
         }
        
+        getElement("total_value").value = numberFormat(total_value);
 		getElement("running").value =  numberFormat(Math.floor( (new Date().getTime() - game_started) / 1000));
 	}, UI_REFRESH_INTERVAL);
 }

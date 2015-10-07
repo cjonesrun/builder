@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<script type="text/javascript" src="js/decimal.min.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+<script>
+
+</script>
+
+<html>
+	<head></head>
+	<body>
+		<div id='runnning_div'>
+			<p>Running <input type=text id="running" value=0>
+				<input type=button value='save' onclick='saveState()'>
+				<input type=button value='reset' onclick='reset()'>
+				<input type=button value='export' onclick='exportState()'>
+				<input type=button value='load' onclick='loadState()'>
+			</p>
+		</div>
+
+		<div></div>
+
+		<div id="items_div"></div>
+		<div id="timer_div">
+			<p>Timer <input type=text id="timer" value=1000> <input type=button value='set timer' on onclick='update_timer_interval();'></p>
+		</div>
+		
+		<div id="notes">
+			<p>Notes:</p>
+			<p>
+			<ul>
+				<li>Item <i>x</i> will begin producing item <i>x+1</i> at a rate of Math.floor( count-x / BASE^(level+2) ).  <br>
+				eg. 100 bits (level 0) will produce 1 (100/10^2) part per second. <br>
+				1000 parts (level 1) will produce 1 (1000/10^3)block per second.</li>
+				<li>Prestige increases rate but doesn't increase the cost.</li>
+			</ul>
+			</p>
+		</div>
+	</body>
+</html>
+
+<script type="text/javascript" src="js/builder.js"></script>
+<script type="text/javascript" src="js/timer.js"></script>

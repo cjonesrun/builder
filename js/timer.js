@@ -33,7 +33,7 @@ function startUIUpdater() {
                 item_count_map[ item ] += adjust;
             }
             getElement(item).value = numberFormat(item_count_map[item]);
-            console.log("adding", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value from', item);
+            //console.log("adding", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value from', item);
             total_value += item_count_map[item] * Math.pow(BASE, i+1-items_arr.length);
         }
        
@@ -50,7 +50,6 @@ function setData() {
         getElement(items_arr[i]+"_build_rate").value = numberFormat(build_rate) + '/s';
         getElement(items_arr[i]+"_rate").value = numberFormat(rate_map[items_arr[i]]) + '/s';
         getElement(items_arr[i]).value = numberFormat(item_count_map[items_arr[i]]);
-
     }
 }
 

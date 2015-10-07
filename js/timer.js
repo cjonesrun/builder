@@ -33,6 +33,7 @@ function startUIUpdater() {
                 item_count_map[ item ] += adjust;
             }
             getElement(item).value = numberFormat(item_count_map[item]);
+            console.log("adding", item_count_map[item] * Math.pow(BASE, 1-items_arr.length), 'value from', item);
             total_value += item_count_map[item] * Math.pow(BASE, 1-items_arr.length);
         }
        

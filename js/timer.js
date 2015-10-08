@@ -48,6 +48,9 @@ function prettifyNumberHTML(number){
         return;
     }
         
+    number = new Decimal(number);        
+            
+
     if(number.comparedTo(Infinity) == 0){
         return "&infin;";
     }

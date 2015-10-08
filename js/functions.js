@@ -112,6 +112,25 @@ function rateInc( item, rate ) {
 
 
 // 
-function numberFormat(val) {
-	return val;
+function numberFormat(number) {
+	if(typeof number == 'undefined'){
+        return;
+    }
+        
+    number = new Decimal(number);        
+            
+
+    if(number.comparedTo(Infinity) == 0){
+        return "&infin;";
+    }
+    if(number.comparedTo(1e21) >= 0){
+        // Very ugly way to extract the mantisa and exponent from an exponential string
+        var exponential = number.toSignificantDigits(6).toString().split("e");
+        var exponent = new Decimal(exponential[1].split("+")[1]);
+        // And it is displayed in with superscript
+       return  "10x"+prettifyNumberHTML(exponent);
+    }
+    return number.toDecimalPlaces(5).toString();
+}
+
 }

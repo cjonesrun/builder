@@ -40,11 +40,11 @@ function startUIUpdater() {
 }
 
 function prettyNumber(number) {
-    console.log("max number", Number.MAX_VALUE);
+    /*console.log("max number", Number.MAX_VALUE);
 
     var d1 = new Decimal(Number.MAX_VALUE);
 
-    console.log(d1.toExpential());
+    console.log(d1.toExpential());*/
     return number;
 }
 

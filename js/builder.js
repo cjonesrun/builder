@@ -14,9 +14,9 @@ for (var i=0; i < items_arr.length; i++) {
 
     html += '<tr><td>' +i+"</td> <td>" + items_arr[i]+'</td>';
     
-    html += "<td><input type=text value="+ numberFormat(0) +" id='"+ items_arr[i] + "' size=10></td>";
-    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_rate' size=10></td>";
-    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_build_rate' size=10></td>";
+    html += "<td><input type=text value="+ numberFormat(0) +" id='"+ items_arr[i] + "' size=12></td>";
+    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_rate' size=12></td>";
+    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_build_rate' size=12></td>";
 
     for (var j=0; j < levels_per_item; j++) {
         if (i==0 && j==0 || i>0) // hide all add buttons for item[0]

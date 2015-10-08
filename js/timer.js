@@ -51,6 +51,9 @@ function calculate() {
     //console.log('calculating for last', sec_since_last);
 
     // for now, forget about less than 1s. catch is next iteration.
+    if (sec_since_last == 0)
+        return;
+
     for (var j = 0; j<sec_since_last; j++) {
         for (var i=0; i < items_arr.length; i++) {
             var item = items_arr[i];

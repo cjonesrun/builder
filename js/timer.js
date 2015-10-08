@@ -51,7 +51,7 @@ function setData() {
         total_value += getItemValue(items_arr[i]);
     }
 
-    getElement("total_value").value = new Decimal(numberFormat(total_value));
+    getElement("total_value").value = new Decimal(""+numberFormat(total_value));
 }
 
 function getItemValue(item) {

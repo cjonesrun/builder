@@ -30,7 +30,7 @@ function startUIUpdater() {
             
             getElement(item).value = numberFormat(item_count_map[item]);
             //console.log("adding", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value from', item);
-            total_value += item_count_map[item] * Math.pow(BASE, i+1-items_arr.length);
+            total_value += getItemValue(item);
         }
        
         getElement("total_value").value = numberFormat(total_value);
@@ -39,6 +39,7 @@ function startUIUpdater() {
 }
 
 function setData() {
+    var total_value = 0;
     for (var i=0; i < items_arr.length; i++) {
 
         var build_rate = Math.floor( item_count_map[items_arr[i]] / Math.pow(BASE,(i+2)) );
@@ -46,7 +47,15 @@ function setData() {
         getElement(items_arr[i]+"_build_rate").value = numberFormat(build_rate) + '/s';
         getElement(items_arr[i]+"_rate").value = numberFormat(rate_map[items_arr[i]]) + '/s';
         getElement(items_arr[i]).value = numberFormat(item_count_map[items_arr[i]]);
+
+        total_value += getItemValue(item);
     }
+
+    getElement("total_value").value = numberFormat(total_value);
+}
+
+function getItemValue(item) {
+    return item_count_map[item] * Math.pow(BASE, i+1-items_arr.length);
 }
 
 function startCookieSaver() {

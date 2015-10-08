@@ -3,9 +3,8 @@
 	- versioning
 
 - separate calc from timing
+	- see http://www.almostidle.com/tutorials/all?cat%5B0%5D=48
 	- offline accumulating
-
-- prettify numbers
 
 - when to show/hide build buttons & items
 
@@ -14,4 +13,9 @@
 	- when to enable prestige upgrade
 	- each escalation increase build&rate increases by PRESTIGE_BASE^PRESTIGE_LEVEL (i.e. 2^0 then 2^1, then 2^2)
 	- each escalation reduces the build/s division ( div by )
+
+
+DONE
+
+- prettify numbers
 

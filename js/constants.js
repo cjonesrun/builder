@@ -1,13 +1,13 @@
 var BASE = 10;
 var STARTING_POWER = -1;
 
-var PRESTIGE_LEVEL = 0
+var PRESTIGE_LEVEL = 0;
 var PRESTIGE_BASE = 2;
 
 var SAVE_INTERVAL = 5000; // 5s
-var UI_REFRESH_INTERVAL = 1000; // default to 1s
+var UI_REFRESH_INTERVAL = 2005; // default to 1s
 
-var NUMERICAL_DISPLAY_PRECISION = 6;
+var NUMERICAL_DISPLAY_PRECISION = 5;
 
 var levels_per_item = 5;
 
@@ -36,10 +36,19 @@ for (var i=0; i < items_arr.length; i++) {
 }
 
 var messagesWindow;
-function addMessage(str_arr){
+
+function setMessage(str_arr) {
+	addMessage(str_arr, true);
+}
+
+function addMessage(str_arr, clearFirst){
 	if (!messagesWindow)
 		messagesWindow = document.getElementById( 'messages' );
 	var dump = str_arr.join(" ");
-	messagesWindow.value = dump + "\n" + messagesWindow.value;
+
+	if (!clearFirst)
+		dump += "\n" + messagesWindow.value;
+
+	messagesWindow.value = dump;
 	// TODO: trim the log to, say, 1,000 characters
 }

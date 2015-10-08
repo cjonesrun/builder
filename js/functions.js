@@ -26,7 +26,7 @@ function build(item, level)
 	var next_cost = calc(level+1);
 	if (item_count_map[prev] >= next_cost) {
 		item_count_map[prev] -= next_cost;
-		getElement(prev).value = numberFormat(item_count_map[prev]);
+		updateNumber(prev, item_count_map[prev]);
 		itemInc(item, level);
 	} else {
 		addMessage( ['can\'t build', item+".", 'insufficient', prev_map[item]+"."	, 'have', numberFormat(item_count_map[prev]), 'need', numberFormat(next_cost)+"."] );
@@ -52,8 +52,8 @@ function buildAll(item) {
 	item_count_map[item] += to_build;
 	item_count_map[prev] -= cost;
 
-	getElement(item).value = numberFormat(item_count_map[item]);
-	getElement(prev).value = numberFormat(item_count_map[prev]);
+	updateNumber(item, item_count_map[item]);
+	updateNumber(prev, item_count_map[prev]);
 }
 
 function buildAllRateInc(item) {
@@ -69,15 +69,15 @@ function buildAllRateInc(item) {
 	rate_map[item] += to_build;
 	item_count_map[next] -= cost;
 
-	getElement(item+ "_rate").value = numberFormat(rate_map[item]) + "/s";
-	getElement(next).value = numberFormat(item_count_map[next]);
+	updateRate(item+ "_rate", rate_map[item]);
+	updateNumber(next, item_count_map[next]);
 }
 
 // increase an item count by BASE^level items
 function itemInc(item, level) {
 	var count = item_count_map[item];
 	item_count_map[item] +=  prestigeMultiplier() * calc(level);
-	getElement(item).value = numberFormat(item_count_map[item]);
+	updateNumber(item, item_count_map[item]);
 }
 
 function itemDec(item, level) {
@@ -100,8 +100,8 @@ function rateInc( item, rate ) {
 		rate_map[item] += prestigeMultiplier() * calc( parseInt( rate ) );
 		item_count_map[next] -= next_cost;
 		
-		getElement(item + "_rate").value = numberFormat(rate_map[item]) + "/s";
-		getElement(next).value = numberFormat(item_count_map[next]);
+		updateRate(item+ "_rate", rate_map[item]);
+		updateNumber(next, item_count_map[next]);
 	} else {
 		addMessage( ['can\'t build', item, 'rate+. insufficient', next+"."	, 'have', numberFormat(item_count_map[next]), 'need', numberFormat(next_cost) +"."] );
 	}
@@ -117,9 +117,26 @@ function numberFormat(number) {
 		return;
 	else if (number === Infinity)
 		return "&infin;";
-	else if (number < Math.pow(BASE, NUMERICAL_DISPLAY_PRECISION) )
+	else if (number == 0 || number >=1 && number < Math.pow(BASE, NUMERICAL_DISPLAY_PRECISION+3) ) { // between 1 and 10^NUMERICAL_DISPLAY_PRECISION
+
+		if (number - Math.floor(number) > 0) // a decimal number
+			return number.toPrecision(NUMERICAL_DISPLAY_PRECISION+3);
+
 		return number;
-	else {
+	} else {
 		return number.toPrecision(NUMERICAL_DISPLAY_PRECISION);
 	}
+}
+
+// updates total value in the UI
+function updateTotalValue(value) {
+	getElement("total_value").innerHTML = numberFormat(value);
+}
+
+function updateNumber(element_name, number) {
+	getElement(element_name).value = numberFormat(number);
+}
+
+function updateRate(element_name, number) {
+	getElement(element_name).value = numberFormat(number) + "/s";
 }

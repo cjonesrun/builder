@@ -1,7 +1,7 @@
 var div = document.getElementById('items_div');
 var html = '';
 
-html+='<p><table border=0><tr> <th>#</th> <th>name</th> <th>item_count</th> <th>accumulate/s</th> <th>build/s</th>';
+html+='<p><table border=0><tr> <th>#</th> <th>name</th> <th>count</th> <th>accumulate/s</th> <th>build/s</th>';
 
 html += '<th colspan="' + (levels_per_item+1) + '">build</th> ';
 html += '<th colspan="' + (levels_per_item+1) + '">rate+</th> ';

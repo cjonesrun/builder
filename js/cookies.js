@@ -76,7 +76,7 @@ function saveState()
 }
 
 function exportState() {
-    addMessage([ saveState() ]);
+    setMessage([ saveState() ]);
 }
 
 function loadState() {

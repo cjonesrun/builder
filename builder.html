@@ -12,32 +12,34 @@
 <html>
 	<head></head>
 	<body>
-		<div id='runnning_div'>
+		<div id='top_div'>
 			<p>
-				value <input type=text id='total_value' value="0.00" size=12>
-				<input type=button value='save' onclick='saveState()'>
-				<input type=button value='reset' onclick='reset()'>
-				<input type=button value='export' onclick='exportState()'>
-				<input type=button value='load' onclick='loadState()'>
+				<div id='total_value_div'>
+					<b><text>value</text></b>
+					<text id="total_value">0</text>
+				</div>
 			</p>
 		</div>
 
 		<div></div>
 
 		<div id="items_div"></div>
-		<div id="timer_div">
+		<div id="options_div">
+			<p> <input type=button value='save' onclick='saveState()'>
+				<input type=button value='reset' onclick='reset()'>
+				<input type=button value='export' onclick='exportState()'>
+				<input type=button value='load' onclick='loadState()'> </p>
+
 			<p>Timer <input type=text id="timer" value=1000> <input type=button value='set timer' on onclick='update_timer_interval();'></p>
 			<p>Running <input type=text id="running" value=0></p>
 		</div>
-		
-		<div id="notes">
-			<p>Notes:</p>
-			<p>
+		<div id="notes_div">
+			<p>Notes:
 			<ul>
-				<li>Item <i>x</i> will begin producing item <i>x+1</i> at a rate of Math.floor( count-x / BASE^(level+2) ).  <br>
+				<li>Item <i>x</i> will begin producing item <i>x+1</i> at a rate of Math.floor( count(x) / BASE^(level+2) ).  <br>
 				eg. 100 bits (level 0) will produce 1 (100/10^2) part per second. <br>
 				1000 parts (level 1) will produce 1 (1000/10^3)block per second.</li>
-				<li>Prestige increases rate but doesn't increase the cost.</li>
+				<li>Prestige is coming.</li>
 			</ul>
 			</p>
 		</div>

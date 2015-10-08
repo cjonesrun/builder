@@ -1,16 +1,16 @@
 - cookies
 	- saving/loading
+	- versioning
 
 - separate calc from timing
-	- 
+	- offline accumulating
 
-- offline accumulating
+- prettify numbers
 
 - when to show/hide build buttons & items
 
-- each item represents a fraction of the total 'value'. prestige can be tied to this value.
-
 - figure out a prestige strategy 
+    - each item represents a fraction of the total 'value'. prestige can be tied to this value.
 	- when to enable prestige upgrade
 	- each escalation increase build&rate increases by PRESTIGE_BASE^PRESTIGE_LEVEL (i.e. 2^0 then 2^1, then 2^2)
 	- each escalation reduces the build/s division ( div by )

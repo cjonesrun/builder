@@ -40,7 +40,8 @@ function startUIUpdater() {
 }
 
 function display(number) {
-    console.log(number.type);
+    if (typeof number == 'number')
+        console.log(number, 'is a number');
     /*console.log("max number", Number.MAX_VALUE);
 
     var d1 = new Decimal(Number.MAX_VALUE);

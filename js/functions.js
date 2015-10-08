@@ -113,22 +113,14 @@ function rateInc( item, rate ) {
 
 // 
 function numberFormat(number) {
-	/*if(typeof number == 'undefined'){
-        return;
-    }
-
-    if(number.comparedTo(Infinity) == 0){
-        return "&infin;";
-    }
-
-    if(number.comparedTo(1e21) >= 0){
-        // Very ugly way to extract the mantisa and exponent from an exponential string
-        var exponential = number.toSignificantDigits(6).toString().split("e");
-        var exponent = new Decimal(exponential[1].split("+")[1]);
-
-       return  "10x"+prettifyNumberHTML(exponent);
-    }
-    return number.toDecimalPlaces(5).toString();*/
-
-    return number;
+	if (typeof number == 'undefined')
+		return;
+	else if (number === Infinity)
+		return "&infin;";
+	else if (number < Math.pow(BASE, NUMERICAL_DISPLAY_PRECISION) )
+		return number;
+	else {
+		console.log(number);
+		return number.toPrecision(NUMERICAL_DISPLAY_PRECISION);
+	}
 }

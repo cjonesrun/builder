@@ -33,31 +33,10 @@ function startUIUpdater() {
             total_value += getItemValue(item);
         }
        
-        getElement("total_value").value = display(total_value);
+        getElement("total_value").value = numberFormat(total_value);
 		getElement("running").value =  numberFormat(Math.floor( (new Date().getTime() - game_started) / 1000));
 
 	}, UI_REFRESH_INTERVAL);
-}
-
-function display(number) {
-    if (typeof number == 'number')
-        console.log(number, 'is a number');
-    /*console.log("max number", Number.MAX_VALUE);
-
-    var d1 = new Decimal(Number.MAX_VALUE);
-
-    console.log(d1.toExpential());*/
-
-    /*if (number.comparedTo(1e21) >= 0){
-        var exponential = number.toSignificantDigits(6).toString().split("e");
-        var exponent = new Decimal(exponential[1].split("+")[1]);
-
-        return  "10x"+prettyNumber(exponent);
-    }
-    else
-        return number.toDecimalPlaces(5).toString();*/
-
-    return number;
 }
 
 function setData() {
@@ -73,7 +52,7 @@ function setData() {
         total_value += getItemValue(items_arr[i]);
     }
 
-    getElement("total_value").value = new Decimal(""+numberFormat(total_value));
+    getElement("total_value").value = numberFormat(total_value);
 }
 
 function getItemValue(item) {

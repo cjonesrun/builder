@@ -27,13 +27,13 @@ for (var i=0; i < items_arr.length; i++) {
     if (i==0)
         html += "<td></td>";
     else
-        html += "<td><input type=\"button\" title='build max number of " + items_arr[i] + "' onclick=\"buildAll( '" + items_arr[i] + "');\" value=\"ALL\">";
+        html += "<td><input type=\"button\" title='build max number of " + items_arr[i] + "' onclick=\"buildAll( '" + items_arr[i] + "');\" value=\"max\">";
 
 	for (var j=0; j < levels_per_item; j++) {
 		html += "<td><input type=\"button\" title='increase " + items_arr[i] + " production rate by " + numberFormat(prestigeMultiplier() * calc(j)) + "/s' onclick=\"rateInc('" + items_arr[i] + "', "+ j +");\" value='" + numberFormat(prestigeMultiplier() * calc(j)) +"/s'></td>";
 	}
 
-    html += "<td><input type=\"button\" title='increase " + items_arr[i] + " production rate by max available " + next_map[items_arr[i]] + "' onclick=\"buildAllRateInc('" + items_arr[i] + "');\" value=\"ALL\">";
+    html += "<td><input type=\"button\" title='increase " + items_arr[i] + " production rate by max available " + next_map[items_arr[i]] + "' onclick=\"buildAllRateInc('" + items_arr[i] + "');\" value=\"max\">";
 
     html+='</tr>';
 }

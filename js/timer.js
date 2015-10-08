@@ -33,13 +33,14 @@ function startUIUpdater() {
             total_value += getItemValue(item);
         }
        
-        getElement("total_value").value = prettyNumber(total_value);
+        getElement("total_value").value = display(total_value);
 		getElement("running").value =  numberFormat(Math.floor( (new Date().getTime() - game_started) / 1000));
 
 	}, UI_REFRESH_INTERVAL);
 }
 
-function prettyNumber(number) {
+function display(number) {
+    console.log(number.type);
     /*console.log("max number", Number.MAX_VALUE);
 
     var d1 = new Decimal(Number.MAX_VALUE);

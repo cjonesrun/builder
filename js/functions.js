@@ -132,5 +132,3 @@ function numberFormat(number) {
     }
     return number.toDecimalPlaces(5).toString();
 }
-
-}

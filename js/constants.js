@@ -5,7 +5,7 @@ var PRESTIGE_LEVEL = 0;
 var PRESTIGE_BASE = 2;
 
 var SAVE_INTERVAL = 5000; // 5s
-var UI_REFRESH_INTERVAL = 2005; // default to 1s
+var UI_REFRESH_INTERVAL = 1000; // default to 1s
 
 var NUMERICAL_DISPLAY_PRECISION = 5;
 

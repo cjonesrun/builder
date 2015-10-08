@@ -45,6 +45,16 @@ function prettyNumber(number) {
     var d1 = new Decimal(Number.MAX_VALUE);
 
     console.log(d1.toExpential());*/
+
+    if (number.comparedTo(1e21) >= 0){
+        var exponential = number.toSignificantDigits(6).toString().split("e");
+        var exponent = new Decimal(exponential[1].split("+")[1]);
+
+        return  "10x"+prettyNumber(exponent);
+    }
+    else
+        return number.toDecimalPlaces(5).toString();
+
     return number;
 }
 

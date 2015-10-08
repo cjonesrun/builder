@@ -33,10 +33,17 @@ function startUIUpdater() {
             total_value += getItemValue(item);
         }
        
-        getElement("total_value").value = numberFormat(total_value);
+        getElement("total_value").value = prettyNumber(total_value);
 		getElement("running").value =  numberFormat(Math.floor( (new Date().getTime() - game_started) / 1000));
 
 	}, UI_REFRESH_INTERVAL);
+}
+
+function prettyNumber(number) {
+    var d1 = new Decimal(12345678);
+
+    console.log(d1 + new Decimal(12345));
+    return number;
 }
 
 function setData() {

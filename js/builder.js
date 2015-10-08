@@ -4,7 +4,7 @@ var html = '';
 html+='<p><table border=0><tr> <th>#</th> <th>name</th> <th>item_count</th> <th>accumulate/s</th> <th>build/s</th>';
 
 html += '<th colspan="' + (levels_per_item+1) + '">build</th> ';
-html += '<th colspan="' + (levels_per_item+1) + '">auto</th> ';
+html += '<th colspan="' + (levels_per_item+1) + '">rate+</th> ';
 
 html += '<th rowspan="' + (items_arr.length+1) + '">messages <input type=button value="clear" onclick="document.getElementById(\'messages\').value=\'\';"><br>' +
         '<p><textarea id="messages" rows="25" cols="60"></textarea>' +

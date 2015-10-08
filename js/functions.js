@@ -111,7 +111,7 @@ function rateInc( item, rate ) {
 }
 
 
-// 
+// format the number for display
 function numberFormat(number) {
 	if (typeof number == 'undefined')
 		return;
@@ -120,7 +120,6 @@ function numberFormat(number) {
 	else if (number < Math.pow(BASE, NUMERICAL_DISPLAY_PRECISION) )
 		return number;
 	else {
-		console.log(number);
 		return number.toPrecision(NUMERICAL_DISPLAY_PRECISION);
 	}
 }

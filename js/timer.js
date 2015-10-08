@@ -47,7 +47,8 @@ var last_calculation = new Date().getTime();
 // calculate changes since last calculation.
 function calculate() {
     var this_calculation = new Date().getTime();
-    var sec_since_last = Math.floor((this_calculation - last_calculation) / 1000);
+    var diff = this_calculation - last_calculation;
+    var sec_since_last = Math.floor(diff / 1000);
     //console.log('calculating for last', sec_since_last);
 
     // for now, forget about less than 1s. catch is next iteration.
@@ -77,7 +78,8 @@ function calculate() {
         }        
     }
 
-    last_calculation = this_calculation;
+    // keep track of the remainder, if any.
+    last_calculation = this_calculation - (diff - sec_since_last * 1000);
     return total_value;
 }
 

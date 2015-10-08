@@ -14,9 +14,9 @@ for (var i=0; i < items_arr.length; i++) {
 
     html += '<tr><td>' +i+"</td> <td>" + items_arr[i]+'</td>';
     
-    html += "<td><input type=text value="+ numberFormat(0) +" id='"+ items_arr[i] + "' size=15></td>";
-    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_rate' size=15></td>";
-    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_build_rate' size=15></td>";
+    html += "<td><input type=text value="+ numberFormat(0) +" id='"+ items_arr[i] + "' size=10></td>";
+    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_rate' size=10></td>";
+    html += "<td><input type=text value='"+ numberFormat(0) +"/s' id='" + items_arr[i] + "_build_rate' size=10></td>";
 
     for (var j=0; j < levels_per_item; j++) {
         if (i==0 && j==0 || i>0) // hide all add buttons for item[0]
@@ -30,10 +30,10 @@ for (var i=0; i < items_arr.length; i++) {
         html += "<td><input type=\"button\" title='build max number of " + items_arr[i] + "' onclick=\"buildAll( '" + items_arr[i] + "');\" value=\"max\">";
 
 	for (var j=0; j < levels_per_item; j++) {
-		html += "<td><input type=\"button\" title='increase " + items_arr[i] + " production rate by " + numberFormat(prestigeMultiplier() * calc(j)) + "/s' onclick=\"rateInc('" + items_arr[i] + "', "+ j +");\" value='" + numberFormat(prestigeMultiplier() * calc(j)) +"/s'></td>";
+		html += "<td><input type=\"button\" title='rate+ " + items_arr[i] + " by " + numberFormat(prestigeMultiplier() * calc(j)) + "/s' onclick=\"rateInc('" + items_arr[i] + "', "+ j +");\" value='" + numberFormat(prestigeMultiplier() * calc(j)) +"/s'></td>";
 	}
 
-    html += "<td><input type=\"button\" title='increase " + items_arr[i] + " production rate by max available " + next_map[items_arr[i]] + "' onclick=\"buildAllRateInc('" + items_arr[i] + "');\" value=\"max\">";
+    html += "<td><input type=\"button\" title='rate+ " + items_arr[i] + " by max available " + next_map[items_arr[i]] + "' onclick=\"buildAllRateInc('" + items_arr[i] + "');\" value=\"max\">";
 
     html+='</tr>';
 }

@@ -150,3 +150,6 @@ startUIUpdater();
 startCookieSaver();
 
 addMessage(['starting prestige is', PRESTIGE_BASE+'^'+PRESTIGE_LEVEL,'=', numberFormat(prestigeMultiplier()) ] );
+
+window.localStorage['SaveName'] = "some_string_to_save";
+console.log(window.localStorage['SaveName']);

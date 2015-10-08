@@ -40,6 +40,8 @@ function startUIUpdater() {
 }
 
 function prettyNumber(number) {
+    console.log("max number", Number.MAX_VALUE);
+
     var d1 = new Decimal(12345678);
 
     console.log(d1 + new Decimal(12345));

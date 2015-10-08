@@ -2,6 +2,10 @@
 	- saving/loading
 	- versioning
 
+- building
+	- change build/rate+ buttons to be 1, 1/2 available, max for both.
+	- at higher prestige, consider enabling auto-build, auto-rate+
+
 - separate calc from timing
 	- see http://www.almostidle.com/tutorials/all?cat%5B0%5D=48
 	- offline accumulating

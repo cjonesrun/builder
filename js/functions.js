@@ -128,5 +128,6 @@ function numberFormat(number) {
        return  "10x"+prettifyNumberHTML(exponent);
     }
     return number.toDecimalPlaces(5).toString();*/
+
     return number;
 }

@@ -42,9 +42,9 @@ function startUIUpdater() {
 function prettyNumber(number) {
     console.log("max number", Number.MAX_VALUE);
 
-    var d1 = new Decimal(12345678);
+    var d1 = new Decimal(Number.MAX_VALUE);
 
-    console.log(d1 + new Decimal(12345));
+    console.log(d1.toExpential());
     return number;
 }
 

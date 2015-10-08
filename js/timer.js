@@ -105,7 +105,3 @@ startUIUpdater();
 startCookieSaver();
 
 addMessage(['starting prestige is', PRESTIGE_BASE+'^'+PRESTIGE_LEVEL,'=', numberFormat(prestigeMultiplier()) ] );
-var d1 = new Decimal(10);
-for (var i = 0; i< 10; i++) {
-    console.log( Decimal.pow(d1, i).toExponential() );
-}

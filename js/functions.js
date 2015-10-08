@@ -120,6 +120,7 @@ function numberFormat(number) {
     if(number.comparedTo(Infinity) == 0){
         return "&infin;";
     }
+
     if(number.comparedTo(1e21) >= 0){
         // Very ugly way to extract the mantisa and exponent from an exponential string
         var exponential = number.toSignificantDigits(6).toString().split("e");

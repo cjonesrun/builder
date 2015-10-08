@@ -36,7 +36,7 @@ function startUIUpdater() {
         getElement("total_value").value = numberFormat(total_value);
 		getElement("running").value =  numberFormat(Math.floor( (new Date().getTime() - game_started) / 1000));
 
-        console.log(prettifyNumberHTML(0), prettifyNumberHTML(Math.pow(10,22));
+        console.log(prettifyNumberHTML(0), prettifyNumberHTML(Math.pow(10,22)));
 
 
 	}, UI_REFRESH_INTERVAL);
@@ -56,7 +56,7 @@ function prettifyNumberHTML(number){
         var exponential = number.toSignificantDigits(6).toString().split("e");
         var exponent = new Decimal(exponential[1].split("+")[1]);
         // And it is displayed in with superscript
-       return  "10x"+prettifyNumberHTML(exponent);          
+       return  "10x"+prettifyNumberHTML(exponent);
     }
     return number.toDecimalPlaces(5).toString();
 }

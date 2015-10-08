@@ -48,7 +48,7 @@ function setData() {
         getElement(items_arr[i]+"_rate").value = numberFormat(rate_map[items_arr[i]]) + '/s';
         getElement(items_arr[i]).value = numberFormat(item_count_map[items_arr[i]]);
 
-        total_value += getItemValue(item);
+        total_value += getItemValue(items_arr[i]);
     }
 
     getElement("total_value").value = numberFormat(total_value);

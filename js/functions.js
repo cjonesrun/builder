@@ -13,11 +13,11 @@ function calc(level) {
 }
 
 // build game.base items, add them to the total and decduct the cost from prev (if affordable)
-function build(item, level)
+/*function build(item, level)
 {
 	//addMessage( ['building', item, 'at level', level] );
 	// lowest smallest item && level, free
-	if (item == game.items[0]) { 
+	if (item == game.items[0]){ 
 		itemInc(item, level);
 		return;
 	}
@@ -31,18 +31,18 @@ function build(item, level)
 	} else {
 		addMessage( ['can\'t build', item+".", 'insufficient', game.prev_map[item]+"."	, 'have', numberFormat(game.item_count[prev]), 'need', numberFormat(next_cost)+"."] );
 	}
-}
+}*/
 
 // build as many items as possible at the given level
-function buildAll(item) {
+function build(item, scale) {
 	// nothing to do
 	if (item == game.items[0]) { 
 		return;
 	}
-
+	
 	var prev = game.prev_map[item];
 
-	var to_build = Math.floor( game.item_count[prev] / game.base );
+	var to_build = Math.floor( scale * game.item_count[prev] / game.base );
 	if (to_build == 0) {
 		addMessage(['can\'t build', item +".", 'insufficient', prev +'.' ]);
 		return;

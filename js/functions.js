@@ -13,48 +13,33 @@ function calc(level) {
 }
 
 // build game.base items, add them to the total and decduct the cost from prev (if affordable)
-/*function build(item, level)
+function build(item, level, scale)
 {
-	//addMessage( ['building', item, 'at level', level] );
-	// lowest smallest item && level, free
+	// smallest item && level, free
 	if (item == game.items[0]){ 
-		itemInc(item, level);
+		//addMessage( [ 'building', item, 'at level', level, 'scale', scale ] );
+		game.item_count[item] +=  prestigeMultiplier() * calc(level);
+		updateNumber(item, game.item_count[item]);
 		return;
-	}
+	} 
 
 	var prev = game.prev_map[item];
-	var next_cost = calc(level+1);
-	if (game.item_count[prev] >= next_cost) {
+	var to_build = scale > 0 ? Math.floor( scale * game.item_count[prev] / game.base ) : 1;
+
+	// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
+	var next_cost = game.base * to_build; 
+	
+	if (to_build > 0 && game.item_count[prev] >= next_cost) {
 		game.item_count[prev] -= next_cost;
 		updateNumber(prev, game.item_count[prev]);
-		itemInc(item, level);
+		
+		game.item_count[item] +=  to_build * prestigeMultiplier() * calc(0);
+		updateNumber(item, game.item_count[item]);
 	} else {
-		addMessage( ['can\'t build', item+".", 'insufficient', game.prev_map[item]+"."	, 'have', numberFormat(game.item_count[prev]), 'need', numberFormat(next_cost)+"."] );
+		addMessage( [ 'can\'t build', item+".", 'insufficient', prev+"."] );
 	}
-}*/
-
-// build as many items as possible at the given level
-function build(item, scale) {
-	// nothing to do
-	if (item == game.items[0]) { 
-		return;
-	}
-	
-	var prev = game.prev_map[item];
-
-	var to_build = Math.floor( scale * game.item_count[prev] / game.base );
-	if (to_build == 0) {
-		addMessage(['can\'t build', item +".", 'insufficient', prev +'.' ]);
-		return;
-	}
-
-	var cost = to_build * game.base;
-	game.item_count[item] += to_build;
-	game.item_count[prev] -= cost;
-
-	updateNumber(item, game.item_count[item]);
-	updateNumber(prev, game.item_count[prev]);
 }
+
 
 function buildRateInc(item, scale) {
 	var next = game.next_map[item];
@@ -70,17 +55,6 @@ function buildRateInc(item, scale) {
 
 	updateRate(item+ "_rate", game.rate_map[item]);
 	updateNumber(next, game.item_count[next]);
-}
-
-// increase an item count by BASE^level items
-function itemInc(item, level) {
-	var count = game.item_count[item];
-	game.item_count[item] +=  prestigeMultiplier() * calc(level);
-	updateNumber(item, game.item_count[item]);
-}
-
-function itemDec(item, level) {
-
 }
 
 // increase an item build rate buy BASE^level items per sec

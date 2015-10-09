@@ -17,7 +17,9 @@ function Builder() {
 	this.prestige_level = 0;
 	this.prestige_base = 2;
 
-	this.items = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'contraption', 'gadget', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'thingamajig', 'apparatus' ];
+	this.total_value = 0;
+
+	this.items = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg machine' ];
 	this.item_count = {};
 	this.rate_map = {};
 	this.prev_map = {};
@@ -38,11 +40,7 @@ function Builder() {
 
 var game = new Builder();
 
-// initialize the Decimal system - NOT USED
-Decimal.config({ toExpPos: 5, maxE: 9e15, precision: 6 });
-
 var messagesWindow;
-
 function setMessage(str_arr) {
 	addMessage(str_arr, true);
 }

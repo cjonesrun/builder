@@ -1,6 +1,4 @@
-/*********************************************************
-sets the value of a cookie
-**********************************************************/
+// sets the value of a cookie
 document.setCookie = function(sName,sValue)
 {
     var oDate = new Date();
@@ -9,9 +7,7 @@ document.setCookie = function(sName,sValue)
     document.cookie= sCookie;
 }
 
-/*********************************************************
-gets the value of a cookie
-**********************************************************/
+// gets the value of a cookie
 document.getCookie = function(sName)
 {
     sName = sName.toLowerCase();
@@ -27,49 +23,11 @@ document.getCookie = function(sName)
     return '';
 }
 
-/*********************************************************
-expires a cookie
-**********************************************************/
+// expires a cookie
 document.clearCookie = function(sName)
 {
     var oDate = new Date();
     oDate.setYear(oDate.getFullYear()-1);
     var sCookie = encodeURIComponent(sName) + '=' + ';expires=' + oDate.toGMTString() + ';path=/';
     document.cookie= sCookie;
-}
-
-function init(encodedState) {
-    var state = atob(encodedState);
-    //console.log(encodedState);
-    //console.log(state);
-
-    clearInterval(global_timer);
-    clearInterval(state_save_timer);
-
-    game = JSON.parse(state);
-
-    setData(); // timer.js
-
-    startUIUpdater();
-    startStateSaver();
-}
-
-function saveState()
-{
-    game.last_save = new Date().getTime();
-
-    // clear the local storage first?
-    //window.localStorage.clear();
-    window.localStorage['builder'] = btoa(JSON.stringify(game));
-    
-    return window.localStorage['builder'];
-}
-
-function exportState() {
-    setMessage([ saveState() ]);
-}
-
-function loadState() {
-    var encodedState = document.getElementById( 'messages' ).value.trim();
-    init(encodedState);
 }

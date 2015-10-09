@@ -1,53 +1,20 @@
 
 var this_session_start_time = new Date().getTime();
-var game_started = new Date().getTime();    // when this game started
-var last_save;                              // last time the game was saved  
 
 var global_timer; // main timer for auto block & thing building
-var cookie_save_timer;
-
-
+var state_save_timer;
 
 function startUIUpdater() {
     global_timer = setInterval(function(){ 
-    	/*var total_value = 0.0;
-
-        for (var i=0; i < items_arr.length; i++) {
-            var item = items_arr[i];
-            var prev = prev_map[item];
-            var next = next_map[item];
-            var adjust = rate_map[item] * (UI_REFRESH_INTERVAL/1000);
-            
-            //addMessage( [item, item_count_map[item] ] );
-            
-            item_count_map[ item ] += adjust;
-            if (i>0) {
-                // take prev (i-1) count divided by BASE^(i+1)
-                var newBuild = Math.floor( item_count_map[prev] / Math.pow(BASE,(i+1) ) );
-                item_count_map[item] += newBuild;
-                updateRate(prev+"_build_rate", newBuild);
-                updateNumber(prev, item_count_map[prev]);
-            }
-            
-            updateNumber(item, item_count_map[item]);
-            //console.log(""+item_count_map[item], item, "adds", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value');
-            total_value += getItemValue(i);
-        }
-       
-        updateTotalValue(total_value);
-		updateNumber("running", Math.floor( (new Date().getTime() - game_started) / 1000));*/
         calculate();
         setData();
-
-
-	}, UI_REFRESH_INTERVAL);
+	}, game.UI_REFRESH_INTERVAL);
 }
 
-var last_calculation = new Date().getTime();
 // calculate changes since last calculation.
 function calculate() {
     var this_calculation = new Date().getTime();
-    var diff = this_calculation - last_calculation;
+    var diff = this_calculation - game.last_calculation;
     var sec_since_last = Math.floor(diff / 1000);
     //console.log('calculating for last', sec_since_last);
 
@@ -56,58 +23,58 @@ function calculate() {
         return;
 
     for (var j = 0; j<sec_since_last; j++) {
-        for (var i=0; i < items_arr.length; i++) {
-            var item = items_arr[i];
-            var prev = prev_map[item];
-            var next = next_map[item];
-            var adjust = rate_map[item] * (UI_REFRESH_INTERVAL/1000);
+        for (var i=0; i < game.items.length; i++) {
+            var item = game.items[i];
+            var prev = game.prev_map[item];
+            var next = game.next_map[item];
+            var adjust = game.rate_map[item] * (game.UI_REFRESH_INTERVAL/1000);
             
             //addMessage( [item, item_count_map[item] ] );
             
-            item_count_map[ item ] += adjust;
+            game.item_count[ item ] += adjust;
             if (i>0) {
                 // take prev (i-1) count divided by BASE^(i+1)
-                var newBuild = Math.floor( item_count_map[prev] / Math.pow(BASE,(i+1) ) );
-                item_count_map[item] += newBuild;
+                var newBuild = Math.floor( game.item_count[prev] / Math.pow(game.base,(i+1) ) );
+                game.item_count[item] += newBuild;
                 updateRate(prev+"_build_rate", newBuild);
-                updateNumber(prev, item_count_map[prev]);
+                updateNumber(prev, game.item_count[prev]);
             }
             
-            updateNumber(item, item_count_map[item]);
-            //console.log(""+item_count_map[item], item, "adds", item_count_map[item] * Math.pow(BASE, i+1-items_arr.length), 'value');
+            updateNumber(item, game.item_count[item]);
+            //console.log(""+item_count_map[item], item, "adds", item_count_map[item] * Math.pow(BASE, i+1-game.items.length), 'value');
         }        
     }
 
     // keep track of the remainder, if any.
-    last_calculation = this_calculation - (diff - sec_since_last * 1000);
+    game.last_calculation = this_calculation - (diff - sec_since_last * 1000);
     return total_value;
 }
 
 
 function setData() {
     var total_value = 0;
-    for (var i=0; i < items_arr.length; i++) {
+    for (var i=0; i < game.items.length; i++) {
 
-        var build_rate = Math.floor( item_count_map[items_arr[i]] / Math.pow(BASE,(i+2)) );
+        var build_rate = Math.floor( game.item_count[game.items[i]] / Math.pow(game.base,(i+2)) );
 
-        updateRate(items_arr[i]+"_build_rate", build_rate);
-        updateRate(items_arr[i]+"_rate", rate_map[items_arr[i]]);
-        updateNumber(items_arr[i], item_count_map[items_arr[i]]);
+        updateRate(game.items[i]+"_build_rate", build_rate);
+        updateRate(game.items[i]+"_rate", game.rate_map[game.items[i]]);
+        updateNumber(game.items[i], game.item_count[game.items[i]]);
         total_value += getItemValue(i);
     }
 
     updateTotalValue(total_value);
-    updateNumber("running", Math.floor( (new Date().getTime() - game_started) / 1000));
+    updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
 }
 
 function getItemValue(item_index) {
-    return item_count_map[items_arr[item_index]] * Math.pow(BASE, item_index+1-items_arr.length);
+    return game.item_count[game.items[item_index]] * Math.pow(game.base, item_index+1-game.items.length);
 }
 
-function startCookieSaver() {
-    cookie_save_timer = setInterval( function(){
+function startStateSaver() {
+    state_save_timer = setInterval( function(){
         saveState();
-    }, SAVE_INTERVAL);
+    }, game.SAVE_INTERVAL);
 }
  
 function stopTimer() {
@@ -122,7 +89,7 @@ function update_timer_interval( )
 {
 	clearInterval(global_timer);
 
-	UI_REFRESH_INTERVAL = numberFormat( parseInt( document.getElementById("timer").value ) );
+	game.UI_REFRESH_INTERVAL = numberFormat( parseInt( document.getElementById("timer").value ) );
 	
 	startUIUpdater();
 }
@@ -130,26 +97,23 @@ function update_timer_interval( )
 function reset() {
     // stop timers.
     clearInterval(global_timer);
-    clearInterval(cookie_save_timer);
+    clearInterval(state_save_timer);
 
-    for (var i=0; i < items_arr.length; i++) {
-        item_count_map[items_arr[i]] = 0;
-        rate_map[items_arr[i]] = 0;
+    for (var i=0; i < game.items.length; i++) {
+        game.item_count[game.items[i]] = 0;
+        game.rate_map[game.items[i]] = 0;
     }
 
     setData();
 
     startUIUpdater();
-    startCookieSaver();
+    startStateSaver();
 }
 
 // init from cookies if they are present, bfore starting the timer
-initFromCookies(document.getCookie("state"));
+init(window.localStorage['builder']);
 
 startUIUpdater();
-startCookieSaver();
+startStateSaver();
 
-addMessage(['starting prestige is', PRESTIGE_BASE+'^'+PRESTIGE_LEVEL,'=', numberFormat(prestigeMultiplier()) ] );
-
-window.localStorage['SaveName'] = "some_string_to_save";
-console.log(window.localStorage['SaveName']);
+addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );

@@ -38,41 +38,31 @@ document.clearCookie = function(sName)
     document.cookie= sCookie;
 }
 
-function initFromCookies(encodedState) {
+function init(encodedState) {
     var state = atob(encodedState);
     //console.log(encodedState);
     //console.log(state);
 
-    var x = state.split('|');
-    for(var i=0; i<x.length;i++)
-    {
-        var oPair= x[i].split('=');
-        var sKey = decodeURIComponent(oPair[0].trim());
-        var sValue = oPair[1];
+    clearInterval(global_timer);
+    clearInterval(state_save_timer);
 
-        if (sKey == "item_count")
-            item_count_map = JSON.parse(sValue);
-        else if (sKey == "rate_count")
-            rate_map = JSON.parse(sValue);
-        else if (sKey == "game_start")
-            game_started = JSON.parse(sValue);
-    }
+    game = JSON.parse(state);
+
     setData(); // timer.js
 
+    startUIUpdater();
+    startStateSaver();
 }
 
 function saveState()
 {
-    var state = "item_count= "+ JSON.stringify(item_count_map);
-    state += "|rate_count=" + JSON.stringify(rate_map);
-    state += "|game_start=" + game_started; 
+    game.last_save = new Date().getTime();
 
-    var encodedState = btoa(state);
-    document.setCookie("state", encodedState);
-
-    last_save = new Date().getTime();
-
-    return encodedState;
+    // clear the local storage first?
+    //window.localStorage.clear();
+    window.localStorage['builder'] = btoa(JSON.stringify(game));
+    
+    return window.localStorage['builder'];
 }
 
 function exportState() {
@@ -81,5 +71,5 @@ function exportState() {
 
 function loadState() {
     var encodedState = document.getElementById( 'messages' ).value.trim();
-    initFromCookies(encodedState);
+    init(encodedState);
 }

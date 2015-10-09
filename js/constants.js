@@ -1,39 +1,45 @@
-var BASE = 10;
-var STARTING_POWER = -1;
+function Builder() {
+	this.SAVE_INTERVAL = 5000;
+	this.UI_REFRESH_INTERVAL = 1000;
 
-var PRESTIGE_LEVEL = 0;
-var PRESTIGE_BASE = 2;
+	this.NUMERICAL_DISPLAY_PRECISION = 5;
 
-var SAVE_INTERVAL = 5000; // 5s
-var UI_REFRESH_INTERVAL = 1000; // default to 1s
+	this.name = "Builder";
+	this.description = "Build. Build. Build.";
+	this.version = 0.1;
 
-var NUMERICAL_DISPLAY_PRECISION = 5;
+	this.game_started = new Date().getTime();    // when this game started
+	this.last_calculation = new Date().getTime();
+	this.last_save;                           // last time the game was saved  
 
-var levels_per_item = 5;
-
-// initialize the Decimal system
-Decimal.config({ toExpPos: 5, maxE: 9e15, precision: 6 });
-
-
-var items_arr = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'contraption', 'gadget', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'thingamajig', 'apparatus' ];
-
-
-// initialize maps
-var item_count_map = {};
-var rate_map = {};
-var prev_map = {};
-var next_map = {};
-for (var i=0; i < items_arr.length; i++) {
-	if (i > 0) 
-		prev_map[items_arr[i]] = items_arr[i-1];
-	if (i < items_arr.length-1)
-		next_map[items_arr[i]] = items_arr[i+1];
-
-	// init the maps to zeros
-	rate_map[items_arr[i]] = 0;
-	item_count_map[items_arr[i]] = 0;
+	this.base = 10;
 	
+	this.prestige_level = 0;
+	this.prestige_base = 2;
+
+	this.items = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'contraption', 'gadget', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'thingamajig', 'apparatus' ];
+	this.item_count = {};
+	this.rate_map = {};
+	this.prev_map = {};
+	this.next_map = {};
+
+	for (var i=0; i < this.items.length; i++) {
+		if (i > 0) 
+			this.prev_map[this.items[i]] = this.items[i-1];
+		if (i < this.items.length-1)
+			this.next_map[this.items[i]] = this.items[i+1];
+
+		// init the maps to zeros
+		this.rate_map[this.items[i]] = 0;
+		this.item_count[this.items[i]] = 0;
+		
+	}
 }
+
+var game = new Builder();
+
+// initialize the Decimal system - NOT USED
+Decimal.config({ toExpPos: 5, maxE: 9e15, precision: 6 });
 
 var messagesWindow;
 

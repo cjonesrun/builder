@@ -16,9 +16,9 @@ function calculate() {
     var this_calculation = new Date().getTime();
     var diff = this_calculation - game.last_calculation;
     var sec_since_last = Math.floor(diff / 1000); // time in s since last calc
-    console.log('calculating for last', sec_since_last);
+    //console.log('calculating for last', sec_since_last);
 
-    // for now, forget about less than 1s. catch is tick
+    // for now, forget about less than 1s. catch is if tick is < 1s, this will only calc each sec...
     if (sec_since_last == 0)
         return;
 
@@ -44,7 +44,7 @@ function calculate() {
         }        
     }
 
-    if (sec_since_last > game.UI_REFRESH_INTERVAL * 5 / 1000) // a bit arbitrary, but if calc hasn't run in 5 ticks, assume no activity
+    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000) // a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
         addMessage(['welcome back. you\'ve been gone for', sec_since_last, 'seconds. value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
     
     // set game total
@@ -56,6 +56,7 @@ function calculate() {
 
 
 function setData() {
+    var prev_build_rate = 0;
     for (var i=0; i < game.items.length; i++) {
 
         var build_rate = Math.floor( game.item_count[game.items[i]] / Math.pow(game.base,(i+2)) );
@@ -63,6 +64,10 @@ function setData() {
         updateRate(game.items[i]+"_build_rate", build_rate);
         updateRate(game.items[i]+"_rate", game.rate_map[game.items[i]]);
         updateNumber(game.items[i], game.item_count[game.items[i]]);
+
+        updateItemInfo(game.items[i], game.rate_map[game.items[i]] + prev_build_rate)
+        
+        prev_build_rate = build_rate;
     }
 
     updateTotalValue(game.total_value);
@@ -71,7 +76,7 @@ function setData() {
 
 function getItemValue(item_index) {
     //console.log(game.items[item_index], game.item_count[game.items[item_index]], Math.pow(game.base, item_index+1-game.items.length) );
-    return game.item_count[game.items[item_index]] * Math.pow(game.base, item_index+1-game.items.length);
+    return game.item_count[game.items[item_index]] * Math.pow(game.base, 2*(item_index+1-game.items.length));
 }
 
 function startStateSaver() {
@@ -114,3 +119,4 @@ function reset() {
 init(window.localStorage['builder']);
 
 addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );
+

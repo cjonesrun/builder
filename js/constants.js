@@ -13,7 +13,8 @@ function Builder() {
 	this.last_save;                           // last time the game was saved  
 
 	this.base = 10;
-	
+	this.bases = {};
+
 	this.prestige_level = 0;
 	this.prestige_base = 2;
 
@@ -34,7 +35,8 @@ function Builder() {
 		// init the maps to zeros
 		this.rate_map[this.items[i]] = 0;
 		this.item_count[this.items[i]] = 0;
-		
+
+		this.bases[this.items[i]] = 5 + Math.floor((Math.random() * 10) + 1) % 7;		
 	}
 }
 
@@ -53,6 +55,14 @@ function addMessage(str_arr, clearFirst){
 	if (!clearFirst)
 		dump += "\n" + messagesWindow.value;
 
+	var lines = dump.split("\n");
+	if (lines.length > 15) {
+		dump = '';
+		for (var i =0; i<15; i++)
+			dump += lines[i] +'\n'; 
+	}
 	messagesWindow.value = dump;
+
+	//console.log( (messagesWindow.value.match(/\n/g) || []).length);
 	// TODO: trim the log to, say, 1,000 characters
 }

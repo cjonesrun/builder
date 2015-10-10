@@ -1,4 +1,4 @@
-// initialize the game state from the given encoded state
+// initialize the game state from the given encoded state and star/stop timers
 function init(encodedState) {
     var state = atob(encodedState);
     //console.log(encodedState);
@@ -22,9 +22,11 @@ function saveState()
 
     // clear the local storage first?
     //window.localStorage.clear();
-    window.localStorage['builder'] = btoa(JSON.stringify(game));
+    var json = JSON.stringify(game);
+    window.localStorage['builder'] = btoa(json);
     
-    //console.log("save state:", window.localStorage['builder'].length, "compressed:", lzw_encode(window.localStorage['builder']).length);
+    addMessage( [ "->state saved. size", window.localStorage['builder'].length, "bytes. compressed would be", lzw_encode(window.localStorage['builder']).length, 'bytes.' ] );
+    /*addMessage( [ "->state saved. json size", json.length, "encoded size", window.localStorage['builder'].length, "bytes. compressed would be", lzw_encode(window.localStorage['builder']).length, 'bytes. compressed json would be', lzw_encode(json).length, 'bytes' ] );*/
 
     return window.localStorage['builder'];
 }

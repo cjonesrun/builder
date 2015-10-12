@@ -24,19 +24,17 @@ function calculate() {
 
     var total_value = 0;
     for (var j = 0; j<sec_since_last; j++) {
-        for (var i=0; i < game.items.length; i++) {
-            var item = game.items[i];
-            var prev = game.prev_map[item];
-            var next = game.next_map[item];
-            var adjust = game.rate_map[item] * (game.UI_REFRESH_INTERVAL/1000);
+        for (var i=0; i < game.item_names.length; i++) {
+            var item = game.map[i];
+            var prev = game.map[item.previous];
+            var next = game.map[item.next];
+            var adjust = game.map[i].rate * (game.UI_REFRESH_INTERVAL/1000);
             
-            //addMessage( [item, item_count_map[item] ] );
-            
-            game.item_count[ item ] += adjust;
+            item.count += adjust;
             if (i>0) {
                 // take prev (i-1) count divided by BASE^(i+1)
-                var newBuild = Math.floor( game.item_count[prev] / Math.pow(game.base,(i+1) ) );
-                game.item_count[item] += newBuild;
+                var newBuild = Math.floor( prev.count / Math.pow(prev.base,(i+1) ) );
+                item.count += newBuild;
             }
 
             if (j == sec_since_last -1)
@@ -44,9 +42,20 @@ function calculate() {
         }        
     }
 
-    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000) // a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
-        addMessage(['welcome back. you\'ve been gone for', sec_since_last, 'seconds. value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
-    
+    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000) {// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
+        var seconds = sec_since_last;
+        var hours = Math.floor( seconds / (60*60) );
+        seconds -= hours * 60*60;
+
+        var mins = Math.floor( seconds / 60 );
+        seconds -= mins * 60;
+
+        var str = "";
+        if (hours > 0) str += hours + "h ";
+        if (mins > 0) mins + "m "
+        str += seconds + "s"
+        addMessage(['welcome back. you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
+    }
     // set game total
     game.total_value = total_value;
 
@@ -57,15 +66,15 @@ function calculate() {
 
 function setData() {
     var prev_build_rate = 0;
-    for (var i=0; i < game.items.length; i++) {
+    for (var i=0; i < game.item_names.length; i++) {
 
-        var build_rate = Math.floor( game.item_count[game.items[i]] / Math.pow(game.base,(i+2)) );
+        var build_rate = Math.floor( game.map[i].count / Math.pow(game.map[i].base,(i+2)) );
 
-        updateRate(game.items[i]+"_build_rate", build_rate);
-        updateRate(game.items[i]+"_rate", game.rate_map[game.items[i]]);
-        updateNumber(game.items[i], game.item_count[game.items[i]]);
+        updateRate(i+"_build_rate", build_rate);
+        updateRate(i+"_rate", game.map[i].rate);
+        updateNumber(i+"_count", game.map[i].count);
 
-        updateItemInfo(game.items[i], game.rate_map[game.items[i]] + prev_build_rate)
+        updateItemInfo(i, game.map[i].rate + prev_build_rate)
         
         prev_build_rate = build_rate;
     }
@@ -74,9 +83,8 @@ function setData() {
     updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
 }
 
-function getItemValue(item_index) {
-    //console.log(game.items[item_index], game.item_count[game.items[item_index]], Math.pow(game.base, item_index+1-game.items.length) );
-    return game.item_count[game.items[item_index]] * Math.pow(game.base, 2*(item_index+1-game.items.length));
+function getItemValue(i) {
+    return game.map[i].count * Math.pow(game.map[i].base, 2*(i+1-game.item_names.length));
 }
 
 function startStateSaver() {
@@ -108,8 +116,12 @@ function reset() {
     clearInterval(state_save_timer);
 
     game = new Builder();
+    //console.log(JSON.stringify(game));
    
+    saveState();
     setData();
+
+    setMessage( [] );
 
     startUIUpdater();
     startStateSaver();

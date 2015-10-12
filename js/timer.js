@@ -37,8 +37,12 @@ function calculate() {
                 item.count += newBuild;
             }
 
-            if (j == sec_since_last -1)
-                total_value += getItemValue(i);
+            if (j == sec_since_last -1) {
+                if (game.map[i].count > 0) {
+                    //console.log( 'adding', game.map[i].name, game.map[i].count, calcItemValue(i));
+                    total_value += calcItemValue(i);
+                }
+            }
         }        
     }
 
@@ -81,10 +85,6 @@ function setData() {
 
     updateTotalValue(game.total_value);
     updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
-}
-
-function getItemValue(i) {
-    return game.map[i].count * Math.pow(game.map[i].base, 2*(i+1-game.item_names.length));
 }
 
 function startStateSaver() {

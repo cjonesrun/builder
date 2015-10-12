@@ -3,7 +3,6 @@ function Builder() {
 	this.description = "build. build. build!";
 	this.version = 0.1;
 
-
 	this.SAVE_INTERVAL = 5000;
 	this.UI_REFRESH_INTERVAL = 1000;
 	this.NUMERICAL_DISPLAY_PRECISION = 5;
@@ -21,8 +20,8 @@ function Builder() {
 	this.total_value = 0;
 	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg machine' ];
 
-	this.baseCalc = function(pow) {
-;		return Math.round( 10 * Math.pow(this.item_base, pow));
+	this.baseCalc = function (pow) {
+		return Math.round( 10 * Math.pow(this.item_base, pow));
 	};
 
 	// init the game state
@@ -56,9 +55,9 @@ function addMessage(str_arr, clearFirst){
 		dump += "\n" + messagesWindow.value;
 
 	var lines = dump.split("\n");
-	if (lines.length > 15) {
+	if (lines.length > 20) {
 		dump = '';
-		for (var i =0; i<15; i++)
+		for (var i =0; i<20; i++)
 			dump += lines[i] +'\n'; 
 	}
 	messagesWindow.value = dump;

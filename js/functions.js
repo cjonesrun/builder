@@ -33,9 +33,10 @@ function build(i, scale)
 	//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
 	if (to_build > 0 && prev.count >= cost) {
 		prev.count -= cost;
-		updateNumber(item.previous+"_count", prev.count);
-		
 		item.count +=  to_build * prestigeMultiplier();
+		
+		addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
+		updateNumber(item.previous+"_count", prev.count);
 		updateNumber(i+"_count", item.count);
 	} else {
 		addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
@@ -60,7 +61,7 @@ function buildRateInc(i, scale) {
 		item.rate += to_build;
 		next.count -= cost;
 
-		addMessage( ['building', to_build, item.name, 'rate+ costing', numberFormat(cost), next.name ] );
+		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
 		updateRate(i+ "_rate", item.rate);
 		updateNumber(item.next+"_count", next.count);
 	} else {
@@ -114,6 +115,16 @@ function buildAllUpTo(index) {
 	setData();
 }
 
+// min number is 5e-324
+var min_exponent = -324;
+
+function calcItemValue(i) {
+	//return game.map[i].count * Math.pow(game.map[i].base, 2*(i+1-game.item_names.length));
+	//console.log(game.map[i].name, game.map[i].count, '*', game.base,'^',min_exponent + i +1);
+	return game.map[i].count * Math.pow(game.base, min_exponent + i +1);
+	//Number.MIN_VALUE
+};
+
 // format the number for display
 function numberFormat(number) {
 	if (typeof number == 'undefined')
@@ -128,7 +139,7 @@ function numberFormat(number) {
 		//return number;
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	} else {
-		return number.toPrecision(2);
+		return number.toPrecision(4);
 	}
 }
 

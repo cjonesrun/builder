@@ -42,7 +42,7 @@ function calculate() {
         }        
     }
 
-    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000) {// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
+    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000 ) {// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
         var seconds = sec_since_last;
         var hours = Math.floor( seconds / (60*60) );
         seconds -= hours * 60*60;

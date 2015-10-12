@@ -14,19 +14,23 @@ function Builder() {
 	this.last_save;                           // last time the game was saved  
 
 	this.base = 10;
+	this.item_base = 1.3;
 	this.prestige_level = 0;
 	this.prestige_base = 2;
 
 	this.total_value = 0;
-
 	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg machine' ];
+
+	this.baseCalc = function(pow) {
+;		return Math.round( 10 * Math.pow(this.item_base, pow));
+	};
 
 	// init the game state
 	this.map = {};
 	for (var i=0; i < this.item_names.length; i++) {
 		this.map[i] = {
 			"name": this.item_names[i],
-			"base": Math.round( 10 * Math.pow(1.2, i)), //this.bases[i],
+			"base": this.baseCalc(i), //this.bases[i],
 			"multipliers" : {},
 			"count": 0,
 			"rate": 0,

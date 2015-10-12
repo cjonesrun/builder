@@ -27,7 +27,6 @@ function saveState()
     
     //addMessage( [ "->state saved. size", window.localStorage['builder'].length, "bytes. compressed", lzw_encode(window.localStorage['builder']).length, 'bytes. json', json.length ] );
 
-    //addMessage( [ JSON.stringify(game.bases) ] );
     /*addMessage( [ "->state saved. json size", json.length, "encoded size", window.localStorage['builder'].length, "bytes. compressed would be", lzw_encode(window.localStorage['builder']).length, 'bytes. compressed json would be', lzw_encode(json).length, 'bytes' ] );*/
 
     return window.localStorage['builder'];

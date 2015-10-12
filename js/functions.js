@@ -12,7 +12,7 @@ function calc(item) {
 	return Math.pow(game.map[item].base, item);
 }
 
-// build game.base items, add them to the total and decduct the cost from prev (if affordable)
+// build items, add them to the total and decduct the cost from prev (if affordable)
 function build(i, scale)
 {
 	var item = game.map[i];
@@ -30,7 +30,7 @@ function build(i, scale)
 	// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
 	var cost = prev.base * to_build; 
 	
-	console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
+	//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
 	if (to_build > 0 && prev.count >= cost) {
 		prev.count -= cost;
 		updateNumber(item.previous+"_count", prev.count);
@@ -47,7 +47,7 @@ function buildRateInc(i, scale) {
 	var item = game.map[i];
 	var next = game.map[item.next];
 
-	// at last item
+	// at last item, let the costing for next be the cost of iteself
 	if (next == null){ 
 		next = item;
 	} 
@@ -55,7 +55,7 @@ function buildRateInc(i, scale) {
 	var to_build = scale > 0 ? Math.floor( scale * next.count / next.base ) : 1;
 	var cost = to_build * next.base;
 	
-	console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
+	//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
 	if (to_build > 0 && next.count >= cost) {
 		item.rate += to_build;
 		next.count -= cost;

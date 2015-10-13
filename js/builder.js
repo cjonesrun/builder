@@ -156,10 +156,10 @@ function setVisible(element, visible) {
 }
 
 
-populateTable();
+//populateTable();
 
 // 5 columns
-html+='<p><table border=1><tr> <th>#</th> <th>name</th> <th>count</th> <th>accumulate/s</th> <th>build/s</th>';
+html+='<p><table border=0><tr> <th>#</th> <th>name</th> <th>count</th> <th>accumulate/s</th> <th>build/s</th>';
 
 // 4 columns
 html += '<th colspan="3">build</th> <th>pull</th>';

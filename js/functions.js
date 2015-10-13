@@ -8,10 +8,6 @@ function prestigeMultiplier() {
     return Math.pow(game.prestige_base, game.prestige_level);
 }
 
-function calc(item) {
-	return Math.pow(game.map[item].base, item);
-}
-
 // build items, add them to the total and decduct the cost from prev (if affordable)
 function build(i, scale)
 {
@@ -121,7 +117,10 @@ function calcItemValue(i) {
 };
 
 function calcBuildRate(i) {
-	return Math.floor( game.map[i].count / Math.pow(game.map[i].base,(i+2)) );
+	//if (game.map[i].count > 0)
+	//	console.log(game.map[i].name, game.map[i].count, '/', game.map[i].base,'^',i+2);
+
+	return Math.floor( (game.map[i].count / 1 )/ Math.pow(game.map[i].base,(i+2)) );
 }
 
 // format the number for display
@@ -155,8 +154,16 @@ function updateItemInfo(i, rate) {
 // updates total value in the UI
 function updateTotalValue(value, rate, accel) {
 	getElement("total_value").innerHTML = numberFormat(value);
-	getElement("total_value_rate").innerHTML = numberFormat(rate) + '/s';
-	getElement("total_value_accel").innerHTML = numberFormat(accel) + '/s<sup>2</sup>';
+	/*if (rate == 0)
+		getElement("total_value_rate").innerHTML = 'recalculating';
+	else*/
+		getElement("total_value_rate").innerHTML = numberFormat(rate) + '/s';
+	
+	/*if (accel == 0) 
+		getElement("total_value_accel").innerHTML = 'recalculating';
+	else*/
+		getElement("total_value_accel").innerHTML = numberFormat(accel)  + '/s<sup>2</sup>';
+
 }
 
 function updateNumber(element_name, number) {

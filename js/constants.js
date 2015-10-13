@@ -16,7 +16,7 @@ function Builder() {
 	this.item_base = 1.3;
 	this.prestige_level = 0;
 	this.prestige_base = 2;
-	this.min_exponent = -324;	// min number is 5e-324
+	this.min_exponent = -324;	// min exponent is -324
 
 	this.total_value = 0; // current total value
 	this.total_value_rate = 0; // total_value rate of change per sec

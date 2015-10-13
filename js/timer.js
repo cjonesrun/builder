@@ -69,8 +69,7 @@ function calculate() {
         addMessage(['welcome back. you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
     }
 
-    // set game total
-    //console.log(total_value, game.total_value, sec_since_last, 'diff', (total_value - game.total_value));
+    // set game totals
     var new_rate = Math.max(0, ( total_value - game.total_value ) / (sec_since_last));
     game.total_value_accel = Math.max(0, ( new_rate - game.total_value_rate ) );
     game.total_value_rate = new_rate;
@@ -87,7 +86,7 @@ function setData() {
     var prev_build_rate = 0;
     for (var i=0; i < game.item_names.length; i++) {
 
-        var build_rate = Math.floor( game.map[i].count / Math.pow(game.map[i].base,(i+2)) );
+        var build_rate = calcBuildRate( i );
 
         updateRate(i+"_build_rate", build_rate);
         updateRate(i+"_rate", game.map[i].rate);

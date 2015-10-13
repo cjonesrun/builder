@@ -15,7 +15,8 @@ html += '<th valign=top rowspan="' + (game.item_names.length+1) + '">messages<br
             '<p> <input type=button value="save" onclick="saveState()"> ' +
                 '<input type=button value="reset" onclick="reset()"> ' +
                 '<input type=button value="export" onclick="exportState()"> '+
-                '<input type=button value="load" onclick="loadState()"> <input type=button value="clear" onclick="document.getElementById(\'messages\').value=\'\';"></p>' +
+                '<input type=button value="load" onclick="loadState()"> <input type=button value="clear" onclick="document.getElementById(\'messages\').value=\'\';">' +
+                '<input type=button value="pause/resume" onclick="pauseResume();"></p>'+
 
             '<p><input type=button value="tick" on onclick="update_timer_interval();"> <input type=text id="timer" value=1000 size=6>ms</p><p>time <input type=text id="running" value=0></p>' +
         '</div></th>';

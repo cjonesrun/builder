@@ -18,7 +18,7 @@ function build(i, scale)
 	var item = game.map[i];
 	// smallest item && level, free
 	if (item.previous == null){ 
-		//addMessage( [ 'building', item, 'at level', level, 'scale', scale ] );
+		//addMessage( [ 'building 1', item.name ] );
 		item.count +=  prestigeMultiplier();
 		updateNumber(i+"_count", item.count);
 		return;
@@ -65,7 +65,7 @@ function buildRateInc(i, scale) {
 		updateRate(i+ "_rate", item.rate);
 		updateNumber(item.next+"_count", next.count);
 	} else {
-		addMessage( [ 'can\'t build', item.name+".", 'insufficient', next.name+".", 'have', numberFormat(next.count), 'need',
+		addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
 			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
 	}
 }
@@ -83,7 +83,7 @@ function buildAllDownTo(index) {
 		var nextCountInc = Math.floor (itemCount / itemBase );
 		var cost = nextCountInc * itemBase;
 		if (nextCountInc > 0) {
-			addMessage( [ 'building', nextCountInc, game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
+			addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
 			game.map[i].count -= cost;
 			game.map[item.next].count += nextCountInc
 		} else
@@ -106,7 +106,7 @@ function buildAllUpTo(index) {
 		var cost = to_build * item.base;
 
 		if (to_build > 0) {
-			addMessage( [ 'building', to_build, previous.name, 'rate+ from', item.count, item.name, 'total', cost ]);
+			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
 			item.count -= cost;
 			previous.rate += to_build;
 
@@ -115,15 +115,14 @@ function buildAllUpTo(index) {
 	setData();
 }
 
-// min number is 5e-324
-var min_exponent = -324;
-
 function calcItemValue(i) {
-	//return game.map[i].count * Math.pow(game.map[i].base, 2*(i+1-game.item_names.length));
 	//console.log(game.map[i].name, game.map[i].count, '*', game.base,'^',min_exponent + i +1);
-	return game.map[i].count * Math.pow(game.base, min_exponent + i +1);
-	//Number.MIN_VALUE
+	return game.map[i].count * Math.pow(game.base, game.min_exponent + i +1);
 };
+
+function calcBuildRate(i) {
+	return Math.floor( game.map[i].count / Math.pow(game.map[i].base,(i+2)) );
+}
 
 // format the number for display
 function numberFormat(number) {
@@ -154,8 +153,10 @@ function updateItemInfo(i, rate) {
 }
 
 // updates total value in the UI
-function updateTotalValue(value) {
+function updateTotalValue(value, rate, accel) {
 	getElement("total_value").innerHTML = numberFormat(value);
+	getElement("total_value_rate").innerHTML = numberFormat(rate) + '/s';
+	getElement("total_value_accel").innerHTML = numberFormat(accel) + '/s<sup>2</sup>';
 }
 
 function updateNumber(element_name, number) {

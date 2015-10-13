@@ -16,8 +16,12 @@ function Builder() {
 	this.item_base = 1.3;
 	this.prestige_level = 0;
 	this.prestige_base = 2;
+	this.min_exponent = -324;	// min number is 5e-324
 
-	this.total_value = 0;
+	this.total_value = 0; // current total value
+	this.total_value_rate = 0; // total_value rate of change per sec
+	this.total_value_accel = 0; // rate of change of total value rate
+
 	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg machine' ];
 
 	this.baseCalc = function (pow) {

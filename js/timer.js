@@ -11,6 +11,12 @@ function startUIUpdater() {
 	}, game.UI_REFRESH_INTERVAL);
 }
 
+function startStateSaver() {
+    state_save_timer = setInterval( function(){
+        saveState();
+    }, game.SAVE_INTERVAL);
+}
+
 // calculate changes since last calculation.
 function calculate() {
     var this_calculation = new Date().getTime();
@@ -56,13 +62,22 @@ function calculate() {
 
         var str = "";
         if (hours > 0) str += hours + "h ";
-        if (mins > 0) mins + "m "
+        if (mins > 0) str += mins + "m "
         str += seconds + "s"
+
+        //console.log( sec_since_last, hours+'h', mins+'m', seconds+'s.');
         addMessage(['welcome back. you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
     }
+
     // set game total
+    //console.log(total_value, game.total_value, sec_since_last, 'diff', (total_value - game.total_value));
+    var new_rate = Math.max(0, ( total_value - game.total_value ) / (sec_since_last));
+    game.total_value_accel = Math.max(0, ( new_rate - game.total_value_rate ) );
+    game.total_value_rate = new_rate;
     game.total_value = total_value;
 
+    //console.log("value_rate", numberFormat( total_value - game.total_value ));
+    
     // keep track of the remainder, if any.
     game.last_calculation = this_calculation - (diff - sec_since_last * 1000);
 }
@@ -83,22 +98,38 @@ function setData() {
         prev_build_rate = build_rate;
     }
 
-    updateTotalValue(game.total_value);
+    updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
     updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
 }
-
-function startStateSaver() {
-    state_save_timer = setInterval( function(){
-        saveState();
-    }, game.SAVE_INTERVAL);
-}
  
-function stopTimer() {
+function stopTimers() {
+    if (typeof global_timer == "number") {
+        //console.log('stopping global_timer', global_timer);
+        clearInterval(global_timer);
+        global_timer = false;
+    } /*else
+        console.log('global_timer already stopped', global_timer);*/
 
+    if (typeof state_save_timer == "number") {
+        //console.log('stopping state_save_timer', state_save_timer);
+        clearInterval(state_save_timer);
+        state_save_timer = false;
+    } /* else
+        console.log('global_timer already stopped', state_save_timer); */
 }
 
-function startTimer() {
+function startTimers() {
+    if (typeof global_timer != "number") {
+        //console.log('starting global_timer', global_timer);
+        startUIUpdater();
+    } /* else
+        console.log('global_timer already started', global_timer); */
 
+    if (typeof state_save_timer != "number") {
+        //console.log('starting state_save_timer', state_save_timer);
+        startStateSaver();
+    } /* else
+        console.log('state_save_timer already started', state_save_timer); */
 }
 
 function update_timer_interval( )
@@ -110,10 +141,22 @@ function update_timer_interval( )
 	startUIUpdater();
 }
 
+function pauseResume()
+{
+    console.log('global', typeof global_timer, global_timer, (0 == true), (1 == false));
+    console.log('state_save_timer', state_save_timer);
+    if (global_timer) {
+        addMessage( ['pausing timers.'] );
+        stopTimers();
+    } else {
+        addMessage( ['resuming timers.'] );
+        startTimers();
+    }
+}
+
 function reset() {
     // stop timers.
-    clearInterval(global_timer);
-    clearInterval(state_save_timer);
+    stopTimers();
 
     game = new Builder();
     //console.log(JSON.stringify(game));
@@ -123,8 +166,7 @@ function reset() {
 
     setMessage( [] );
 
-    startUIUpdater();
-    startStateSaver();
+    startTimers();
 }
 
 // init from cookies if they are present, bfore starting the timer

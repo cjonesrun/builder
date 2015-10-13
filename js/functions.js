@@ -116,54 +116,65 @@ function calcItemValue(i) {
 	return game.map[i].count * Math.pow(game.base, game.min_exponent + i +1);
 };
 
-function calcBuildRate(i) {
-	//if (game.map[i].count > 0)
-	//	console.log(game.map[i].name, game.map[i].count, '/', game.map[i].base,'^',i+2);
 
-	return Math.floor( (game.map[i].count / 1 )/ Math.pow(game.map[i].base,(i+2)) );
+function autoBuildLevel(i) {
+	var pow = 2 + i / game.base;
+	var denom = Math.pow(game.map[i].base,pow);
+
+	return denom;
+}
+
+function calcBuildRate(i) {
+	// build rate is item-count / item-base^pow
+	var val = Math.floor( game.map[i].count / autoBuildLevel(i) );
+	//if (game.map[i].count > 0)
+	//	console.log(game.map[i].name, game.map[i].count, '/', game.map[i].base,'^', (2+i/game.base), "=", val);
+	
+	return val;
 }
 
 // format the number for display
-function numberFormat(number) {
+function numberFormat(number, precision) {
 	if (typeof number == 'undefined')
 		return;
 	else if (number === Infinity)
 		return "&infin;";
 	else if (number == 0 || number >=1 && number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3) ) { // between 1 and 10^NUMERICAL_DISPLAY_PRECISION
 
-		if (number - Math.floor(number) > 0) // a decimal number
+		if (number - Math.floor(number) > 0) { // a decimal number
 			return number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
 
 		//return number;
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	} else {
-		return number.toPrecision(4);
+		if (typeof precision !== 'undefined') {
+			return number.toPrecision(precision);
+		} else
+			return number.toPrecision(4);
 	}
 }
 
 function updateItemInfo(i, rate) {
 	var item = game.map[i];
+	var starts_building_at = autoBuildLevel(i);
 	
 	getElement(i+"_display").innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
-	if (i < game.item_names.length-1)
-		getElement(i+"_display").title = '['+ item.base + ' ' + item.name + '->' + game.map[item.next].name +' | '+numberFormat(rate)+'/s net]';
-	else
-		getElement(i+"_display").title = '['+ item.base + ' | '+numberFormat(rate)+'/s net]';
+	var next = game.map[item.next];
+	if (i == game.item_names.length-1)
+		next = item;
+	getElement(i+"_display").title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
+		'@' + numberFormat(Math.ceil(starts_building_at)) + " | " +
+
+	numberFormat(rate)+'/s net]';
+	
 }
 
 // updates total value in the UI
 function updateTotalValue(value, rate, accel) {
 	getElement("total_value").innerHTML = numberFormat(value);
-	/*if (rate == 0)
-		getElement("total_value_rate").innerHTML = 'recalculating';
-	else*/
-		getElement("total_value_rate").innerHTML = numberFormat(rate) + '/s';
-	
-	/*if (accel == 0) 
-		getElement("total_value_accel").innerHTML = 'recalculating';
-	else*/
-		getElement("total_value_accel").innerHTML = numberFormat(accel)  + '/s<sup>2</sup>';
-
+	getElement("total_value_rate").innerHTML = numberFormat(rate) + '/s';
+	getElement("total_value_accel").innerHTML = numberFormat(accel)  + '/s<sup>2</sup>';
 }
 
 function updateNumber(element_name, number) {

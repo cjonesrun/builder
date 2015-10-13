@@ -1,0 +1,59 @@
+/* Invisible Container */
+[data-visible="false"]{
+  display: none;
+}
+
+.numeric-display{
+	text-align: left;
+	width: 10em;
+}
+
+/* multiple classes: https://css-tricks.com/multiple-attribute-values/;
+<div class="module accordion expand"></div>
+
+All these match that
+.module { }
+.accordion { }
+.expand { }
+
+// Will only match if element has both
+.accordion.expand { }
+*/
+
+textarea[class="main-message-area"]{
+	width: 35em;
+	height: 25em;
+}
+
+/*table[class="data-test"]{
+	border: 1px solid black;
+}
+
+table tr{
+	border: 1px solid red;
+}
+
+table th,td{
+	border: 1px solid black;
+}*/
+
+/* Step 1 */
+tr[data-stepdisplay="1"] td[data-control="step-1"]{
+  display: table-cell;
+}
+
+tr[data-stepdisplay="1"] td[data-control="step-2"],
+tr[data-stepdisplay="1"] td[data-control="step-3"]{
+  display: none;
+}
+
+
+/* Step 2 */
+tr[data-stepdisplay="2"] td[data-control="step-1"],
+tr[data-stepdisplay="2"] td[data-control="step-2"]{
+  display: table-cell;
+}
+
+tr[data-stepdisplay="2"] td[data-control="step-3"]{
+  display: none;
+}

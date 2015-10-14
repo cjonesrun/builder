@@ -148,7 +148,8 @@ function delegate(fcn) {
     var args = [].slice.apply(arguments);
     return function() {
         console.log('inside', args.length, args.slice(1));
-        args[0](args.slice(1));
+        //fcn(args.slice(1));
+        fcn.apply(this||window,args);
     }
 }
 function assignFunctions() {
@@ -160,7 +161,7 @@ function assignFunctions() {
     getElement("pause_button").addEventListener("click", pauseResume, false);
 
     for (var i=0; i < game.item_names.length; i++) {
-        getElement("build_1_"+i).addEventListener("click", delegate( build, i, 0) , false);
+        getElement("build_1_"+i).addEventListener("click", delegate( build,i,0 ) , false);
 
         if (i>0) {
             getElement("build_1_"+i).addEventListener("click", build(i, 0.5), false);

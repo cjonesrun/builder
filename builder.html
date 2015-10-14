@@ -5,10 +5,7 @@
 <script type="text/javascript" src="js/constants.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
 <script type="text/javascript" src="js/state.js"></script>
-
-<script>
-
-</script>
+<script type="text/javascript" src="js/timer.js"></script>
 
 <html>
 	<head>
@@ -20,10 +17,13 @@
 				<div id='total_value_div'>
 					<b><text>value</text></b>
 					<text id="total_value">0</text>
-					(<b><text>rate</text></b>
-					<text id="total_value_rate">0</text>
+					<b><text>time</text></b>
+					<text id="running" title="total building time"></text>
+					<br>
+					<b><text>rate</text></b>
+					<text id="total_value_rate">0/s</text>
 					<b><text>acceleration</text></b>
-					<text id="total_value_accel">0</text>)
+					<text id="total_value_accel">0/s<sup>2</sup></text>
 				</div>
 			</p>
 		</div>
@@ -34,12 +34,11 @@
 			<p><table id='main_table' class="data-test"></table></p>
 		</div>
 		<div id="notes_div">
-			<p>Notes:
+			<p>notes:
 			<ul>
-				<li>Item <i>x</i> will begin producing item <i>x+1</i> at a rate of Math.floor( count(x) / BASE^(level+2) ).  <br>
-				eg. 100 bits (level 0) will produce 1 (100/10^2) part per second. <br>
-				1000 parts (level 1) will produce 1 (1000/10^3)block per second.</li>
-				<li>Prestige is coming.</li>
+				<li>build a rube goldberg machine.</li>
+				<li>more info about the game is coming. for now, build things to build more things. some clues/hints/explanations can be found in the tool-tips.</li>
+				<li>prestige is coming.</li>
 			</ul>
 			</p>
 		</div>
@@ -47,4 +46,4 @@
 </html>
 
 <script type="text/javascript" src="js/builder.js"></script>
-<script type="text/javascript" src="js/timer.js"></script>
+<script type="text/javascript" src="js/init.js"></script>

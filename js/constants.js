@@ -69,3 +69,9 @@ function addMessage(str_arr, clearFirst){
 	//console.log( (messagesWindow.value.match(/\n/g) || []).length);
 	// TODO: trim the log to, say, 1,000 characters
 }
+
+function clearMessages() {
+	if (!messagesWindow)
+		messagesWindow = document.getElementById( 'messages' );
+	setMessage( [] );
+}

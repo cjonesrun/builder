@@ -9,7 +9,7 @@ function init(encodedState) {
 
     game = JSON.parse(state);
 
-    setData(); // timer.js
+    setData(); // functions.js
 
     startUIUpdater();
     startStateSaver();
@@ -18,6 +18,7 @@ function init(encodedState) {
 // write the encoded state out to local storage
 function saveState()
 {
+    console.log('saving...');
     game.last_save = new Date().getTime();
 
     // clear the local storage first?

@@ -8,107 +8,200 @@ function prestigeMultiplier() {
     return Math.pow(game.prestige_base, game.prestige_level);
 }
 
+function setData() {
+    var prev_build_rate = 0;
+    for (var i=0; i < game.item_names.length; i++) {
+
+        var build_rate = calcBuildRate( i );
+
+        updateRate("build_"+i, build_rate);
+        updateRate("rate_"+i, game.map[i].rate);
+        updateNumber("count_"+i, game.map[i].count);
+
+        updateItemInfo(i, game.map[i].rate + prev_build_rate)
+        
+        prev_build_rate = build_rate;
+    }
+
+    updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
+    updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
+}
+
+// calculate changes since last calculation.
+function calculate() {
+    var this_calculation = new Date().getTime();
+    var diff = this_calculation - game.last_calculation;
+    var sec_since_last = Math.floor(diff / 1000); // time in s since last calc
+    //console.log('calculating for last', sec_since_last);
+
+    // for now, forget about less than 1s. catch is if tick is < 1s, this will only calc each sec...
+    if (sec_since_last == 0)
+        return;
+
+    var total_value = 0;
+    for (var j = 0; j<sec_since_last; j++) {
+        for (var i=0; i < game.item_names.length; i++) {
+            var item = game.map[i];
+            var prev = game.map[item.previous];
+            var next = game.map[item.next];
+            var adjust = game.map[i].rate * (game.UI_REFRESH_INTERVAL/1000);
+            
+            item.count += adjust;
+            if (i>0) {
+                // take prev (i-1) count divided by BASE^(i+1)
+                var newBuild = Math.floor( prev.count / Math.pow(prev.base,(i+1) ) );
+                item.count += newBuild;
+            }
+
+            if (j == sec_since_last -1) {
+                if (game.map[i].count > 0) {
+                    //console.log( 'adding', game.map[i].name, game.map[i].count, calcItemValue(i));
+                    total_value += calcItemValue(i);
+                }
+            }
+        }        
+    }
+
+    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000 ) {// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
+        var seconds = sec_since_last;
+        var hours = Math.floor( seconds / (60*60) );
+        seconds -= hours * 60*60;
+
+        var mins = Math.floor( seconds / 60 );
+        seconds -= mins * 60;
+
+        var str = "";
+        if (hours > 0) str += hours + "h ";
+        if (mins > 0) str += mins + "m "
+        str += seconds + "s"
+
+        //console.log( sec_since_last, hours+'h', mins+'m', seconds+'s.');
+        addMessage(['welcome back. you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
+    }
+
+    // set game totals
+    var new_rate = Math.max(0, ( total_value - game.total_value ) / (sec_since_last));
+    game.total_value_accel = Math.max(0, ( new_rate - game.total_value_rate ) );
+    game.total_value_rate = new_rate;
+    game.total_value = total_value;
+
+    //console.log("value_rate", numberFormat( total_value - game.total_value ));
+    
+    // keep track of the remainder, if any.
+    game.last_calculation = this_calculation - (diff - sec_since_last * 1000);
+}
+
 // build items, add them to the total and decduct the cost from prev (if affordable)
 function build(i, scale)
-{
-	var item = game.map[i];
-	// smallest item && level, free
-	if (item.previous == null){ 
-		//addMessage( [ 'building 1', item.name ] );
-		item.count +=  prestigeMultiplier();
-		updateNumber(i+"_count", item.count);
-		return;
-	} 
+{	// delegate method to preserve state when dynamically assigning this function to elements
+	//return function() {
+		console.log(i,scale);
+		var item = game.map[i];
+		// smallest item && level, free
+		if (item.previous == null){ 
+			//addMessage( [ 'building 1', item.name ] );
+			item.count +=  prestigeMultiplier();
+			updateNumber("count_"+i, item.count);
+			return;
+		} 
 
-	var prev = game.map[item.previous];
-	var to_build = scale > 0 ? Math.floor( scale * prev.count / prev.base ) : 1;
+		var prev = game.map[item.previous];
+		var to_build = scale > 0 ? Math.floor( scale * prev.count / prev.base ) : 1;
 
-	// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
-	var cost = prev.base * to_build; 
-	
-	//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
-	if (to_build > 0 && prev.count >= cost) {
-		prev.count -= cost;
-		item.count +=  to_build * prestigeMultiplier();
+		// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
+		var cost = prev.base * to_build; 
 		
-		addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
-		updateNumber(item.previous+"_count", prev.count);
-		updateNumber(i+"_count", item.count);
-	} else {
-		addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
-			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
-	}
+		//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
+		if (to_build > 0 && prev.count >= cost) {
+			prev.count -= cost;
+			item.count +=  to_build * prestigeMultiplier();
+			
+			addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
+			updateNumber("count_"+item.previous, prev.count);
+			updateNumber("count_"+i, item.count);
+		} else {
+			addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
+				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
+		}
+	//}
 }
 
 function buildRateInc(i, scale) {
-	var item = game.map[i];
-	var next = game.map[item.next];
+	// delegate method to preserve state when dynamically assigning this function to elements
+	return function() {
+		var item = game.map[i];
+		var next = game.map[item.next];
 
-	// at last item, let the costing for next be the cost of iteself
-	if (next == null){ 
-		next = item;
-	} 
+		// at last item, let the costing for next be the cost of iteself
+		if (next == null){ 
+			next = item;
+		} 
 
-	var to_build = scale > 0 ? Math.floor( scale * next.count / next.base ) : 1;
-	var cost = to_build * next.base;
-	
-	//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
-	if (to_build > 0 && next.count >= cost) {
-		item.rate += to_build;
-		next.count -= cost;
+		var to_build = scale > 0 ? Math.floor( scale * next.count / next.base ) : 1;
+		var cost = to_build * next.base;
+		
+		//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
+		if (to_build > 0 && next.count >= cost) {
+			item.rate += to_build;
+			next.count -= cost;
 
-		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
-		updateRate(i+ "_rate", item.rate);
-		updateNumber(item.next+"_count", next.count);
-	} else {
-		addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
-			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
+			addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
+			updateRate("rate_"+i, item.rate);
+			updateNumber("count_"+item.next, next.count);
+		} else {
+			addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
+				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
+		}
 	}
 }
 
 function buildAllDownTo(index) {
-	//console.log('pulling all down to', item);
-	for (var i=0; i < game.item_names.length; i++) {
-		if (index == i)
-			break;
+	// delegate method to preserve state when dynamically assigning this function to elements
+	return function() {
+		//console.log('pulling all down to', game.map[index].name);
+		for (var i=0; i < game.item_names.length; i++) {
+			if (index == i)
+				break;
 
-		var item = game.map[i];
-		var itemCount = item.count;
-		var itemBase = item.base;
+			var item = game.map[i];
+			var itemCount = item.count;
+			var itemBase = item.base;
 
-		var nextCountInc = Math.floor (itemCount / itemBase );
-		var cost = nextCountInc * itemBase;
-		if (nextCountInc > 0) {
-			addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
-			game.map[i].count -= cost;
-			game.map[item.next].count += nextCountInc
-		} else
-			break;
-			
-
+			var nextCountInc = Math.floor (itemCount / itemBase );
+			var cost = nextCountInc * itemBase;
+			if (nextCountInc > 0) {
+				addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
+				game.map[i].count -= cost;
+				game.map[item.next].count += nextCountInc
+			} else
+				break;
+		}
+		setData();
 	}
-	setData();
 }
 
 function buildAllUpTo(index) {
-	//console.log('pulling all up to', item);
-	for (var i=game.item_names.length-1; i > 0; i--) {
-		if (index == i)
-			break;
+	// delegate method to preserve state when dynamically assigning this function to elements
+	return function() {
+		//console.log('pulling all up to', game.map[index].name);
+		for (var i=game.item_names.length-1; i > 0; i--) {
+			if (index == i)
+				break;
 
-		var item = game.map[i];
-		var previous = game.map[item.previous];
-		var to_build = Math.floor( item.count / item.base );
-		var cost = to_build * item.base;
+			var item = game.map[i];
+			var previous = game.map[item.previous];
+			var to_build = Math.floor( item.count / item.base );
+			var cost = to_build * item.base;
 
-		if (to_build > 0) {
-			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
-			item.count -= cost;
-			previous.rate += to_build;
+			if (to_build > 0) {
+				addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
+				item.count -= cost;
+				previous.rate += to_build;
 
+			}
 		}
+		setData();
 	}
-	setData();
 }
 
 function calcItemValue(i) {
@@ -159,11 +252,11 @@ function updateItemInfo(i, rate) {
 	var item = game.map[i];
 	var starts_building_at = autoBuildLevel(i);
 	
-	getElement(i+"_display").innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
+	getElement("name_" + i).innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
 	var next = game.map[item.next];
 	if (i == game.item_names.length-1)
 		next = item;
-	getElement(i+"_display").title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
+	getElement("name_" + i).title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
 		'@' + numberFormat(Math.ceil(starts_building_at)) + " | " +
 
 	numberFormat(rate)+'/s net]';
@@ -178,11 +271,11 @@ function updateTotalValue(value, rate, accel) {
 }
 
 function updateNumber(element_name, number) {
-	//console.log('updateNumber', element_name, number);
-	getElement(element_name).value = numberFormat(number);
+	//console.log('updateNumber', element_name, number, getElement(element_name));
+	getElement(element_name).innerHTML = numberFormat(number);
 }
 
 function updateRate(element_name, number) {
-	//console.log('updateRate', element_name, number);
-	getElement(element_name).value = numberFormat(number) + "/s";
+	//console.log('updateRate', element_name, number, getElement(element_name));
+	getElement(element_name).innerHTML = numberFormat(number) + "/s";
 }

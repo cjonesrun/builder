@@ -1,3 +1,7 @@
+body { font-family: serif; 
+	font-size: 0.85em;
+}
+
 /* Invisible Container */
 [data-visible="false"]{
   display: none;
@@ -5,7 +9,7 @@
 
 .numeric-display{
 	text-align: left;
-	width: 10em;
+	width: 8em;
 }
 
 /* multiple classes: https://css-tricks.com/multiple-attribute-values/;

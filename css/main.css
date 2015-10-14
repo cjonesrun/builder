@@ -31,33 +31,13 @@ textarea[class="main-message-area"]{
 
 /*table[class="data-test"]{
 	border: 1px solid black;
-}
-
-table tr{
-	border: 1px solid red;
-}
-
-table th,td{
-	border: 1px solid black;
 }*/
 
-/* Step 1 */
-tr[data-stepdisplay="1"] td[data-control="step-1"]{
-  display: table-cell;
-}
+/*table tr{
+	border: 1px solid red;
+}*/
 
-tr[data-stepdisplay="1"] td[data-control="step-2"],
-tr[data-stepdisplay="1"] td[data-control="step-3"]{
-  display: none;
-}
-
-
-/* Step 2 */
-tr[data-stepdisplay="2"] td[data-control="step-1"],
-tr[data-stepdisplay="2"] td[data-control="step-2"]{
-  display: table-cell;
-}
-
-tr[data-stepdisplay="2"] td[data-control="step-3"]{
-  display: none;
+table th,td{
+	/*border: 1px solid black;*/
+	vertical-align: top;
 }

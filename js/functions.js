@@ -8,20 +8,48 @@ function prestigeMultiplier() {
     return Math.pow(game.prestige_base, game.prestige_level);
 }
 
+function hasClass(elem, cls) {
+    var str = " " + elem.className + " ";
+    var testCls = " " + cls + " ";
+    return(str.indexOf(testCls) != -1) ;
+};
+
+function closest(el, cls) {
+    while (el  && el !== document) {
+        if (hasClass(el, cls)) return el;
+        el = el.parentNode;
+    }
+    return null;
+};
+
 function setData() {
     var prev_build_rate = 0;
     for (var i=0; i < game.item_names.length; i++) {
 
         var build_rate = calcBuildRate( i );
 
-        updateRate("build_"+i, build_rate);
-        updateRate("rate_"+i, game.map[i].rate);
-        updateNumber("count_"+i, game.map[i].count);
+        updateRate("build", build_rate);
+        updateRate("rate", game.map[i].rate);
+        updateNumber("count", game.map[i].count);
 
         updateItemInfo(i, game.map[i].rate + prev_build_rate)
         
         prev_build_rate = build_rate;
     }
+
+    var rows = document.getElementsByClassName("item-data-row");
+    for (var i = 0; i<rows.length; i++ ) {
+    	var itemid = rows[i].getAttribute("item-id");
+    	var txt = rows[i].getElementById('count');
+    	console.log(txt);
+
+		var build_rate = calcBuildRate( i );    	
+
+    	//console.log('itemid', itemid, game.map[itemid].name, build_rate);
+    }
+
+
+
 
     updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
     updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
@@ -240,11 +268,11 @@ function updateItemInfo(i, rate) {
 	var item = game.map[i];
 	var starts_building_at = autoBuildLevel(i);
 	
-	getElement("name_" + i).innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
+	getElement("name").innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
 	var next = game.map[item.next];
 	if (i == game.item_names.length-1)
 		next = item;
-	getElement("name_" + i).title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
+	getElement("name").title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
 		'@' + numberFormat(Math.ceil(starts_building_at)) + " | " +
 
 	numberFormat(rate)+'/s net]';

@@ -147,9 +147,8 @@ function delegate(fcn) {
     //console.log('delegating', arguments);
     var args = [].slice.apply(arguments);
     return function() {
-        console.log('inside', args.length, args.slice(1));
-        //fcn(args.slice(1));
-        fcn.apply(this||window,args);
+        //console.log('inside', args.length, args.slice(1));
+        fcn.apply(this,args.slice(1));
     }
 }
 function assignFunctions() {
@@ -161,19 +160,19 @@ function assignFunctions() {
     getElement("pause_button").addEventListener("click", pauseResume, false);
 
     for (var i=0; i < game.item_names.length; i++) {
-        getElement("build_1_"+i).addEventListener("click", delegate( build,i,0 ) , false);
+        getElement("build_1_"+i).addEventListener("click", delegate( build, i, 0), false);
 
         if (i>0) {
-            getElement("build_1_"+i).addEventListener("click", build(i, 0.5), false);
-            getElement("build_all_"+i).addEventListener("click", build(i, 1), false);
-            getElement("pull_down_"+i).addEventListener("click", buildAllDownTo(i), false);
+            getElement("build_1_"+i).addEventListener("click", delegate(build, i, 0.5), false);
+            getElement("build_all_"+i).addEventListener("click", delegate(build, i, 1), false);
+            getElement("pull_down_"+i).addEventListener("click", delegate(buildAllDownTo, i), false);
         }
 
         if (i < game.item_names.length-1) {
-            getElement("rate_build_1_"+i).addEventListener( "click", buildRateInc(i, 0), false);
-            getElement("rate_build_half_"+i).addEventListener( "click", buildRateInc(i, 0.5), false);
-            getElement("rate_build_all_"+i).addEventListener( "click", buildRateInc(i, 1), false);
-            getElement("pull_up_"+i).addEventListener( "click", buildAllUpTo(i), false);
+            getElement("rate_build_1_"+i).addEventListener( "click", delegate(buildRateInc, i, 0), false);
+            getElement("rate_build_half_"+i).addEventListener( "click", delegate(buildRateInc, i, 0.5), false);
+            getElement("rate_build_all_"+i).addEventListener( "click", delegate(buildRateInc, i, 1), false);
+            getElement("pull_up_"+i).addEventListener( "click", delegate(buildAllUpTo, i), false);
         }
     }
 }

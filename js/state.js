@@ -18,7 +18,7 @@ function init(encodedState) {
 // write the encoded state out to local storage
 function saveState()
 {
-    console.log('saving...');
+    //console.log('saving...');
     game.last_save = new Date().getTime();
 
     // clear the local storage first?

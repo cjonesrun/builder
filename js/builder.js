@@ -51,17 +51,17 @@ function populateTable()
     // item rows
     for (var i=0; i < game.item_names.length; i++) {
         var row = document.getElementById("row-to-clone").cloneNode(true); // true = deep clone of entire row
-        row.removeAttribute("row-to-clone");
-        main_table.appendChild(row); // hidden by default
+        row.id = "item_row_"+i;
+        main_table.appendChild(row);
         
         row.setAttribute("item-id", i);
         row.setAttribute("class", "item-data-row");
 
-        // hidden by default, set to false
-        row.setAttribute("data-visible", "true");
+        // hidden by default, set to false. always show first item
+        if (i == 0) row.setAttribute("data-visible", "true");
         
-        row.cells[0].appendChild( text("index", i) );
-        row.cells[1].appendChild( text("name", game.item_names[i]));
+        addToCell(row.cells[0], text("index", i), 'item-index-display');
+        addToCell(row.cells[1], text("name", game.item_names[i]), 'item-name-display');
 
         addToCell(row.cells[2], text("count", 0), 'numeric-display');
         addToCell(row.cells[3], text("rate", "0/s"), 'numeric-display');

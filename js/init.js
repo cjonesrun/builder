@@ -1,54 +1,13 @@
 // init from localstorage if they are present, bfore starting the timer
 init(window.localStorage['builder']);
 
-handleVisibility();
-
-addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );
-
-// default hide all components.
-/*var rows = document.getElementById("main_table").rows;
-
-//(game.map[0].count > 0)
-setVisible(getElement("rate_build_1_0"), (game.map[0].count > 0));
-setVisible(getElement("rate_build_half_0"), (game.map[0].count > 0));
-setVisible(getElement("rate_build_all_0"), (game.map[0].count > 0));
-setVisible(getElement("pull_up_0"), false);
-
-for (var i = 2; i<rows.length; i++){
-    var item_index = rows[i].getAttribute("item-id");
-    
-    setVisible(rows[i], false);
-}
-
-function getRowByItemID(item_id) {
-	var rows = document.getElementById("main_table").rows;
-	for (var i = 2; i<rows.length; i++) {
-    	var item_index = rows[i].getAttribute("item-id");
-    	if (item_id = item_index)
-    		return rows[i];
-	}
-}*/
-
-function handleVisibility() {
-	// determine row visibility
-
-	// for item=0
-	
-
-
-	/*setVisible(getElement("rate_build_1_0"), false);
-	setVisible(getElement("rate_build_half_0"), false);
-	setVisible(getElement("rate_build_all_0"), false);
-	setVisible(getElement("pull_up_0"), false);
-*/}
-
+// main_table event listener
 getElement('main_table').addEventListener('click', function(e){
-	// Clears its.a calls
-    its.clearAll();
+	its.clearAll();
 
   	if (e.target.nodeName === 'BUTTON'){
-	  	var row = closest(e.target, 'row');
-	    var item_id = row.getAttribute('item-id');
+	  	var row = closest(e.target, 'item-data-row');
+	    var item_id = parseInt(row.getAttribute('item-id'));
 	  	var btnClass = e.target.className;
 	  	
 	  	switch (btnClass) {
@@ -85,16 +44,15 @@ getElement('main_table').addEventListener('click', function(e){
 			break;
 
 	  		default:
-	  			its.a('no handler for ' + btnClass);
+	  			its.a('main_table event handle. no handler for ' + btnClass);
 	  		break;
 	  	}    
-    its.a('item: ' + item_id);
   }
 });
 
+// message_table event listner
 getElement('messages_table').addEventListener('click', function(e){
-	// Clears its.a calls
-    its.clearAll();
+	its.clearAll();
 
   	if (e.target.nodeName === 'BUTTON'){
 	  	var btnClass = e.target.className;
@@ -129,9 +87,11 @@ getElement('messages_table').addEventListener('click', function(e){
     		break;
 
 	  		default:
-	  			its.a('no handler for ' + btnClass);
+	  			its.a('messages_table event handle. no handler for ' + btnClass);
 	  		break;
 	  	}    
   }
 });
+
+addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );
 

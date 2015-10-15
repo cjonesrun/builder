@@ -12,6 +12,15 @@ body { font-family: serif;
 	width: 8em;
 }
 
+.item-name-display{
+	text-align: left;
+	width: 15em;
+}
+
+.item-index-display{
+	text-align: left;
+	width: 2em;
+}
 /* multiple classes: https://css-tricks.com/multiple-attribute-values/;
 <div class="module accordion expand"></div>
 
@@ -29,13 +38,13 @@ textarea[class="main-message-area"]{
 	height: 25em;
 }
 
-/*table[class="data-test"]{
-	border: 1px solid black;
-}*/
+table[class="data-test"]{
+	/*border: 1px solid black;*/
+}
 
-/*table tr{
-	border: 1px solid red;
-}*/
+table tr{
+	/*border: 1px solid red;*/
+}
 
 table th,td{
 	/*border: 1px solid black;*/

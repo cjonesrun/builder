@@ -1,14 +1,17 @@
 // initialize the game state from the given encoded state and star/stop timers
 function init(encodedState) {
-    var state = atob(encodedState);
-    //console.log(encodedState);
-    //console.log(state);
+    if (typeof encodedState === 'undefined')
+        game = new Builder();
+    else {
+        var state = atob(encodedState);
+        //console.log(encodedState);
+        //console.log(state);
 
-    clearInterval(global_timer);
-    clearInterval(state_save_timer);
+        clearInterval(global_timer);
+        clearInterval(state_save_timer);
 
-    game = JSON.parse(state);
-
+        game = JSON.parse(state);
+    }
     setData(); // functions.js
 
     startUIUpdater();

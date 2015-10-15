@@ -1,18 +1,17 @@
 // initialize the game state from the given encoded state and star/stop timers
 function init(encodedState) {
-    //console.log(encodedState, typeof encodedState, encodedState == null);
-    if (typeof encodedState === 'undefined')
-        game = new Builder();
-    else {
-        var state = atob(encodedState);
-        //console.log(encodedState);
-        //console.log(state);
+    clearInterval(global_timer);
+    clearInterval(state_save_timer);
 
-        clearInterval(global_timer);
-        clearInterval(state_save_timer);
-
-        game = JSON.parse(state);
+    if (encodedState === null || encodedState === "null" || typeof encodedState === 'undefined'){
+        console.log('malformed state obj.');
+        encodedState = btoa(JSON.stringify(new Builder()));
     }
+    
+    var state = atob(encodedState);
+    
+    game = JSON.parse(state);
+
     setData(); // functions.js
 
     startUIUpdater();

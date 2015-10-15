@@ -47,7 +47,7 @@ function setData() {
     }
 
     updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
-    updateNumber(getElement("running"), Math.floor( (new Date().getTime() - game.game_started) / 1000));
+    getElement("running").innerHTML = timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000));
 }
 
 function handleRow(i, row, i_next, next_row){
@@ -55,7 +55,7 @@ function handleRow(i, row, i_next, next_row){
 	//TODO console.log("activating next row enables current rows rate builders");
 
 	if (game.map[i].count >= game.map[i].base) {
-		console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);
+		//console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);
 		setVisible(next_row, true);
 	}
 	// if next row has nothing, hide rate buttons.
@@ -103,17 +103,7 @@ function calculate() {
     }
 
     if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000 ) {// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
-        var seconds = sec_since_last;
-        var hours = Math.floor( seconds / (60*60) );
-        seconds -= hours * 60*60;
-
-        var mins = Math.floor( seconds / 60 );
-        seconds -= mins * 60;
-
-        var str = "";
-        if (hours > 0) str += hours + "h ";
-        if (mins > 0) str += mins + "m "
-        str += seconds + "s"
+        var str = timeFormat(sec_since_last);
 
         //console.log( sec_since_last, hours+'h', mins+'m', seconds+'s.');
         addMessage(['you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
@@ -252,7 +242,7 @@ function calcBuildRate(i) {
 
 // format the number for display
 function numberFormat(number, precision) {
-	if (typeof number == 'undefined')
+	if (typeof number === 'undefined')
 		return;
 	else if (number === Infinity)
 		return "&infin;";
@@ -270,6 +260,21 @@ function numberFormat(number, precision) {
 		} else
 			return number.toPrecision(4);
 	}
+}
+
+function timeFormat(number) {
+	var seconds = number;
+	var hours = Math.floor( seconds / (60*60) );
+	seconds -= hours * 60*60;
+
+	var mins = Math.floor( seconds / 60 );
+	seconds -= mins * 60;
+
+	var str = "";
+	if (hours > 0) str += hours + "h ";
+	if (mins > 0) str += mins + "m "
+	str += seconds + "s";
+    return str;
 }
 
 function updateItemInfo(row, rate) {

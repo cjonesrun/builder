@@ -55,7 +55,7 @@ function handleRow(i, row, i_next, next_row){
 	//TODO console.log("activating next row enables current rows rate builders");
 
 	if (game.map[i].count >= game.map[i].base) {
-		console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);
+		//console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);
 		setVisible(next_row, true);
 	}
 	// if next row has nothing, hide rate buttons.

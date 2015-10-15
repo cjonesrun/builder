@@ -52,7 +52,7 @@ function setData() {
 
 function handleRow(i, row, i_next, next_row){
 
-	console.log("activating next row enables current rows rate builders");
+	//TODO console.log("activating next row enables current rows rate builders");
 
 	if (game.map[i].count >= game.map[i].base) {
 		console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);

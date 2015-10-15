@@ -1,6 +1,6 @@
 // initialize the game state from the given encoded state and star/stop timers
 function init(encodedState) {
-    console.log(encodedState, typeof encodedState, encodedState == null);
+    //console.log(encodedState, typeof encodedState, encodedState == null);
     if (typeof encodedState === 'undefined')
         game = new Builder();
     else {

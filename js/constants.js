@@ -22,6 +22,9 @@ function Builder() {
 	this.total_value_rate = 0; // total_value rate of change per sec
 	this.total_value_accel = 0; // rate of change of total value rate
 
+	// 5 items
+	//this.item_names = [ 'bit', 'part', 'block', 'thing', 'rube goldberg machine' ];
+	// 26 items
 	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg machine' ];
 
 	this.baseCalc = function (pow) {
@@ -38,11 +41,13 @@ function Builder() {
 			"count": 0,
 			"rate": 0,
 			"previous": (i>0) ? i-1 : null,
-			"next": (i < this.item_names.length-1) ? i+1 : null
+			"next": (i < this.item_names.length-1) ? i+1 : null,
+			"active": i===0 ? true : false
 		};		
 	}
 }
 
+var this_session_start_time = new Date().getTime();
 var game = new Builder();
 
 var messagesWindow;

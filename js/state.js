@@ -4,7 +4,7 @@ function init(encodedState) {
     clearInterval(state_save_timer);
 
     if (encodedState === null || encodedState === "null" || typeof encodedState === 'undefined'){
-        console.log('malformed state obj.');
+        console.log('malformed state obj', encodedState);
         encodedState = btoa(JSON.stringify(new Builder()));
     }
     
@@ -37,16 +37,38 @@ function saveState()
 }
 
 // show encoded state in message window
-function exportState() {
+function exportEncodedState() {
     setMessage([ saveState() ]);
+}
 
-    console.log ( JSON.stringify(game) );
+function exportJSON() {
+    setMessage([ JSON.stringify(game) ]);
 }
 
 // load an encoded state from the message window
 function loadState() {
     var encodedState = document.getElementById( 'messages' ).value.trim();
     init(encodedState);
+}
+
+function hardReset() {
+    window.localStorage['builder'] = null;
+    location.reload();
+}
+
+function reset() {
+    // stop timers.
+    stopTimers();
+
+    game = new Builder();
+    //console.log(JSON.stringify(game));
+   
+    saveState();
+    setData();
+
+    setMessage( ['game reset.'] );
+
+    startTimers();
 }
 
 // LZW-compress a string

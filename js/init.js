@@ -66,8 +66,16 @@ getElement('messages_table').addEventListener('click', function(e){
 				reset();
 			break;
 
+			case "hard_reset":
+				// swallow
+			break;
+
 			case "export_button":
-				exportState();
+				exportEncodedState();
+			break;
+
+			case "export_json_button":
+				exportJSON();
 			break;
 
 			case "load_button":

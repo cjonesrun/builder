@@ -1,6 +1,3 @@
-
-var this_session_start_time = new Date().getTime();
-
 var global_timer; // main timer for auto block & thing building
 var state_save_timer;
 
@@ -66,20 +63,5 @@ function pauseResume()
         addMessage( ['resuming timers.'] );
         startTimers();
     }
-}
-
-function reset() {
-    // stop timers.
-    stopTimers();
-
-    game = new Builder();
-    //console.log(JSON.stringify(game));
-   
-    saveState();
-    setData();
-
-    setMessage( ['game reset'] );
-
-    startTimers();
 }
 

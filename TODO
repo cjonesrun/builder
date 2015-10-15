@@ -1,16 +1,12 @@
 - localstorage
-	- saving/loading
 	- versioning
 	-
 
 - building
 	- at higher prestige, consider enabling auto-build, auto-rate+
-
-- separate calc from timing
-	- see http://www.almostidle.com/tutorials/all?cat%5B0%5D=48
-	- offline accumulating (warp)
-
-- when to show/hide build buttons & items
+	- add push next to build-pull. rather than pull all builds down to where the button was clicked
+	  have it push all builds down from the clicked button (clicking push-part will save all bits)
+	- add push for rate+, similar to above only it pushes rate+ builds up from button clicked
 
 - figure out a prestige strategy 
     - each item represents a fraction of the total 'value'. prestige can be tied to this value.
@@ -18,8 +14,20 @@
 	- each escalation increase build&rate increases by PRESTIGE_BASE^PRESTIGE_LEVEL (i.e. 2^0 then 2^1, then 2^2)
 	- each escalation reduces the build/s division ( div by )
 
+- reveal item rows in descending item # (i.e build table upside down)
 
-DONE
+- game play
+	- add in a perpetual motion machine
+	- introduce clusters (groups of n consecutive items). cluster value milestones can trigger events
+	- use value to buy more clusters or individual items
+	
+	- detemine activation criteria for
+		- build pull/push buttons
+		- rate+ pull/push buttons
+		- build 1/2, max buttons
+		- rate+ 1/2, max buttons
 
-- prettify numbers
+- button to blow local(storage away hard reset)
 
+
+- responsive for mobile

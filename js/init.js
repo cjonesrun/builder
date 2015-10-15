@@ -1,5 +1,4 @@
 // init from localstorage if they are present, bfore starting the timer
-window.localStorage['builder'] = null;
 init(window.localStorage['builder']);
 
 // main_table event listener

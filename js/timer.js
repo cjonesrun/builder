@@ -58,8 +58,7 @@ function update_timer_interval( )
 
 function pauseResume()
 {
-    console.log('global', typeof global_timer, global_timer, (0 == true), (1 == false));
-    console.log('state_save_timer', state_save_timer);
+    //console.log('state_save_timer', state_save_timer);
     if (global_timer) {
         addMessage( ['pausing timers.'] );
         stopTimers();
@@ -79,7 +78,7 @@ function reset() {
     saveState();
     setData();
 
-    setMessage( [] );
+    setMessage( ['game reset'] );
 
     startTimers();
 }

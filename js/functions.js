@@ -1,5 +1,4 @@
-function getElement(item)
-{
+function getElement(item){
 	return document.getElementById(item);
 }
 
@@ -24,35 +23,48 @@ function closest(el, cls) {
 
 function setData() {
     var prev_build_rate = 0;
-    for (var i=0; i < game.item_names.length; i++) {
-
-        var build_rate = calcBuildRate( i );
-
-        updateRate("build", build_rate);
-        updateRate("rate", game.map[i].rate);
-        updateNumber("count", game.map[i].count);
-
-        updateItemInfo(i, game.map[i].rate + prev_build_rate)
-        
-        prev_build_rate = build_rate;
-    }
-
+    
     var rows = document.getElementsByClassName("item-data-row");
     for (var i = 0; i<rows.length; i++ ) {
     	var itemid = rows[i].getAttribute("item-id");
-    	var txt = rows[i].getElementById('count');
-    	console.log(txt);
+    	
+    	var build_rate = calcBuildRate( i );    
 
-		var build_rate = calcBuildRate( i );    	
+    	var count = rows[i].querySelector("#count");
+    	var build = rows[i].querySelector("#build");
+    	var rate = rows[i].querySelector("#rate");
 
-    	//console.log('itemid', itemid, game.map[itemid].name, build_rate);
+    	if (i<rows.length-1)
+    		handleRow(i, rows[i], i+1, rows[i+1]);
+
+    	count.innerHTML = numberFormat(game.map[i].count);
+    	build.innerHTML = numberFormat(build_rate) + "/s";
+    	rate.innerHTML = numberFormat(game.map[i].rate) + "/s";
+    	
+    	updateItemInfo(rows[i], game.map[i].rate + prev_build_rate);
+
+		prev_build_rate = build_rate;
     }
 
-
-
-
     updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
-    updateNumber("running", Math.floor( (new Date().getTime() - game.game_started) / 1000));
+    updateNumber(getElement("running"), Math.floor( (new Date().getTime() - game.game_started) / 1000));
+}
+
+function handleRow(i, row, i_next, next_row){
+
+	console.log("activating next row enables current rows rate builders");
+
+	if (game.map[i].count >= game.map[i].base) {
+		console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);
+		setVisible(next_row, true);
+	}
+	// if next row has nothing, hide rate buttons.
+	if (game.map[i_next].count < 1){
+		// rate_build_1
+		// rate_build_half
+		// rate_build_all
+		//console.log('hiding', game.map[i].name, 'rate builders');
+	}
 }
 
 // calculate changes since last calculation.
@@ -104,7 +116,7 @@ function calculate() {
         str += seconds + "s"
 
         //console.log( sec_since_last, hours+'h', mins+'m', seconds+'s.');
-        addMessage(['welcome back. you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
+        addMessage(['you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
     }
 
     // set game totals
@@ -127,28 +139,25 @@ function build(i, scale) {
 	if (item.previous == null){ 
 		//addMessage( [ 'building 1', item.name ] );
 		item.count +=  prestigeMultiplier();
-		updateNumber("count_"+i, item.count);
-		return;
-	} 
-
-	var prev = game.map[item.previous];
-	var to_build = scale > 0 ? Math.floor( scale * prev.count / prev.base ) : 1;
-
-	// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
-	var cost = prev.base * to_build; 
-	
-	//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
-	if (to_build > 0 && prev.count >= cost) {
-		prev.count -= cost;
-		item.count +=  to_build * prestigeMultiplier();
-		
-		addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
-		updateNumber("count_"+item.previous, prev.count);
-		updateNumber("count_"+i, item.count);
 	} else {
-		addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
-			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
+		var prev = game.map[item.previous];
+		var to_build = scale > 0 ? Math.floor( scale * prev.count / prev.base ) : 1;
+
+		// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
+		var cost = prev.base * to_build; 
+		
+		//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
+		if (to_build > 0 && prev.count >= cost) {
+			prev.count -= cost;
+			item.count +=  to_build * prestigeMultiplier();
+			
+			addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
+		} else {
+			addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
+				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
+		}
 	}
+	setData();
 }
 
 function buildRateInc(i, scale) {
@@ -162,19 +171,18 @@ function buildRateInc(i, scale) {
 
 	var to_build = scale > 0 ? Math.floor( scale * next.count / next.base ) : 1;
 	var cost = to_build * next.base;
-	
+
 	//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
 	if (to_build > 0 && next.count >= cost) {
 		item.rate += to_build;
 		next.count -= cost;
 
 		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
-		updateRate("rate_"+i, item.rate);
-		updateNumber("count_"+item.next, next.count);
 	} else {
 		addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
 			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
 	}
+	setData();
 }
 
 function buildAllDownTo(index) {
@@ -264,15 +272,17 @@ function numberFormat(number, precision) {
 	}
 }
 
-function updateItemInfo(i, rate) {
+function updateItemInfo(row, rate) {
+	var i = row.getAttribute("item-id");
 	var item = game.map[i];
 	var starts_building_at = autoBuildLevel(i);
 	
-	getElement("name").innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
+	var name = row.querySelector("#name");
+	name.innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
 	var next = game.map[item.next];
 	if (i == game.item_names.length-1)
 		next = item;
-	getElement("name").title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
+	name.title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
 		'@' + numberFormat(Math.ceil(starts_building_at)) + " | " +
 
 	numberFormat(rate)+'/s net]';
@@ -286,12 +296,12 @@ function updateTotalValue(value, rate, accel) {
 	getElement("total_value_accel").innerHTML = numberFormat(accel)  + '/s<sup>2</sup>';
 }
 
-function updateNumber(element_name, number) {
+function updateNumber(element, number) {
 	//console.log('updateNumber', element_name, number, getElement(element_name));
-	getElement(element_name).innerHTML = numberFormat(number);
+	element.innerHTML = numberFormat(number);
 }
 
-function updateRate(element_name, number) {
+function updateRate(element, number) {
 	//console.log('updateRate', element_name, number, getElement(element_name));
-	getElement(element_name).innerHTML = numberFormat(number) + "/s";
+	element.innerHTML = numberFormat(number) + "/s";
 }

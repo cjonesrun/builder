@@ -20,6 +20,7 @@ function text(id, str, title){
 function button(id, str, title, onclick) {
     var t1 = document.createElement("button");
     t1.setAttribute("class", id);
+    t1.setAttribute("id", id);
     t1.innerHTML = str;
     if (typeof title === 'undefined')
         t1.title = id;
@@ -74,7 +75,7 @@ function populateTable()
             addToCell(row.cells[7], button("build_all", 'max', "build max number of " + game.map[i].name));
             addToCell(row.cells[8], button("pull_down", 'V', "pull all builds down to "+ game.map[i].name));
         }
-
+       
         if (i < game.item_names.length-1) { // skip 9 thru 12 for last row
             addToCell(row.cells[9], button("rate_build_1", '1', "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s"));
             addToCell(row.cells[10], button("rate_build_half", '1/2', "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name));
@@ -103,10 +104,12 @@ function setVisible(element, visible) {
 
 function isVisible(element) {
     var vis = element.getAttribute("data-visible");
-    if (vis !== 'undefined')
-        return true;
+    //console.log(vis, typeof vis);
+
+    if (vis === "false")
+        return false;
     else
-        return (vis !== 'false');
+        return true;
 }
 
 populateTable();

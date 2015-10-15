@@ -51,19 +51,22 @@ function setData() {
 }
 
 function handleRow(i, row, i_next, next_row){
+	// current row visibility
+	var show = game.map[i].count >= game.map[i].base;
 
-	//TODO console.log("activating next row enables current rows rate builders");
-
-	if (game.map[i].count >= game.map[i].base) {
-		//console.log('enabling item', game.map[i_next].name, game.map[i].count, '>=', game.map[i].base);
+	if (show) {
 		setVisible(next_row, true);
+		game.map[i_next].active = true;
+	} else {
+		if (!game.map[i_next].active)
+			setVisible(next_row, false);
 	}
-	// if next row has nothing, hide rate buttons.
-	if (game.map[i_next].count < 1){
-		// rate_build_1
-		// rate_build_half
-		// rate_build_all
-		//console.log('hiding', game.map[i].name, 'rate builders');
+	
+	if (i_next < game.item_names.length-1) {
+		setVisible( row.querySelector("#rate_build_1"), game.map[i_next].active );
+		setVisible( row.querySelector("#rate_build_half"), game.map[i_next].active );
+		setVisible( row.querySelector("#rate_build_all"), game.map[i_next].active );
+		setVisible( row.querySelector("#pull_up"), game.map[i_next].active );
 	}
 }
 
@@ -88,9 +91,7 @@ function calculate() {
             
             item.count += adjust;
             if (i>0) {
-                // take prev (i-1) count divided by BASE^(i+1)
-                var newBuild = Math.floor( prev.count / Math.pow(prev.base,(i+1) ) );
-                item.count += newBuild;
+                item.count += calcBuildRate( item.previous );
             }
 
             if (j == sec_since_last -1) {
@@ -285,12 +286,13 @@ function updateItemInfo(row, rate) {
 	var name = row.querySelector("#name");
 	name.innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
 	var next = game.map[item.next];
-	if (i == game.item_names.length-1)
-		next = item;
-	name.title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
-		'@' + numberFormat(Math.ceil(starts_building_at)) + " | " +
+	if (i == game.item_names.length-1){
+		name.title = '['+ item.base + ' | '+ '@' + numberFormat(Math.ceil(starts_building_at)) + " | " + numberFormat(rate)+'/s net]';
+	} else
+		name.title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
+			'@' + numberFormat(Math.ceil(starts_building_at)) + " | " + numberFormat(rate)+'/s net]';
 
-	numberFormat(rate)+'/s net]';
+	
 	
 }
 

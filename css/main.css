@@ -9,12 +9,17 @@ body { font-family: serif;
 
 .numeric-display{
 	text-align: left;
+	width: 6em;
+}
+
+.colspan-display{
+	text-align: center;
 	width: 8em;
 }
 
 .item-name-display{
 	text-align: left;
-	width: 15em;
+	width: 17em;
 }
 
 .item-index-display{
@@ -44,6 +49,7 @@ table[class="data-test"]{
 
 table tr{
 	/*border: 1px solid red;*/
+	height: 1em;
 }
 
 table th,td{

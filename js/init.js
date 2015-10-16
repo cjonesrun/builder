@@ -95,7 +95,7 @@ getElement('messages_table').addEventListener('click', function(e){
 			break;
 
 			case "pause_button":
-				pauseResume();
+				pauseResume(e.target);
 			break;
     
     		case "tick_button":

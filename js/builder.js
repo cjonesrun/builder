@@ -73,14 +73,16 @@ function populateTable()
         if (i>0) { // skip cells 6,7,8 for i=0
             addToCell(row.cells[6], button("build_half", '1/2', 'build 1/2 the max number of ' + game.map[i].name));
             addToCell(row.cells[7], button("build_all", 'max', "build max number of " + game.map[i].name));
-            addToCell(row.cells[8], button("pull_down", 'V', "pull all builds down to "+ game.map[i].name));
+            addToCell(row.cells[8], button("pull_down", '&#8609;', "pull all builds down to "+ game.map[i].name));
+            addToCell(row.cells[8], button("push_down", '&#8615;', "push all builds down from "+ game.map[i].name));
         }
        
         if (i < game.item_names.length-1) { // skip 9 thru 12 for last row
             addToCell(row.cells[9], button("rate_build_1", '1', "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s"));
             addToCell(row.cells[10], button("rate_build_half", '1/2', "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name));
             addToCell(row.cells[11], button("rate_build_all", 'max', "rate+ " + game.map[i].name + " by using max available " + game.map[i].next));
-            addToCell(row.cells[12], button("pull_up", '^', "pull all rate+ up to "+ game.map[i].name));
+            addToCell(row.cells[12], button("pull_up", '&#8607;', "pull all rate+ up to "+ game.map[i].name));
+            addToCell(row.cells[12], button("push_up", '&#8613;', "push all rate+ up from "+ game.map[i].name));
         }
     }
     return main_table;
@@ -96,6 +98,8 @@ function delegate(fcn) {
 }
 
 function setVisible(element, visible) {
+    if (element === null)
+        return;
     if (visible) 
         element.removeAttribute("data-visible");
     else

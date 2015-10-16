@@ -27,6 +27,10 @@ getElement('main_table').addEventListener('click', function(e){
 	  			buildAllDownTo(item_id);
 	  		break;
 
+	  		case "push_down":
+				buildDownFrom(item_id);
+			break;
+
 			case "rate_build_1":
 				buildRateInc(item_id, 0);
 			break;
@@ -41,6 +45,10 @@ getElement('main_table').addEventListener('click', function(e){
 
 			case "pull_up":
 				buildAllUpTo(item_id);
+			break;
+
+			case "push_up":
+				buildUpFrom(item_id);
 			break;
 
 	  		default:

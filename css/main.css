@@ -26,6 +26,7 @@ body { font-family: serif;
 	text-align: left;
 	width: 2em;
 }
+
 /* multiple classes: https://css-tricks.com/multiple-attribute-values/;
 <div class="module accordion expand"></div>
 
@@ -37,6 +38,26 @@ All these match that
 // Will only match if element has both
 .accordion.expand { }
 */
+
+.pull_down, .pull_up, .push_down, .push_up{
+	//height: 1em;
+}
+
+button[class="pull_down"]{
+	//content: "&#8595;";
+}
+button[class="pull_up"]{
+	 //content: "&#8607;";
+}
+button[class="push_down"]{
+	content: "&#8615;";
+	//visibility: hidden;
+	//height: 2em;
+}
+
+button[class="push_up"]{
+	//content: "&#8613;";
+}
 
 textarea[class="main-message-area"]{
 	width: 35em;

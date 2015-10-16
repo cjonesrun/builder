@@ -52,7 +52,11 @@ function setData() {
 
 function handleRow(i, row, i_next, next_row){
 	// current row visibility
-	var show = game.map[i].count >= game.map[i].base;
+	var show = game.map[i].count >= game.map[i].base || game.map[i_next].active;
+
+	/*if (i===11 || i===12) {
+		console.log(game.map[i].name, game.map[i].next, game.map[i_next].active, show, game.map[i].count, game.map[i].base);
+	}*/
 
 	if (show) {
 		setVisible(next_row, true);
@@ -67,6 +71,10 @@ function handleRow(i, row, i_next, next_row){
 		setVisible( row.querySelector("#rate_build_half"), game.map[i_next].active );
 		setVisible( row.querySelector("#rate_build_all"), game.map[i_next].active );
 		setVisible( row.querySelector("#pull_up"), game.map[i_next].active );
+
+		// not present in the first row
+		setVisible( row.querySelector("#push_up"), game.map[i_next].active && i > 0 );
+		setVisible( row.querySelector("#push_down"), game.map[i_next].active && i > 0 );
 	}
 }
 
@@ -196,6 +204,14 @@ function buildAllDownTo(index) {
 			break;
 	}
 	setData();
+}
+
+function buildDownFrom(i){
+	console.log('pushing builds down from', game.map[i].name);
+}
+
+function buildUpFrom(i){
+	console.log('pushing rate+ builds up from', game.map[i].name);
 }
 
 function buildAllUpTo(index) {

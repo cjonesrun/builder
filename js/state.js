@@ -2,14 +2,17 @@
 function init(encodedState) {
     clearInterval(global_timer);
     clearInterval(state_save_timer);
-
-    if (encodedState === null || encodedState === "null" || typeof encodedState === 'undefined'){
+    
+    var state;
+    try {
+        if (encodedState === "null" || encodedState === null)
+            throw "null encodedState state";
+        state = atob(encodedState);
+    } catch (err) {
         console.log('malformed state obj', encodedState);
-        encodedState = btoa(JSON.stringify(new Builder()));
+        state = JSON.stringify(new Builder());
     }
-    
-    var state = atob(encodedState);
-    
+
     game = JSON.parse(state);
 
     setData(); // functions.js

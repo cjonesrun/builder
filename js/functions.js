@@ -74,7 +74,7 @@ function handleRow(i, row, i_next, next_row){
 
 		// not present in the first row
 		setVisible( row.querySelector("#push_up"), game.map[i_next].active && i > 0 );
-		setVisible( row.querySelector("#push_down"), game.map[i_next].active && i > 0 );
+		setVisible( row.querySelector("#push_down"), game.map[i_next].active);
 	}
 }
 
@@ -200,18 +200,56 @@ function buildAllDownTo(index) {
 			addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
 			game.map[i].count -= cost;
 			game.map[item.next].count += nextCountInc
-		} else
+		} else if (!game.map[item.next].active) {
+			// we are done if next item is active is active (and nextCountInc is 0)
 			break;
+		}
 	}
 	setData();
 }
 
-function buildDownFrom(i){
-	console.log('pushing builds down from', game.map[i].name);
+function buildDownFrom(index){
+	//console.log('pushing builds down from', game.map[index].name);
+	for (var i=index; i < game.item_names.length; i++) {
+		//console.log('pushing builds from', game.map[i].name, 'to', game.map[game.map[i].next].name);
+		if (!game.map[game.map[i].next].active)
+			break;
+
+		var item = game.map[i];
+		var itemCount = item.count;
+		var itemBase = item.base;
+
+		var nextCountInc = Math.floor (itemCount / itemBase );
+		var cost = nextCountInc * itemBase;
+		if (nextCountInc > 0) {
+			addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
+			game.map[i].count -= cost;
+			game.map[item.next].count += nextCountInc
+		} else
+			break;
+	}
+	setData();
+
 }
 
-function buildUpFrom(i){
-	console.log('pushing rate+ builds up from', game.map[i].name);
+function buildUpFrom(index){
+	console.log('pushing rate+ builds up from', game.map[index].name);
+
+	for (var i=index; i > 0; i--) {
+		//console.log('pushing builds from', game.map[i].name, 'to', game.map[game.map[i].previous].name);
+		var item = game.map[i];
+		var previous = game.map[item.previous];
+		var to_build = Math.floor( item.count / item.base );
+		var cost = to_build * item.base;
+
+		if (to_build > 0) {
+			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
+			item.count -= cost;
+			previous.rate += to_build;
+
+		}
+	}
+	setData();
 }
 
 function buildAllUpTo(index) {

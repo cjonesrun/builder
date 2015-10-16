@@ -53,14 +53,16 @@ function update_timer_interval( )
 	startUIUpdater();
 }
 
-function pauseResume()
+function pauseResume(button)
 {
-    //console.log('state_save_timer', state_save_timer);
+    //console.log('state_save_timer', state_save_timer, button);
     if (global_timer) {
         addMessage( ['pausing timers.'] );
+        button.innerHTML = 'resume';
         stopTimers();
     } else {
         addMessage( ['resuming timers.'] );
+         button.innerHTML = 'pause';
         startTimers();
     }
 }

@@ -6,7 +6,7 @@ getElement('main_table').addEventListener('click', function(e){
 	its.clearAll();
 
   	if (e.target.nodeName === 'BUTTON'){
-	  	var row = closest(e.target, 'item-data-row');
+	  	var row = closestParentByClass(e.target, 'item-data-row');
 	    var item_id = parseInt(row.getAttribute('item-id'));
 	  	var btnClass = e.target.className;
 	  	
@@ -24,11 +24,11 @@ getElement('main_table').addEventListener('click', function(e){
 	  		break;
 
 	  		case "pull_down":
-	  			buildAllDownTo(item_id);
+	  			buildDown(0, item_id);
 	  		break;
 
 	  		case "push_down":
-				buildDownFrom(item_id);
+	  			buildDown(item_id, game.item_names.length-1);
 			break;
 
 			case "rate_build_1":
@@ -44,12 +44,34 @@ getElement('main_table').addEventListener('click', function(e){
 			break;
 
 			case "pull_up":
-				buildAllUpTo(item_id);
+				buildUp(game.item_names.length-1,item_id);
 			break;
 
 			case "push_up":
-				buildUpFrom(item_id);
+				buildUp(item_id, 0);
 			break;
+
+			case "expand":
+				var rowToShow = getElement(row.getAttribute("expanded-item-data-row"));
+				
+				var arr = document.getElementsByClassName("expanded-item-data-row");
+
+				for (var i = 0; i < arr.length; i++){
+					// collapse everything
+					if (rowToShow.id !== arr[i].id) {
+						setVisible(arr[i], false);
+						arr[i].previousSibling.getElementsByClassName("expand")[0].innerHTML = "+";
+					}
+				}
+
+				if (isVisible( rowToShow )){
+					e.target.innerHTML = "+";
+					setVisible(rowToShow, false);
+				} else {
+					e.target.innerHTML = "-";
+					setVisible(rowToShow, true);
+				}
+    		break;
 
 	  		default:
 	  			its.a('main_table event handle. no handler for ' + btnClass);
@@ -109,5 +131,85 @@ getElement('messages_table').addEventListener('click', function(e){
   }
 });
 
-addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );
+getElement('main_table').addEventListener('mouseover', function(e){
+	if (e.target.nodeName === 'TEXT'){
+		var row = closestParentByClass(e.target, 'item-data-row');
+		var item_id = parseInt(row.getAttribute('item-id'));
 
+		var txtID = e.target.id;
+		//console.log(e.target);
+		switch (txtID) {
+			case "rate":
+	  		break;
+		}
+
+	}
+
+	if (e.target.nodeName === 'BUTTON'){
+		var row = closestParentByClass(e.target, 'item-data-row');
+	    var item_id = parseInt(row.getAttribute('item-id'));
+
+	    var btnClass = e.target.className;
+	    var item, scale;
+
+	    var txt;
+	    switch (btnClass) {
+	  		case "build_1":
+	  			scale = 0;
+	  		break;
+	  		case "build_half":
+	  			scale = 0.5;
+	  		break;
+	  		case "build_all":
+	  			scale = 1;
+	  		break;
+
+	  		/*case "pull_down":
+	  		break;
+
+	  		case "push_down":
+			break;
+
+			case "rate_build_1":
+				scale = 0;
+			break;
+
+			case "rate_build_half":
+				scale = 0.5;
+			break;
+
+			case "rate_build_all":
+				scale = 1;
+			break;
+
+			case "pull_up":
+			break;
+
+			case "push_up":
+			break;*/
+
+	  		default:
+	  			return;
+	  	}
+	  	if (item_id < game.item_names.length-1)
+			item = game.map[item_id+1];
+		else 
+			item = game.map[item_id];
+		//e.target.setAttribute("title", 'cost '+ numberFormat(calcBuildCost(item, scale)) + ' ' + item.name);
+		e.target.title = 'cost '+ numberFormat( calcBuildCost(item, calcBuildCount(item,scale))) + ' ' + item.name;
+	  	
+	}
+});
+
+
+window.addEventListener('focus', function(e) {
+
+	//console.log('focus gained... resuming', e);
+});
+
+window.addEventListener('blur', function(e) {
+	//console.log('focus lost... pausing',e );
+
+});
+
+addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );

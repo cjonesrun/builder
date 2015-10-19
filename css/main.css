@@ -1,5 +1,5 @@
 body { font-family: serif; 
-	font-size: 0.85em;
+	font-size: 1em;
 }
 
 /* Invisible Container */
@@ -12,51 +12,23 @@ body { font-family: serif;
 	width: 6em;
 }
 
-.colspan-display{
-	text-align: center;
-	width: 8em;
-}
-
 .item-name-display{
 	text-align: left;
-	width: 17em;
+	width: 6em;
 }
 
 .item-index-display{
-	text-align: left;
-	width: 2em;
+	text-align: center;
+	width: 1em;
 }
 
-/* multiple classes: https://css-tricks.com/multiple-attribute-values/;
-<div class="module accordion expand"></div>
-
-All these match that
-.module { }
-.accordion { }
-.expand { }
-
-// Will only match if element has both
-.accordion.expand { }
-*/
+.expand-button-display{
+	text-align: center;
+	width: 1em;
+}
 
 .pull_down, .pull_up, .push_down, .push_up{
 	//height: 1em;
-}
-
-button[class="pull_down"]{
-	//content: "&#8595;";
-}
-button[class="pull_up"]{
-	 //content: "&#8607;";
-}
-button[class="push_down"]{
-	content: "&#8615;";
-	//visibility: hidden;
-	//height: 2em;
-}
-
-button[class="push_up"]{
-	//content: "&#8613;";
 }
 
 textarea[class="main-message-area"]{
@@ -77,3 +49,18 @@ table th,td{
 	/*border: 1px solid black;*/
 	vertical-align: top;
 }
+
+table td [class="expanded-item-data-col"]{
+	border: 1px solid gray;
+	vertical-align: top;
+}
+table th,td [colspan="2"]{
+	text-align: center;
+	width: 4em;
+}
+
+table th,td [colspan="3"]{
+	text-align: center;
+	width: 8em;
+}
+

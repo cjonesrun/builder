@@ -301,18 +301,18 @@ function updateItemInfo(row, rate) {
 	var starts_building_at = autoBuildLevel(i);
 	
 	var name = row.querySelector("#name");
-	name.innerHTML = item.name + " ["+item.base+"]";/* +' ['+numberFormat(rate)+'/s, ' + item.base + ']';*/
+	name.innerHTML = item.name + " ["+ numberFormat(item.base)+"]";/* +' ['+numberFormat(rate)+'/s, ' + item.base + ']';*/
 	var next = game.map[item.next];
 
-	var str = item.base;
-	if (i != game.item_names.length-1)
-		str += ' ' + item.name + '->' + next.name;
+	var str = numberFormat(item.base) + ' ' + item.name + '->';
 
-	str += '<BR>starts accruing @' + numberFormat(Math.ceil(starts_building_at)) + " " + item.name + "<BR>accruing " + numberFormat(rate)+ " " + item.name + '/s net';
+	str += (i != game.item_names.length-1) ? next.name : item.name;
+	
+	str += '<BR>starts building ' + ((i != game.item_names.length-1) ? next.name : item.name ) + ' @' + numberFormat(Math.ceil(starts_building_at)) + " " + item.name + "<BR>accruing " + numberFormat(rate)+ " " + item.name + '/s net';
 
 	if (i != game.item_names.length-1)
 		str += '<BR>building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s';
-
+	else
 	str += "<BR>each " + item.name + " is worth " + numberFormat(calcItemValue(i));
 	str += "<BR>total " + item.name + " value is " + numberFormat(calcTotalItemValue(i));
 	var info_row = row.nextSibling;
@@ -335,4 +335,37 @@ function updateNumber(element, number) {
 function updateRate(element, number) {
 	//console.log('updateRate', element_name, number, getElement(element_name));
 	element.innerHTML = numberFormat(number) + "/s";
+}
+
+function updateExpandDataRowVisibility(row, element){
+	var rowToShow = getElement(row.getAttribute("expanded-item-data-row"));
+
+	var arr = row.parentNode.querySelectorAll(".expanded-item-data-row").length);
+	
+	// hide all rows, reset expand buttons to +
+
+	// then show/hide the triggering element
+
+
+	console.log('clicked on', row);
+	console.log('showing/hiding', row.parentNode.querySelector("#" + row.getAttribute("expanded-item-data-row")));
+	console.log( row.parentNode.querySelectorAll(".expanded-item-data-row").length);
+
+
+	/*for (var i = 0; i < arr.length; i++){
+		// collapse everything
+		if (rowToShow.id !== arr[i].id) {
+			setVisible(arr[i], false);
+			console.log(i, arr[i].previousSibling, row);
+			arr[i].previousSibling.getElementsByClassName("expand-data-row")[0].innerHTML = "+";
+		}
+	}
+
+	if (isVisible( rowToShow )){
+		element.innerHTML = "+";
+		setVisible(rowToShow, false);
+	} else {
+		innerHTML.element = "-";
+		setVisible(rowToShow, true);
+	}*/
 }

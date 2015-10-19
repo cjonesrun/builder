@@ -16,7 +16,7 @@ function Builder() {
 	this.last_save;                           // last time the game was saved  
 
 	this.base = 10;
-	this.item_base = 2.4; /*1.3*/
+	this.item_base = 1.7; /*1.3*/
 	this.prestige_level = 0;
 	this.prestige_base = 2;
 	this.min_exponent = -324;	// min exponent is -324
@@ -42,7 +42,7 @@ function Builder() {
 	for (var i=0; i < this.item_names.length; i++) {
 		this.map[i] = {
 			"name": this.item_names[i],
-			"base": this.baseCalc(i), //this.bases[i],
+			"base": this.baseCalc(i),
 			"multipliers" : {},
 			"count": 0,
 			"rate": 0,

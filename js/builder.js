@@ -1,12 +1,17 @@
-function text(id, str, title){
+function text(id, str, title, attr_arr){
     var t1 = document.createElement("text");
     t1.setAttribute("id", id);
     t1.innerHTML = str;
     
-    if (typeof title === 'undefined')
+    if (title === undefined)
         t1.title = id;
     else t1.title = title;
 
+    if (attr_arr !== undefined) {
+        for (attr in attr_arr) {
+            t1.setAttribute(attr, attr_arr[attr]);
+        }
+    }
 
     return t1;
 }
@@ -64,15 +69,18 @@ function populateTable()
 
         // rows hidden by default, show first row expanded
         if (i == 0) {
-            [row, additionalInfoRow].forEach(function(entry) {
+            [row/*, additionalInfoRow*/].forEach(function(entry) {
                 entry.setAttribute("data-visible", "true");
             });
         }
 
         var col_index = 0;
 
-        addToCell(row.cells[col_index++], text("index", i), 'item-index-display');
-        addToCell(row.cells[col_index++], button("expand", (i>0?'+':'-'), 'expand ' + game.map[i].name));
+        var txt = text("expand"+i, '+', 'expand ' + game.map[i].name);
+        txt.setAttribute("expand-action", "expand-data-row");
+        addToCell(row.cells[col_index++], txt);
+        addToCell(row.cells[col_index++], text("index", i, undefined, { "expand-action": "expand-data-row" }), 'item-index-display');
+        
         addToCell(row.cells[col_index++], text("name", game.item_names[i]), 'item-name-display');
 
         addToCell(row.cells[col_index++], text("count", 0), 'numeric-display');

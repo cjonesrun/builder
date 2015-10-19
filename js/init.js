@@ -5,7 +5,22 @@ init(window.localStorage['builder']);
 getElement('main_table').addEventListener('click', function(e){
 	its.clearAll();
 
-  	if (e.target.nodeName === 'BUTTON'){
+	if (e.target.nodeName === 'TEXT'){
+		var row = closestParentByClass(e.target, 'item-data-row');
+	    var item_id = parseInt(row.getAttribute('item-id'));
+	  	var expandAction = e.target.getAttribute("expand-action");
+	  	
+	  	switch (expandAction) {
+	  		case "expand-data-row":
+				updateExpandDataRowVisibility(row, e.target);
+    		break;
+
+	  		default:
+	  			//console.log(e.target);
+	  			//its.a('main_table event handle. no anchor handler for ' + aClass);
+	  		break;
+	  	}
+	} else if (e.target.nodeName === 'BUTTON'){
 	  	var row = closestParentByClass(e.target, 'item-data-row');
 	    var item_id = parseInt(row.getAttribute('item-id'));
 	  	var btnClass = e.target.className;
@@ -51,30 +66,8 @@ getElement('main_table').addEventListener('click', function(e){
 				buildUp(item_id, 0);
 			break;
 
-			case "expand":
-				var rowToShow = getElement(row.getAttribute("expanded-item-data-row"));
-				
-				var arr = document.getElementsByClassName("expanded-item-data-row");
-
-				for (var i = 0; i < arr.length; i++){
-					// collapse everything
-					if (rowToShow.id !== arr[i].id) {
-						setVisible(arr[i], false);
-						arr[i].previousSibling.getElementsByClassName("expand")[0].innerHTML = "+";
-					}
-				}
-
-				if (isVisible( rowToShow )){
-					e.target.innerHTML = "+";
-					setVisible(rowToShow, false);
-				} else {
-					e.target.innerHTML = "-";
-					setVisible(rowToShow, true);
-				}
-    		break;
-
 	  		default:
-	  			its.a('main_table event handle. no handler for ' + btnClass);
+	  			its.a('main_table event handle. no button handler for ' + btnClass);
 	  		break;
 	  	}    
   }
@@ -150,39 +143,45 @@ getElement('main_table').addEventListener('mouseover', function(e){
 	    var item_id = parseInt(row.getAttribute('item-id'));
 
 	    var btnClass = e.target.className;
-	    var item, scale;
+	    var item, prev, next, scale;
 
-	    var txt;
+	    item = game.map[item_id];
+		if (item_id > 0)
+			prev = game.map[game.map[item_id].previous];
+		
+		if (item_id < game.item_names.length-1)
+			next = game.map[game.map[item_id].next];
+
 	    switch (btnClass) {
 	  		case "build_1":
-	  			scale = 0;
+	  			updateBuilderElementTitle(e.target, item, prev, 0);
 	  		break;
 	  		case "build_half":
-	  			scale = 0.5;
+	  			updateBuilderElementTitle(e.target, item, prev, 0.5);
 	  		break;
 	  		case "build_all":
-	  			scale = 1;
+	  			updateBuilderElementTitle(e.target, item, prev, 1);
 	  		break;
 
 	  		/*case "pull_down":
 	  		break;
 
 	  		case "push_down":
-			break;
+			break;*/
 
 			case "rate_build_1":
-				scale = 0;
+				updateBuilderElementTitle(e.target, item, next, 0);
 			break;
 
 			case "rate_build_half":
-				scale = 0.5;
+				updateBuilderElementTitle(e.target, item, next, 0.5);
 			break;
 
 			case "rate_build_all":
-				scale = 1;
+				updateBuilderElementTitle(e.target, item, next, 1);
 			break;
 
-			case "pull_up":
+			/*case "pull_up":
 			break;
 
 			case "push_up":
@@ -190,18 +189,46 @@ getElement('main_table').addEventListener('mouseover', function(e){
 
 	  		default:
 	  			return;
-	  	}
-	  	if (item_id < game.item_names.length-1)
-			item = game.map[item_id+1];
-		else 
-			item = game.map[item_id];
-		//e.target.setAttribute("title", 'cost '+ numberFormat(calcBuildCost(item, scale)) + ' ' + item.name);
-		e.target.title = 'cost '+ numberFormat( calcBuildCost(item, calcBuildCount(item,scale))) + ' ' + item.name;
-	  	
+	  	}	  	
 	}
 });
 
+function updateBuilderElementTitle(el, item, other_item, scale){
+	if (other_item === undefined){
+		el.title = item.name + ' free';
+	}else{
+		var count = calcBuildCount(other_item,scale);
+		if (count < 1)
+			el.title = 'insufficient ' + other_item.name + ' to build '+ item.name;
+		else
+			el.title = numberFormat(count) + ' ' + item.name + ' needs '+ numberFormat( calcBuildCost(other_item, count)) + ' ' + other_item.name;
+	}
+}
 
+/*function updateBuilderElementTitle(el, item, prev, scale){
+	if (prev === undefined){
+		el.title = item.name + ' free';
+	}else{
+		var count = calcBuildCount(prev,scale);
+		el.title = numberFormat(count) + ' ' + item.name + ' needs '+ numberFormat( calcBuildCost(prev, count)) + ' ' + prev.name;
+	}
+}
+
+function updateRateBuilderElementTitle(el, item, next, scale){
+
+	if (item.name ==='widget'){
+		console.log(item.name, next, scale);
+	}
+
+	if (next === undefined){
+		el.title = item.name + ' free';
+	}else{
+		var count = calcBuildCount(next,scale);
+		el.title = numberFormat(count) + ' ' + item.name + ' needs '+ numberFormat( calcBuildCost(next, count)) + ' ' + next.name;
+	}
+
+}
+*/
 window.addEventListener('focus', function(e) {
 
 	//console.log('focus gained... resuming', e);

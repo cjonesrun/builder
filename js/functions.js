@@ -13,7 +13,7 @@ function hasClass(elem, cls) {
     return(str.indexOf(testCls) != -1) ;
 };
 
-function closest(el, cls) {
+function closestParentByClass(el, cls) {
     while (el  && el !== document) {
         if (hasClass(el, cls)) return el;
         el = el.parentNode;
@@ -21,7 +21,7 @@ function closest(el, cls) {
     return null;
 };
 
-function setData() {
+function updateUI() {
     var prev_build_rate = 0;
     
     var rows = document.getElementsByClassName("item-data-row");
@@ -38,6 +38,7 @@ function setData() {
     		handleRow(i, rows[i], i+1, rows[i+1]);
 
     	count.innerHTML = numberFormat(game.map[i].count);
+    	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
     	build.innerHTML = numberFormat(build_rate) + "/s";
     	rate.innerHTML = numberFormat(game.map[i].rate) + "/s";
     	
@@ -53,10 +54,6 @@ function setData() {
 function handleRow(i, row, i_next, next_row){
 	// current row visibility
 	var show = game.map[i].count >= game.map[i].base || game.map[i_next].active;
-
-	/*if (i===11 || i===12) {
-		console.log(game.map[i].name, game.map[i].next, game.map[i_next].active, show, game.map[i].count, game.map[i].base);
-	}*/
 
 	if (show) {
 		setVisible(next_row, true);
@@ -104,8 +101,8 @@ function calculate() {
 
             if (j == sec_since_last -1) {
                 if (game.map[i].count > 0) {
-                    //console.log( 'adding', game.map[i].name, game.map[i].count, calcItemValue(i));
-                    total_value += calcItemValue(i);
+                    //console.log( 'adding', game.map[i].name, game.map[i].count, calcTotalItemValue(i));
+                    total_value += calcTotalItemValue(i);
                 }
             }
         }        
@@ -130,152 +127,21 @@ function calculate() {
     game.last_calculation = this_calculation - (diff - sec_since_last * 1000);
 }
 
-// build items, add them to the total and decduct the cost from prev (if affordable)
-function build(i, scale) {	
-	//console.log(i,scale);
-	var item = game.map[i];
-	// smallest item && level, free
-	if (item.previous == null){ 
-		//addMessage( [ 'building 1', item.name ] );
-		item.count +=  prestigeMultiplier();
-	} else {
-		var prev = game.map[item.previous];
-		var to_build = scale > 0 ? Math.floor( scale * prev.count / prev.base ) : 1;
-
-		// consider using calc(level) for next_cost, so @ each level, exponentially more prevs are needed
-		var cost = prev.base * to_build; 
-		
-		//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
-		if (to_build > 0 && prev.count >= cost) {
-			prev.count -= cost;
-			item.count +=  to_build * prestigeMultiplier();
-			
-			addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
-		} else {
-			addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
-				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
-		}
-	}
-	setData();
+function calcBuildCost(item, count){
+	return item.base * count;
 }
 
-function buildRateInc(i, scale) {
-	var item = game.map[i];
-	var next = game.map[item.next];
-
-	// at last item, let the costing for next be the cost of iteself
-	if (next == null){ 
-		next = item;
-	} 
-
-	var to_build = scale > 0 ? Math.floor( scale * next.count / next.base ) : 1;
-	var cost = to_build * next.base;
-
-	//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
-	if (to_build > 0 && next.count >= cost) {
-		item.rate += to_build;
-		next.count -= cost;
-
-		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
-	} else {
-		addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
-			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
-	}
-	setData();
+function calcBuildCount(item, scale){
+	//console.log(item, scale, scale > 0);
+	return scale > 0 ? Math.floor( scale * item.count / item.base ) : 1;
 }
 
-function buildAllDownTo(index) {
-	//console.log('pulling all down to', game.map[index].name);
-	for (var i=0; i < game.item_names.length; i++) {
-		if (index == i)
-			break;
-
-		var item = game.map[i];
-		var itemCount = item.count;
-		var itemBase = item.base;
-
-		var nextCountInc = Math.floor (itemCount / itemBase );
-		var cost = nextCountInc * itemBase;
-		if (nextCountInc > 0) {
-			addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
-			game.map[i].count -= cost;
-			game.map[item.next].count += nextCountInc
-		} else if (!game.map[item.next].active) {
-			// we are done if next item is active is active (and nextCountInc is 0)
-			break;
-		}
-	}
-	setData();
+function calcTotalItemValue(i){
+	//console.log(game.map[i].name, i, typeof i, game.map[i].count * calcItemValue(i));
+	return game.map[i].count * calcItemValue(parseInt(i));
 }
-
-function buildDownFrom(index){
-	//console.log('pushing builds down from', game.map[index].name);
-	for (var i=index; i < game.item_names.length; i++) {
-		//console.log('pushing builds from', game.map[i].name, 'to', game.map[game.map[i].next].name);
-		if (!game.map[game.map[i].next].active)
-			break;
-
-		var item = game.map[i];
-		var itemCount = item.count;
-		var itemBase = item.base;
-
-		var nextCountInc = Math.floor (itemCount / itemBase );
-		var cost = nextCountInc * itemBase;
-		if (nextCountInc > 0) {
-			addMessage( [ 'building', numberFormat(nextCountInc), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
-			game.map[i].count -= cost;
-			game.map[item.next].count += nextCountInc
-		} else
-			break;
-	}
-	setData();
-
-}
-
-function buildUpFrom(index){
-	console.log('pushing rate+ builds up from', game.map[index].name);
-
-	for (var i=index; i > 0; i--) {
-		//console.log('pushing builds from', game.map[i].name, 'to', game.map[game.map[i].previous].name);
-		var item = game.map[i];
-		var previous = game.map[item.previous];
-		var to_build = Math.floor( item.count / item.base );
-		var cost = to_build * item.base;
-
-		if (to_build > 0) {
-			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
-			item.count -= cost;
-			previous.rate += to_build;
-
-		}
-	}
-	setData();
-}
-
-function buildAllUpTo(index) {
-	//console.log('pulling all up to', game.map[index].name);
-	for (var i=game.item_names.length-1; i > 0; i--) {
-		if (index == i)
-			break;
-
-		var item = game.map[i];
-		var previous = game.map[item.previous];
-		var to_build = Math.floor( item.count / item.base );
-		var cost = to_build * item.base;
-
-		if (to_build > 0) {
-			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
-			item.count -= cost;
-			previous.rate += to_build;
-
-		}
-	}
-	setData();
-}
-
 function calcItemValue(i) {
-	//console.log(game.map[i].name, game.map[i].count, '*', game.base,'^',min_exponent + i +1);
-	return game.map[i].count * Math.pow(game.base, game.min_exponent + i +1);
+	return Math.pow(game.base, game.min_exponent + parseInt(i) +1);
 };
 
 
@@ -293,6 +159,103 @@ function calcBuildRate(i) {
 	//	console.log(game.map[i].name, game.map[i].count, '/', game.map[i].base,'^', (2+i/game.base), "=", val);
 	
 	return val;
+}
+
+// build items, add them to the total and decduct the cost from prev (if affordable)
+function build(i, scale) {	
+	//console.log(i,scale);
+	var item = game.map[i];
+	// smallest item && level, free
+	if (item.previous == null){ 
+		//addMessage( [ 'building 1', item.name ] );
+		item.count +=  prestigeMultiplier();
+	} else {
+		var prev = game.map[item.previous];
+		var to_build = calcBuildCount(prev, scale);
+		var cost = calcBuildCost(prev, to_build); 
+		
+		//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
+		if (cost > 0 && prev.count >= cost) {
+			prev.count -= cost;
+			item.count +=  to_build * prestigeMultiplier();
+			
+			addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
+		} else {
+			addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
+				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
+		}
+	}
+	updateUI();
+}
+
+function buildRateInc(i, scale) {
+	var item = game.map[i];
+	var next = game.map[item.next];
+
+	// at last item, let the costing for next be the cost of iteself
+	if (next == null){ 
+		next = item;
+	} 
+
+	var to_build = calcBuildCount(next, scale);
+	var cost = calcBuildCost(next, to_build); 
+
+	//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
+	if (to_build > 0 && next.count >= cost) {
+		item.rate += to_build;
+		next.count -= cost;
+
+		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
+	} else {
+		addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
+			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
+	}
+	updateUI();
+}
+
+function buildDown(from, to) {
+	//console.log('building down from', game.map[from].name, 'to', game.map[to].name);
+	for (var i=from; i < to; i++) {
+		if (to == i)
+			break;
+
+		var item = game.map[i];
+		var itemCount = item.count;
+		var itemBase = item.base;
+
+		var to_build = calcBuildCount(item, 1);
+		var cost = calcBuildCost(item, to_build);
+		if (to_build > 0) {
+			addMessage( [ 'building', numberFormat(to_build), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
+			game.map[i].count -= cost;
+			game.map[item.next].count += to_build
+		} else if (!game.map[item.next].active) {
+			// we are done if next item is active is active (since to_build is 0)
+			break;
+		}
+	}
+	updateUI();
+}
+
+function buildUp(from, to) {
+	//console.log('building up from', game.map[from].name, 'to', game.map[to].name);
+	for (var i=from; i > 0; i--) {
+		if (to == i)
+			break;
+
+		var item = game.map[i];
+		var previous = game.map[item.previous];
+		var to_build = calcBuildCount(item, 1);
+		var cost = to_build * item.base;
+
+		if (to_build > 0) {
+			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
+			item.count -= cost;
+			previous.rate += to_build;
+
+		}
+	}
+	updateUI();
 }
 
 // format the number for display
@@ -338,16 +301,23 @@ function updateItemInfo(row, rate) {
 	var starts_building_at = autoBuildLevel(i);
 	
 	var name = row.querySelector("#name");
-	name.innerHTML = item.name +' ['+numberFormat(rate)+'/s, ' + item.base + ']';
+	name.innerHTML = item.name + " ["+item.base+"]";/* +' ['+numberFormat(rate)+'/s, ' + item.base + ']';*/
 	var next = game.map[item.next];
-	if (i == game.item_names.length-1){
-		name.title = '['+ item.base + ' | '+ '@' + numberFormat(Math.ceil(starts_building_at)) + " | " + numberFormat(rate)+'/s net]';
-	} else
-		name.title = '['+ item.base + ' ' + item.name + '->' + next.name +' | '+ 
-			'@' + numberFormat(Math.ceil(starts_building_at)) + " | " + numberFormat(rate)+'/s net]';
 
-	
-	
+	var str = item.base;
+	if (i != game.item_names.length-1)
+		str += ' ' + item.name + '->' + next.name;
+
+	str += '<BR>starts accruing @' + numberFormat(Math.ceil(starts_building_at)) + " " + item.name + "<BR>accruing " + numberFormat(rate)+ " " + item.name + '/s net';
+
+	if (i != game.item_names.length-1)
+		str += '<BR>building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s';
+
+	str += "<BR>each " + item.name + " is worth " + numberFormat(calcItemValue(i));
+	str += "<BR>total " + item.name + " value is " + numberFormat(calcTotalItemValue(i));
+	var info_row = row.nextSibling;
+	name.title = "[" + str.replace(/<br>/gi, " | ") + "]";
+	info_row.getElementsByClassName("expanded-item-data-col")[0].innerHTML = str;
 }
 
 // updates total value in the UI

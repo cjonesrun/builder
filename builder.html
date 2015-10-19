@@ -16,15 +16,16 @@
 		<div id='top_div'>
 			<p>
 				<div id='total_value_div'>
-					<b><text>value</text></b>
-					<text id="total_value">0</text>
-					<b><text>time</text></b>
-					<text id="running" title="total building time"></text>
+					<b><text title="total value">v</text></b>
+					<text id="total_value" title="total value">0</text>
+					<b><text title="delta value">&beta;<sub>v</text></b>
+					<text id="total_value_rate" title="delta value">0/s</text>
+					<b><text title="gamma value">&gamma;<sub>v</sub></text></b>
+					<text id="total_value_accel" title="gamma value">0/s<sup>2</sup></text>
 					<br>
-					<b><text>rate</text></b>
-					<text id="total_value_rate">0/s</text>
-					<b><text>acceleration</text></b>
-					<text id="total_value_accel">0/s<sup>2</sup></text>
+					<b><text><i>t</i></text></b>
+					<text id="running" title="total building time"></text>
+					
 				</div>
 			</p>
 		</div>
@@ -39,20 +40,28 @@
 						<table id='main_table' class="data-test">
 							<tr>
 								<th class="item-index-display">#</th>
+								<th class="expand-button-display">+</th>
 								<th align="left">name</th>
 								<th class="numeric-display">count</th>
-								<th class="numeric-display">accumulate/s</th>
+								<th class="numeric-display">accrue/s</th>
 								<th class="numeric-display">build/s</th>
-								<th colspan=3 class="colspan-display">build</th>
-								<th>pull</th>
-								<th colspan=3 class="colspan-display">rate+</th>
-								<th>pull</th>
+								<th colspan=3>build</th>	
+								<th colspan=2>&#8615;</th>
+								<th colspan=3>rate+</th>
+								<th colspan=2>&#8613;</th>
 							</tr>
 
-							<tr id='row-to-clone' data-visible="false">
+							<tr id='main-item-row-to-clone' data-visible="false">
 								<td></td> <td></td> <td></td> <td></td> <td></td>
 								<td></td> <td></td> <td></td> <td></td> <td></td>
-								<td></td> <td></td> <td></td>
+								<td></td> <td></td> <td></td> <td></td> <td></td>
+								<td></td>
+							</tr>
+
+							<tr id='expanded-item-row-to-clone' data-visible="false">
+								<td></td>
+								<td colspan=14 class="expanded-item-data-col"></td>
+								<td></td>
 							</tr>
 						</table>
 					</td>

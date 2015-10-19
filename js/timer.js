@@ -4,7 +4,7 @@ var state_save_timer;
 function startUIUpdater() {
     global_timer = setInterval(function(){ 
         calculate();
-        setData();
+        updateUI();
 	}, game.UI_REFRESH_INTERVAL);
 }
 
@@ -62,7 +62,7 @@ function pauseResume(button)
         stopTimers();
     } else {
         addMessage( ['resuming timers.'] );
-         button.innerHTML = 'pause';
+        button.innerHTML = 'pause';
         startTimers();
     }
 }

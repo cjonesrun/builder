@@ -15,7 +15,7 @@ function init(encodedState) {
 
     game = JSON.parse(state);
 
-    setData(); // functions.js
+    updateUI(); // functions.js
 
     startUIUpdater();
     startStateSaver();
@@ -65,9 +65,9 @@ function reset() {
 
     game = new Builder();
     //console.log(JSON.stringify(game));
-   
+
     saveState();
-    setData();
+    updateUI();
 
     setMessage( ['game reset.'] );
 

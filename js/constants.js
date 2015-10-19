@@ -7,13 +7,16 @@ function Builder() {
 	this.UI_REFRESH_INTERVAL = 1000;
 	this.NUMERICAL_DISPLAY_PRECISION = 5;
 
+	// how much things are slowed down when  accumulating "offline"
+	this.warp_reduction = 0.25;
+
 	
 	this.game_started = new Date().getTime();    // when this game started
 	this.last_calculation = new Date().getTime();
 	this.last_save;                           // last time the game was saved  
 
 	this.base = 10;
-	this.item_base = 1.3;
+	this.item_base = 2.4; /*1.3*/
 	this.prestige_level = 0;
 	this.prestige_base = 2;
 	this.min_exponent = -324;	// min exponent is -324
@@ -22,13 +25,16 @@ function Builder() {
 	this.total_value_rate = 0; // total_value rate of change per sec
 	this.total_value_accel = 0; // rate of change of total value rate
 
+	// prestige-system
+	this.perpetual_machines = [];
+
 	// 5 items
 	//this.item_names = [ 'bit', 'part', 'block', 'thing', 'rube goldberg machine' ];
 	// 26 items
-	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg machine' ];
+	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'];
 
 	this.baseCalc = function (pow) {
-		return Math.round( 10 * Math.pow(this.item_base, pow));
+		return Math.round( this.base * Math.pow(this.item_base, pow));
 	};
 
 	// init the game state

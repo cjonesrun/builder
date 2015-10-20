@@ -312,13 +312,44 @@ function updateItemInfo(row, rate) {
 
 	if (i != game.item_names.length-1)
 		str += '<BR>building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s';
-	else
+	
 	str += "<BR>each " + item.name + " is worth " + numberFormat(calcItemValue(i));
 	str += "<BR>total " + item.name + " value is " + numberFormat(calcTotalItemValue(i));
 	var info_row = row.nextSibling;
 	name.title = "[" + str.replace(/<br>/gi, " | ") + "]";
-	info_row.getElementsByClassName("expanded-item-data-col")[0].innerHTML = str;
+	
+	var container = info_row.getElementsByClassName("expanded-item-data-col")[0];
+	var myNode = container;
+	while (myNode.firstChild) {
+	    myNode.removeChild(container.firstChild);
+	}
+
+	var list = buildUL();
+
+	addLI(list, numberFormat(item.base) + ' ' + item.name + '->' + ((i != game.item_names.length-1) ? next.name : item.name));
+    addLI(list, 'starts building ' + ((i != game.item_names.length-1) ? next.name : item.name ) + ' @' + 
+    		numberFormat(Math.ceil(starts_building_at)) + " " + item.name);
+    addLI(list, "accruing " + numberFormat(rate)+ " " + item.name + '/s net');
+
+    if (i != game.item_names.length-1)
+		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');
+	addLI(list, "each " + item.name + " is worth " + numberFormat(calcItemValue(i)));
+	addLI(list, "total " + item.name + " value is " + numberFormat(calcTotalItemValue(i)));
+
+    info_row.getElementsByClassName("expanded-item-data-col")[0].appendChild(list);
+
 }
+
+function buildUL() {
+	return document.createElement('ul');
+};
+
+function addLI(ul, str) {
+	var itemX = document.createElement('li');
+    itemX.appendChild(document.createTextNode(str));
+    ul.appendChild(itemX);
+    return itemX; // if needed
+};
 
 // updates total value in the UI
 function updateTotalValue(value, rate, accel) {
@@ -339,33 +370,21 @@ function updateRate(element, number) {
 
 function updateExpandDataRowVisibility(row, element){
 	var rowToShow = getElement(row.getAttribute("expanded-item-data-row"));
-
-	var arr = row.parentNode.querySelectorAll(".expanded-item-data-row").length);
+	var arr = row.parentNode.querySelectorAll(".expanded-item-data-row");
 	
-	// hide all rows, reset expand buttons to +
-
-	// then show/hide the triggering element
-
-
-	console.log('clicked on', row);
-	console.log('showing/hiding', row.parentNode.querySelector("#" + row.getAttribute("expanded-item-data-row")));
-	console.log( row.parentNode.querySelectorAll(".expanded-item-data-row").length);
-
-
-	/*for (var i = 0; i < arr.length; i++){
-		// collapse everything
+	for (var i = 0; i < arr.length; i++){
+		// collapse everything, don't touch the 
 		if (rowToShow.id !== arr[i].id) {
 			setVisible(arr[i], false);
-			console.log(i, arr[i].previousSibling, row);
-			arr[i].previousSibling.getElementsByClassName("expand-data-row")[0].innerHTML = "+";
+			row.parentNode.querySelector("#"+arr[i].getAttribute("main-item-row-id")).querySelector(".expander").innerHTML = "+";
 		}
 	}
-
 	if (isVisible( rowToShow )){
 		element.innerHTML = "+";
 		setVisible(rowToShow, false);
 	} else {
-		innerHTML.element = "-";
+		element.innerHTML = "-";
 		setVisible(rowToShow, true);
-	}*/
+	}
+	
 }

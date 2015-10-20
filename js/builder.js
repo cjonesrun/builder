@@ -76,18 +76,15 @@ function populateTable()
 
         var col_index = 0;
 
-        var txt = text("expand"+i, '+', 'expand ' + game.map[i].name);
-        txt.setAttribute("expand-action", "expand-data-row");
+        var txt = text("expand"+i, '+', 'expand ' + game.map[i].name, { "expand-action": "expand-data-row", "class": "expander"});
         addToCell(row.cells[col_index++], txt);
-        addToCell(row.cells[col_index++], text("index", i, undefined, { "expand-action": "expand-data-row" }), 'item-index-display');
+        addToCell(row.cells[col_index++], text("index", i,  undefined, { "expand-action": "expand-data-row" }), 'item-index-display');
         
-        addToCell(row.cells[col_index++], text("name", game.item_names[i]), 'item-name-display');
+        addToCell(row.cells[col_index++], text("name", game.item_names[i], undefined, { "expand-action": "expand-data-row" }), 'item-name-display');
 
-        addToCell(row.cells[col_index++], text("count", 0), 'numeric-display');
-        addToCell(row.cells[col_index++], text("rate", "0/s"), 'numeric-display');
-        addToCell(row.cells[col_index++], text("build", "0/s"), 'numeric-display');
-
-
+        addToCell(row.cells[col_index++], text("count", 0, undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
+        addToCell(row.cells[col_index++], text("rate", "0/s", undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
+        addToCell(row.cells[col_index++], text("build", "0/s", undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
 
         addToCell(row.cells[col_index++], button("build_1", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
        

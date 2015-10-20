@@ -12,7 +12,7 @@ getElement('main_table').addEventListener('click', function(e){
 	  	
 	  	switch (expandAction) {
 	  		case "expand-data-row":
-				updateExpandDataRowVisibility(row, e.target);
+				updateExpandDataRowVisibility(row, row.querySelector(".expander"));
     		break;
 
 	  		default:

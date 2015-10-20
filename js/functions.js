@@ -298,30 +298,19 @@ function timeFormat(number) {
 function updateItemInfo(row, rate) {
 	var i = row.getAttribute("item-id");
 	var item = game.map[i];
+	if (!item.active)
+		return;
 	var starts_building_at = autoBuildLevel(i);
 	
 	var name = row.querySelector("#name");
 	name.innerHTML = item.name + " ["+ numberFormat(item.base)+"]";/* +' ['+numberFormat(rate)+'/s, ' + item.base + ']';*/
 	var next = game.map[item.next];
 
-	var str = numberFormat(item.base) + ' ' + item.name + '->';
 
-	str += (i != game.item_names.length-1) ? next.name : item.name;
-	
-	str += '<BR>starts building ' + ((i != game.item_names.length-1) ? next.name : item.name ) + ' @' + numberFormat(Math.ceil(starts_building_at)) + " " + item.name + "<BR>accruing " + numberFormat(rate)+ " " + item.name + '/s net';
-
-	if (i != game.item_names.length-1)
-		str += '<BR>building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s';
-	
-	str += "<BR>each " + item.name + " is worth " + numberFormat(calcItemValue(i));
-	str += "<BR>total " + item.name + " value is " + numberFormat(calcTotalItemValue(i));
 	var info_row = row.nextSibling;
-	name.title = "[" + str.replace(/<br>/gi, " | ") + "]";
-	
 	var container = info_row.getElementsByClassName("expanded-item-data-col")[0];
-	var myNode = container;
-	while (myNode.firstChild) {
-	    myNode.removeChild(container.firstChild);
+	while (container.firstChild) {
+	    container.removeChild(container.firstChild);
 	}
 
 	var list = buildUL();
@@ -335,9 +324,15 @@ function updateItemInfo(row, rate) {
 		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');
 	addLI(list, "each " + item.name + " is worth " + numberFormat(calcItemValue(i)));
 	addLI(list, "total " + item.name + " value is " + numberFormat(calcTotalItemValue(i)));
-
-    info_row.getElementsByClassName("expanded-item-data-col")[0].appendChild(list);
-
+	info_row.getElementsByClassName("expanded-item-data-col")[0].appendChild(list);
+	
+	// update title text from the LI items
+	var str = "";
+	var li_items = list.querySelectorAll("li");
+	for (var li = 0; li < li_items.length; li++){
+		str += li_items[li].innerText + " | ";
+	}
+	name.title = "| " + str.trim();
 }
 
 function buildUL() {

@@ -205,30 +205,6 @@ function updateBuilderElementTitle(el, item, other_item, scale){
 	}
 }
 
-/*function updateBuilderElementTitle(el, item, prev, scale){
-	if (prev === undefined){
-		el.title = item.name + ' free';
-	}else{
-		var count = calcBuildCount(prev,scale);
-		el.title = numberFormat(count) + ' ' + item.name + ' needs '+ numberFormat( calcBuildCost(prev, count)) + ' ' + prev.name;
-	}
-}
-
-function updateRateBuilderElementTitle(el, item, next, scale){
-
-	if (item.name ==='widget'){
-		console.log(item.name, next, scale);
-	}
-
-	if (next === undefined){
-		el.title = item.name + ' free';
-	}else{
-		var count = calcBuildCount(next,scale);
-		el.title = numberFormat(count) + ' ' + item.name + ' needs '+ numberFormat( calcBuildCost(next, count)) + ' ' + next.name;
-	}
-
-}
-*/
 window.addEventListener('focus', function(e) {
 
 	//console.log('focus gained... resuming', e);
@@ -239,4 +215,4 @@ window.addEventListener('blur', function(e) {
 
 });
 
-addMessage(['starting prestige is', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );
+addMessage(['perpetual machine of order', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );

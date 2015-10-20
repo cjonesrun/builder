@@ -1,6 +1,5 @@
 - localstorage
 	- versioning
-	-
 
 - building
 	- at higher prestige, consider enabling auto-build, auto-rate+
@@ -17,7 +16,7 @@
 - reveal item rows in descending item # (i.e build table upside down)
 
 - game play
-	- add in a perpetual motion machine
+	- add in a perpetual motion machine (prestige)
 	- introduce clusters (groups of n consecutive items). cluster value milestones can trigger events
 	- use value to buy more clusters or individual items
 	
@@ -27,7 +26,17 @@
 		- build 1/2, max buttons
 		- rate+ 1/2, max buttons
 
-- button to blow local(storage away hard reset)
-
-
 - responsive for mobile
+
+- auto-clickers timer/intervals
+	- upgradeable auto clickers on each build/rate+/push/pull button.
+	- upgrading increases clicking rate, costs value.
+
+- stats
+	- time to get to item X
+	- highest val, fatest build rate (beta), highest acceleration (gamma)
+	- total spent
+	- 
+
+- look into javascript modules, O.o, polymer project
+	

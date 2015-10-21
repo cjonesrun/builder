@@ -76,6 +76,7 @@ function populateTable()
 
         var col_index = 0;
 
+        /*div("count_"+i, "count", "textContent:count", "bound-element", 0), 'numeric-display')*/
         var txt = text("expand"+i, '+', 'expand ' + game.map[i].name, { "expand-action": "expand-data-row", "class": "expander"});
         addToCell(row.cells[col_index++], txt);
         addToCell(row.cells[col_index++], text("index", i,  undefined, { "expand-action": "expand-data-row" }), 'item-index-display');
@@ -83,19 +84,18 @@ function populateTable()
         addToCell(row.cells[col_index++], text("name", game.item_names[i], undefined, { "expand-action": "expand-data-row" }), 'item-name-display');
 
         //var c = text("count", 0, undefined, { "expand-action": "expand-data-row", "bind": "innerText:count" });
-        var c = document.createElement("div");
-        c.setAttribute("id", "count_"+i);
-        c.setAttribute("title", "count");
-        //c.setAttribute("bind",'textContent:count');
-        c.textContent = 0;
-        addToCell(row.cells[col_index++], c, 'numeric-display');
-        //bind(c, game.map[i]);
+        var count_div = div("count", "count", "textContent:count", "bound-element", 0);
+        var rate_div = div("rate", "rate", "textContent:rate", "bound-element", i==0?"":0);
+        var build_div = div("build", "build", "textContent:count", "bound-element", 0);
 
+        addToCell(row.cells[col_index++], count_div, 'numeric-display');
+        addToCell(row.cells[col_index++], rate_div);
+        addToCell(row.cells[col_index++], build_div, 'numeric-display');
 
-        addToCell(row.cells[col_index++], text("rate", "0/s", undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
-        addToCell(row.cells[col_index++], text("build", "0/s", undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
-
-        addToCell(row.cells[col_index++], button("build_1", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
+        // assign observer to the game item
+        //Object.observe(game.map[i], numberFormattedContent(count_div, build_div, rate_div, i));
+        
+        addToCell(row.cells[col_index++], button("build_single", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
        
         if (i>0) { // skip cells 6,7,8 for i=0
             addToCell(row.cells[col_index++], button("build_half", '1/2', 'build 1/2 the max number of ' + game.map[i].name));
@@ -106,26 +106,38 @@ function populateTable()
         addToCell(row.cells[col_index++], button("push_down", '&#8615;', "push all builds down from "+ game.map[i].name));
        
         if (i < game.item_names.length-1) { // skip 9 thru 12 for last row
-            addToCell(row.cells[col_index++], button("rate_build_1", '1', "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s"));
-            addToCell(row.cells[col_index++], button("rate_build_half", '1/2', "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name));
-            addToCell(row.cells[col_index++], button("rate_build_all", 'max', "rate+ " + game.map[i].name + " by using max available " + game.map[i].next));
-            addToCell(row.cells[col_index++], button("pull_up", '&#8624;', "pull all rate+ up to "+ game.map[i].name));
-            addToCell(row.cells[col_index++], button("push_up", '&#8613;', "push all rate+ up from "+ game.map[i].name));
+            if (i>0){
+                addToCell(row.cells[col_index++], button("rate_build_single", '1', "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s"));
+                addToCell(row.cells[col_index++], button("rate_build_half", '1/2', "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name));
+                addToCell(row.cells[col_index++], button("rate_build_all", 'max', "rate+ " + game.map[i].name + " by using max available " + game.map[i].next));
+                addToCell(row.cells[col_index++], button("pull_up", '&#8624;', "pull all rate+ up to "+ game.map[i].name));
+            } if (i>1)
+                addToCell(row.cells[col_index++], button("push_up", '&#8613;', "push all rate+ up from "+ game.map[i].name));
         }
-
-        
     }
     return main_table;
 }
 
-// calls function fcn and passes the remaining args in a params to fcn
-function delegate(fcn) {
-    //console.log('delegating', arguments);
-    var args = [].slice.apply(arguments);
-    return function() {
-        //console.log('inside', args.length, args.slice(1));
-        fcn.apply(this,args.slice(1));
-    }
+// returns function used by observer on change event
+function numberFormattedContent(count, build, rate, index) {
+    return function(changes) {
+        var last_change = changes[changes.length-1];
+        
+        count.textContent = numberFormat( game.map[index].count );
+        rate.textContent = numberFormat( game.map[index].rate )+"/s";
+        build.textContent = numberFormat( calcBuildRate( index ) )+"/s";
+    };
+}
+
+
+function div(id, title, bind, classAttr, str) {
+    var c = document.createElement("div");
+    c.setAttribute("id", id);
+    c.setAttribute("title", title);
+    c.setAttribute("bind", bind);
+    c.setAttribute("class", classAttr);
+    c.textContent = str;
+    return c;
 }
 
 function setVisible(element, visible) {
@@ -147,5 +159,9 @@ function isVisible(element) {
         return true;
 }
 
+// init from localstorage if they are present, bfore starting the timer
+loadGameState();
+
 populateTable();
-//assignFunctions();
+
+builderInit();

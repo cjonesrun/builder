@@ -1,8 +1,5 @@
-// initialize the game state from the given encoded state and star/stop timers
-function init(encodedState) {
-    clearInterval(global_timer);
-    clearInterval(state_save_timer);
-    
+function loadGameState() {
+    var encodedState = window.localStorage['builder'];
     var state;
     try {
         if (encodedState === "null" || encodedState === null)
@@ -14,8 +11,20 @@ function init(encodedState) {
     }
 
     game = JSON.parse(state);
+}
 
+
+// initialize the game state from the given encoded state and star/stop timers
+function builderInit() {
+    clearInterval(global_timer);
+    clearInterval(state_save_timer);
+    
     updateUI(); // functions.js
+
+    // notify the observers
+    /*for (var i in game.map) {
+       Object.getNotifier(game.map[i]).performChange("update", function() { console.log('honk'); return {init: "initialized" }; });
+    }*/
 
     startUIUpdater();
     startStateSaver();
@@ -51,7 +60,9 @@ function exportJSON() {
 // load an encoded state from the message window
 function loadState() {
     var encodedState = document.getElementById( 'messages' ).value.trim();
-    init(encodedState);
+
+    window.localStorage['builder'] = encodedState;
+    location.reload();
 }
 
 function hardReset() {
@@ -61,17 +72,19 @@ function hardReset() {
 
 function reset() {
     // stop timers.
-    stopTimers();
+    //stopTimers();
 
     game = new Builder();
     //console.log(JSON.stringify(game));
 
     saveState();
-    updateUI();
 
+    builderInit();
+    /*updateUI();
+*/
     setMessage( ['game reset.'] );
 
-    startTimers();
+//    startTimers();
 }
 
 // LZW-compress a string

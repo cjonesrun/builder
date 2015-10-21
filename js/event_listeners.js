@@ -1,6 +1,3 @@
-// init from localstorage if they are present, bfore starting the timer
-init(window.localStorage['builder']);
-
 // main_table event listener
 getElement('main_table').addEventListener('click', function(e){
 	its.clearAll();
@@ -26,7 +23,7 @@ getElement('main_table').addEventListener('click', function(e){
 	  	var btnClass = e.target.className;
 	  	
 	  	switch (btnClass) {
-	  		case "build_1":
+	  		case "build_single":
 	  			build(item_id, 0);
 	  		break;
 
@@ -46,7 +43,7 @@ getElement('main_table').addEventListener('click', function(e){
 	  			buildDown(item_id, game.item_names.length-1);
 			break;
 
-			case "rate_build_1":
+			case "rate_build_single":
 				buildRateInc(item_id, 0);
 			break;
 
@@ -153,7 +150,7 @@ getElement('main_table').addEventListener('mouseover', function(e){
 			next = game.map[game.map[item_id].next];
 
 	    switch (btnClass) {
-	  		case "build_1":
+	  		case "build_single":
 	  			updateBuilderElementTitle(e.target, item, prev, 0);
 	  		break;
 	  		case "build_half":
@@ -169,7 +166,7 @@ getElement('main_table').addEventListener('mouseover', function(e){
 	  		case "push_down":
 			break;*/
 
-			case "rate_build_1":
+			case "rate_build_single":
 				updateBuilderElementTitle(e.target, item, next, 0);
 			break;
 
@@ -206,13 +203,9 @@ function updateBuilderElementTitle(el, item, other_item, scale){
 }
 
 window.addEventListener('focus', function(e) {
-
 	//console.log('focus gained... resuming', e);
 });
 
 window.addEventListener('blur', function(e) {
 	//console.log('focus lost... pausing',e );
-
 });
-
-addMessage(['perpetual machine of order', game.prestige_base+'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()) ] );

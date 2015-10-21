@@ -4,16 +4,12 @@
 
 <script type="text/javascript" src="js/constants.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
-<script type="text/javascript" src="js/state.js"></script>
-<script type="text/javascript" src="js/timer.js"></script>
 
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="css/main.css">
 	</head>
 	<body>
-		<div id='projection' bind='textContent:count'></div>
-
 		<div id='top_div'>
 			<p>
 				<div id='total_value_div'>
@@ -112,39 +108,22 @@
 	</body>
 </html>
 
+
+<script type="text/javascript" src="js/state.js"></script>
+<script type="text/javascript" src="js/timer.js"></script>
+<script type="text/javascript" src="js/builder.js"></script>
+<script type="text/javascript" src="js/event_listeners.js"></script>
+
 <script src='http://brandonbrule.github.io/itsa/js/itsa.js'></script>
 
-<script type="text/javascript" src="js/builder.js"></script>
-<script type="text/javascript" src="js/init.js"></script>
 
 <script>
-function bindData(domElement, obj) {
-    var bind = domElement.getAttribute("bind").split(":");
-    var domAttr = bind[0].trim(); // the attribute on the DOM element
-    var itemAttr = bind[1].trim(); // the attribute the object
-
-    // when the object changes - update the DOM
-    Object.observe(obj, function (change) {
-        //console.log(change);
-        domElement[domAttr] = obj[itemAttr]; 
-    });
-    // when the dom changes - update the object
-    new MutationObserver(updateObj).observe(domElement, { 
-        attributes: true,
-        childList: true,
-        characterData: true
-    });
-    domElement.addEventListener("keyup", updateObj);
-    domElement.addEventListener("click",updateObj);
-    function updateObj(){
-        obj[itemAttr] = domElement[domAttr];   
-    }
-    domElement[domAttr] = obj[itemAttr]; 
-}
-
 its.a('app loaded');
-/*var field = document.getElementById("projection");
-bindData(field, game.map[0]);*/
+
+addMessage(['perpetual machine of order', game.prestige_level+".", "goal is get to item", game.perpetual_motion_machine_levels[game.prestige_level]+"." ]);
+
+// +'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()), 'initialized' ] );
+
 
 
 </script>

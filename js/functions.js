@@ -2,9 +2,14 @@ function getElement(item){
 	return document.getElementById(item);
 }
 
-
-function prestigeMultiplier() {
-    return Math.pow(game.prestige_base, game.prestige_level);
+// calls function fcn and passes the remaining args in a params to fcn
+function delegate(fcn) {
+    //console.log('delegating', arguments);
+    var args = [].slice.apply(arguments);
+    return function() {
+        //console.log('inside', args.length, args.slice(1));
+        fcn.apply(this,args.slice(1));
+    }
 }
 
 function hasClass(elem, cls) {
@@ -21,6 +26,11 @@ function closestParentByClass(el, cls) {
     return null;
 };
 
+function prestigeMultiplier() {
+    return Math.pow(game.prestige_base, game.prestige_level);
+}
+
+
 function updateUI() {
     var prev_build_rate = 0;
     
@@ -30,7 +40,7 @@ function updateUI() {
     	
     	var build_rate = calcBuildRate( i );    
 
-    	var count = rows[i].querySelector("#count_"+i);
+    	var count = rows[i].querySelector("#count");
     	var build = rows[i].querySelector("#build");
     	var rate = rows[i].querySelector("#rate");
 
@@ -39,8 +49,8 @@ function updateUI() {
 
     	count.textContent = numberFormat(game.map[i].count);
     	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
-    	build.innerHTML = numberFormat(build_rate) + "/s";
-    	rate.innerHTML = numberFormat(game.map[i].rate) + "/s";
+    	build.textContent = numberFormat(build_rate) + "/s";
+    	rate.textContent = i > 0 ? numberFormat(game.map[i].rate) + "/s" : "";
     	
     	updateItemInfo(rows[i], game.map[i].rate + prev_build_rate);
 
@@ -64,7 +74,7 @@ function handleRow(i, row, i_next, next_row){
 	}
 	
 	if (i_next < game.item_names.length-1) {
-		setVisible( row.querySelector("#rate_build_1"), game.map[i_next].active );
+		setVisible( row.querySelector("#rate_build_single"), game.map[i_next].active );
 		setVisible( row.querySelector("#rate_build_half"), game.map[i_next].active );
 		setVisible( row.querySelector("#rate_build_all"), game.map[i_next].active );
 		setVisible( row.querySelector("#pull_up"), game.map[i_next].active );
@@ -89,17 +99,26 @@ function calculate() {
     var total_value = 0;
     for (var j = 0; j<sec_since_last; j++) {
         for (var i=0; i < game.item_names.length; i++) {
-            var item = game.map[i];
+        	var item = game.map[i];
             var prev = game.map[item.previous];
             var next = game.map[item.next];
             var adjust = game.map[i].rate * (game.UI_REFRESH_INTERVAL/1000);
             
             item.count += adjust;
             if (i>0) {
-                item.count += calcBuildRate( item.previous );
+            	item.count += calcBuildRate( item.previous );
             }
 
-            if (j == sec_since_last -1) {
+			if (item.active){
+        		//console.log(i,item.count, item.active);
+        	} else if (Math.floor(item.count/item.base) > 0 ) {
+        		console.log(i, "setting", item.name, "to active.");
+        	} else {
+        		//console.log(i, "leaving", item.name, "as inactive.");
+        	}
+            
+
+            if (j == sec_since_last -1) { // only on last iteration of j is the total val calculated
                 if (game.map[i].count > 0) {
                     //console.log( 'adding', game.map[i].name, game.map[i].count, calcTotalItemValue(i));
                     total_value += calcTotalItemValue(i);
@@ -239,7 +258,7 @@ function buildDown(from, to) {
 
 function buildUp(from, to) {
 	//console.log('building up from', game.map[from].name, 'to', game.map[to].name);
-	for (var i=from; i > 0; i--) {
+	for (var i=from; i > 1; i--) {
 		if (to == i)
 			break;
 

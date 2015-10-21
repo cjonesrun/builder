@@ -26,12 +26,16 @@ function Builder() {
 	this.total_value_accel = 0; // rate of change of total value rate
 
 	// prestige-system
-	this.perpetual_machines = [];
+	this.perpetual_motion_machine_levels = [5, 11, 17, 23, 25];
 
 	// 5 items
 	//this.item_names = [ 'bit', 'part', 'block', 'thing', 'rube goldberg machine' ];
 	// 26 items
-	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 'device', 'gear', 'contraption', 'gimmick', 'dingbat', 'utensil', 'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 'whatchamacalit', 'paraphernalia', 'thingamajig', 'apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'];
+	this.item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 
+						'device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil', 
+						'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 
+						'whatchamacalit', 'paraphernalia', 'thingamajig','apparatus', 'appliance', 'furnishing', 
+						'rig', 'rube goldberg'];
 
 	this.baseCalc = function (pow) {
 		return Math.round( this.base * Math.pow(this.item_base, pow));

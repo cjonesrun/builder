@@ -16,15 +16,21 @@
 - reveal item rows in descending item # (i.e build table upside down)
 
 - game play
-	- add in a perpetual motion machine (prestige)
-	- introduce clusters (groups of n consecutive items). cluster value milestones can trigger events
-	- use value to buy more clusters or individual items
+	- add in a perpetual motion machine (PMMs prestige)
+		- no accrual for item #0, nor rate+ buttons
+		- last item in cluster builds item #0
+		- eg. 1st cluster: start with 5 items, once item #5 starts producing bits (item 0), perpetual motion PM can be "bought", reducing value to 0 (i.e. selling all items)
+			  2nd cluster: has, say, 10 items. once item 10 starts producing bits (item 0), next PM level can be "bought". 
+			  etc...
+		- PMMs will speed things up a bit with level increase, the more you pay for a PPM (i'e the more you let the builder run in PPM mode), the more it will speed things up.
 	
 	- detemine activation criteria for
 		- build pull/push buttons
 		- rate+ pull/push buttons
 		- build 1/2, max buttons
 		- rate+ 1/2, max buttons
+
+	- more sophisicated build rules (10xX builds 1xY, 7xZ and 4xW build 1xY, etc), tree rather than linked list
 
 - responsive for mobile
 

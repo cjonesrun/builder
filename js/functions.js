@@ -109,6 +109,8 @@ function calculate() {
             	item.count += calcBuildRate( item.previous );
             }
 
+
+            // determine a hidden row is to be made active
 			if (item.active){
         		//console.log(i,item.count, item.active);
         	} else if (Math.floor(item.count/item.base) > 0 ) {

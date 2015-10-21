@@ -82,7 +82,16 @@ function populateTable()
         
         addToCell(row.cells[col_index++], text("name", game.item_names[i], undefined, { "expand-action": "expand-data-row" }), 'item-name-display');
 
-        addToCell(row.cells[col_index++], text("count", 0, undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
+        //var c = text("count", 0, undefined, { "expand-action": "expand-data-row", "bind": "innerText:count" });
+        var c = document.createElement("div");
+        c.setAttribute("id", "count_"+i);
+        c.setAttribute("title", "count");
+        //c.setAttribute("bind",'textContent:count');
+        c.textContent = 0;
+        addToCell(row.cells[col_index++], c, 'numeric-display');
+        //bind(c, game.map[i]);
+
+
         addToCell(row.cells[col_index++], text("rate", "0/s", undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
         addToCell(row.cells[col_index++], text("build", "0/s", undefined, { "expand-action": "expand-data-row" }), 'numeric-display');
 
@@ -103,10 +112,13 @@ function populateTable()
             addToCell(row.cells[col_index++], button("pull_up", '&#8624;', "pull all rate+ up to "+ game.map[i].name));
             addToCell(row.cells[col_index++], button("push_up", '&#8613;', "push all rate+ up from "+ game.map[i].name));
         }
+
+        
     }
     return main_table;
 }
 
+// calls function fcn and passes the remaining args in a params to fcn
 function delegate(fcn) {
     //console.log('delegating', arguments);
     var args = [].slice.apply(arguments);

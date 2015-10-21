@@ -52,8 +52,6 @@ function buildGameMap(game){
   }
 }
 
-
-
 Object.observe(newGame, function(changes) {
   changes.forEach(function(change) {
       //console.log('game-observer', change);

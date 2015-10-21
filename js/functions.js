@@ -30,14 +30,14 @@ function updateUI() {
     	
     	var build_rate = calcBuildRate( i );    
 
-    	var count = rows[i].querySelector("#count");
+    	var count = rows[i].querySelector("#count_"+i);
     	var build = rows[i].querySelector("#build");
     	var rate = rows[i].querySelector("#rate");
 
     	if (i<rows.length-1)
     		handleRow(i, rows[i], i+1, rows[i+1]);
 
-    	count.innerHTML = numberFormat(game.map[i].count);
+    	count.textContent = numberFormat(game.map[i].count);
     	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
     	build.innerHTML = numberFormat(build_rate) + "/s";
     	rate.innerHTML = numberFormat(game.map[i].rate) + "/s";

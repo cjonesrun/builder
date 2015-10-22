@@ -49,14 +49,20 @@ function updateUI() {
 
     	count.textContent = numberFormat(game.map[i].count);
     	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
-    	build.textContent = numberFormat(build_rate) + "/s";
-    	rate.textContent = i > 0 ? numberFormat(game.map[i].rate) + "/s" : "";
-    	
+		rate.textContent = i > 0 ? numberFormat(game.map[i].rate) + "/s" : "";
+
+    	if (game.perpetual_motion_activated && i == game.perpetual_motion_machine_levels[game.prestige_level]){
+    		//console.log('using this', game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count, autoBuildLevel(0));
+    		build.textContent = numberFormat( game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count ) + "/s";
+    	} else
+    		build.textContent = numberFormat(build_rate) + "/s";
+
     	updateItemInfo(rows[i], game.map[i].rate + prev_build_rate);
 
 		prev_build_rate = build_rate;
     }
 
+    //console.log( game.total_value, game.total_value_rate, game.total_value_accel);
     updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
     getElement("running").innerHTML = timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000));
 }
@@ -68,6 +74,8 @@ function handleRow(i, row, i_next, next_row){
 	if (show) {
 		if (game.perpetual_motion_activated && i >= game.perpetual_motion_machine_levels[game.prestige_level]){
 			setVisible(next_row, false);
+		} else if (i >= game.perpetual_motion_machine_levels[game.prestige_level]) {
+			setVisible(next_row, false);
 		} else {
 			setVisible(next_row, true);
 		}
@@ -77,7 +85,7 @@ function handleRow(i, row, i_next, next_row){
 			setVisible(next_row, false);
 	}
 	
-	if (i_next < game.item_names.length-1) {
+	if (i_next < game.num_items()-1) {
 		setVisible( row.querySelector("#rate_build_single"), game.map[i_next].active );
 		setVisible( row.querySelector("#rate_build_half"), game.map[i_next].active );
 		setVisible( row.querySelector("#rate_build_all"), game.map[i_next].active );
@@ -111,7 +119,7 @@ function calculate() {
 
     var done = false;
     for (var j = 0; j<ticks_since_last; j++) {
-        for (var i=0; i < game.item_names.length && !done; i++) {
+        for (var i=0; i < game.num_items() && !done; i++) {
         	var item = game.map[i];
             var prev = game.map[item.previous];
 
@@ -130,6 +138,12 @@ function calculate() {
             item.count += adjust;
             if (i>0) {
             	item.count += calcBuildRate( item.previous );
+            } else if (game.perpetual_motion_activated) {
+            	var ppm_item = game.map[game.perpetual_motion_machine_levels[game.prestige_level]];
+            	//console.log('perpetual motion on', item.name, "from", ppm_item.name, 'of', calcBuildRate( game.perpetual_motion_machine_levels[game.prestige_level] ));
+            	//game.map[0].count += calcBuildRate( game.perpetual_motion_machine_levels[game.prestige_level] );
+            	//game.map[0].count += Math.floor( game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count / autoBuildLevel(0) );
+            	game.map[0].count += game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count; 
             }
 
             
@@ -137,8 +151,7 @@ function calculate() {
 			if (!item.active){
         		done = true;
        			break;
-        	} else if (i < game.item_names.length -1 && (item.count >= item.base && !next.active)){
-        		// determine if a hidden row is to be made active
+        	} else if (i < game.num_items() -1 && (item.count >= autoBuildLevel(i) && !next.active)){
         		//console.log(i, "setting", next.name, "to active.");
         		
         		if (i == game.perpetual_motion_machine_levels[game.prestige_level]) {
@@ -155,7 +168,7 @@ function calculate() {
     }
 
     var total_value = 0;
-    for (var i = 0; i < game.item_names.length-1; i++) 
+    for (var i = 0; i < game.num_items()-1; i++) 
     	total_value += calcTotalItemValue(i);
     
     // set game totals
@@ -356,12 +369,12 @@ function updateItemInfo(row, rate) {
 
 	var list = buildUL();
 
-	addLI(list, numberFormat(item.base) + ' ' + item.name + '->' + ((i != game.item_names.length-1) ? next.name : item.name));
-    addLI(list, 'starts building ' + ((i != game.item_names.length-1) ? next.name : item.name ) + ' @' + 
+	addLI(list, numberFormat(item.base) + ' ' + item.name + '->' + ((i != game.num_items()-1) ? next.name : item.name));
+    addLI(list, 'starts building ' + ((i != game.num_items()-1) ? next.name : item.name ) + ' @' + 
     		numberFormat(Math.ceil(starts_building_at)) + " " + item.name);
     addLI(list, "accruing " + numberFormat(rate)+ " " + item.name + '/s net');
 
-    if (i != game.item_names.length-1)
+    if (i != game.num_items()-1)
 		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');
 	addLI(list, "each " + item.name + " is worth " + numberFormat(calcItemValue(i)));
 	addLI(list, "total " + item.name + " value is " + numberFormat(calcTotalItemValue(i)));

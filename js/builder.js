@@ -49,7 +49,7 @@ function populateTable()
     var main_table = document.getElementById('main_table');
     
     // item rows
-    for (var i=0; i < game.item_names.length; i++) {
+    for (var i=0; i < game.num_items(); i++) {
         var row = document.getElementById("main-item-row-to-clone").cloneNode(true); // true = deep clone of entire row
         row.id = "item_row_"+i;
         main_table.appendChild(row);
@@ -81,7 +81,7 @@ function populateTable()
         addToCell(row.cells[col_index++], txt);
         addToCell(row.cells[col_index++], text("index", i,  undefined, { "expand-action": "expand-data-row" }), 'item-index-display');
         
-        addToCell(row.cells[col_index++], text("name", game.item_names[i], undefined, { "expand-action": "expand-data-row" }), 'item-name-display');
+        addToCell(row.cells[col_index++], text("name", game.map[i].name, undefined, { "expand-action": "expand-data-row" }), 'item-name-display');
 
         //var c = text("count", 0, undefined, { "expand-action": "expand-data-row", "bind": "innerText:count" });
         var count_div = div("count", "count", "textContent:count", "bound-element", 0);
@@ -105,7 +105,7 @@ function populateTable()
             col_index += 3;
         addToCell(row.cells[col_index++], button("push_down", '&#8615;', "push all builds down from "+ game.map[i].name));
        
-        if (i < game.item_names.length-1) { // skip 9 thru 12 for last row
+        if (i < game.num_items()-1) { // skip 9 thru 12 for last row
             if (i>0){
                 addToCell(row.cells[col_index++], button("rate_build_single", '1', "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s"));
                 addToCell(row.cells[col_index++], button("rate_build_half", '1/2', "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name));

@@ -1,5 +1,5 @@
 function loadGameState() {
-    var encodedState = window.localStorage['builder'];
+    /*var encodedState = window.localStorage['builder'];
     var state;
     try {
         if (encodedState === "null" || encodedState === null)
@@ -10,7 +10,7 @@ function loadGameState() {
         state = JSON.stringify(new Builder());
     }
 
-    game = JSON.parse(state);
+    game = JSON.parse(state);*/
 }
 
 

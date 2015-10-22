@@ -40,7 +40,7 @@ getElement('main_table').addEventListener('click', function(e){
 	  		break;
 
 	  		case "push_down":
-	  			buildDown(item_id, game.item_names.length-1);
+	  			buildDown(item_id, game.num_items()-1);
 			break;
 
 			case "rate_build_single":
@@ -56,7 +56,7 @@ getElement('main_table').addEventListener('click', function(e){
 			break;
 
 			case "pull_up":
-				buildUp(game.item_names.length-1,item_id);
+				buildUp(game.num_items()-1,item_id);
 			break;
 
 			case "push_up":
@@ -146,7 +146,7 @@ getElement('main_table').addEventListener('mouseover', function(e){
 		if (item_id > 0)
 			prev = game.map[game.map[item_id].previous];
 		
-		if (item_id < game.item_names.length-1)
+		if (item_id < game.num_items()-1)
 			next = game.map[game.map[item_id].next];
 
 	    switch (btnClass) {

@@ -66,8 +66,12 @@ function handleRow(i, row, i_next, next_row){
 	var show = game.map[i].count >= game.map[i].base || game.map[i_next].active;
 
 	if (show) {
-		setVisible(next_row, true);
-		game.map[i_next].active = true;
+		if (game.perpetual_motion_activated && i >= game.perpetual_motion_machine_levels[game.prestige_level]){
+			setVisible(next_row, false);
+		} else {
+			setVisible(next_row, true);
+		}
+		//game.map[i_next].active = true;
 	} else {
 		if (!game.map[i_next].active)
 			setVisible(next_row, false);
@@ -85,23 +89,42 @@ function handleRow(i, row, i_next, next_row){
 	}
 }
 
+
+function calculateItem(index) {
+
+}
+
 // calculate changes since last calculation.
 function calculate() {
     var this_calculation = new Date().getTime();
     var diff = this_calculation - game.last_calculation;
-    var sec_since_last = Math.floor(diff / 1000); // time in s since last calc
-    //console.log('calculating for last', sec_since_last);
-
-    // for now, forget about less than 1s. catch is if tick is < 1s, this will only calc each sec...
-    if (sec_since_last == 0)
+    var ticks_since_last = Math.floor(diff / game.UI_REFRESH_INTERVAL); // ticks since last calc
+    //console.log('calculating for last', ticks_since_last, 'ticks (', game.UI_REFRESH_INTERVAL/1000, " tick/s)");
+    
+    // for now, forget about less than 1s.
+    if (ticks_since_last == 0)
         return;
+    else if (ticks_since_last > 25 ) {
+    	// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity and show a message
+        addMessage(['you\'ve been gone for', timeFormat(ticks_since_last)+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
+    }
 
-    var total_value = 0;
-    for (var j = 0; j<sec_since_last; j++) {
-        for (var i=0; i < game.item_names.length; i++) {
+    var done = false;
+    for (var j = 0; j<ticks_since_last; j++) {
+        for (var i=0; i < game.item_names.length && !done; i++) {
         	var item = game.map[i];
             var prev = game.map[item.previous];
-            var next = game.map[item.next];
+
+            var next;
+            if (i > game.perpetual_motion_machine_levels[game.prestige_level])
+            	break;
+            else if ( game.perpetual_motion_activated && i == game.perpetual_motion_machine_levels[game.prestige_level]){
+            	next = game.map[0];
+			}
+            else
+            	next = game.map[item.next];
+
+
             var adjust = game.map[i].rate * (game.UI_REFRESH_INTERVAL/1000);
             
             item.count += adjust;
@@ -109,43 +132,40 @@ function calculate() {
             	item.count += calcBuildRate( item.previous );
             }
 
-
-            // determine a hidden row is to be made active
-			if (item.active){
-        		//console.log(i,item.count, item.active);
-        	} else if (Math.floor(item.count/item.base) > 0 ) {
-        		console.log(i, "setting", item.name, "to active.");
-        	} else {
-        		//console.log(i, "leaving", item.name, "as inactive.");
-        	}
             
+            // bail out if no active rows
+			if (!item.active){
+        		done = true;
+       			break;
+        	} else if (i < game.item_names.length -1 && (item.count >= item.base && !next.active)){
+        		// determine if a hidden row is to be made active
+        		//console.log(i, "setting", next.name, "to active.");
+        		
+        		if (i == game.perpetual_motion_machine_levels[game.prestige_level]) {
+        			console.log(i, item.next, game.prestige_level, game.perpetual_motion_machine_levels[game.prestige_level]);
+        			game.perpetual_motion_activated = true;
+        			console.log("ready to start perpetual motion from", item.name, "back to", game.map[0].name);
+        		} else {
+        			next.active = true;
+        		}
+        	} else {
 
-            if (j == sec_since_last -1) { // only on last iteration of j is the total val calculated
-                if (game.map[i].count > 0) {
-                    //console.log( 'adding', game.map[i].name, game.map[i].count, calcTotalItemValue(i));
-                    total_value += calcTotalItemValue(i);
-                }
-            }
+        	}
         }        
     }
 
-    if (sec_since_last > game.UI_REFRESH_INTERVAL * 25 / 1000 ) {// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity
-        var str = timeFormat(sec_since_last);
-
-        //console.log( sec_since_last, hours+'h', mins+'m', seconds+'s.');
-        addMessage(['you\'ve been gone for', str+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
-    }
-
+    var total_value = 0;
+    for (var i = 0; i < game.item_names.length-1; i++) 
+    	total_value += calcTotalItemValue(i);
+    
     // set game totals
-    var new_rate = Math.max(0, ( total_value - game.total_value ) / (sec_since_last));
+    var new_rate = Math.max(0, ( total_value - game.total_value ) / (ticks_since_last));
     game.total_value_accel = Math.max(0, ( new_rate - game.total_value_rate ) );
     game.total_value_rate = new_rate;
     game.total_value = total_value;
-
-    //console.log("value_rate", numberFormat( total_value - game.total_value ));
     
-    // keep track of the remainder, if any.
-    game.last_calculation = this_calculation - (diff - sec_since_last * 1000);
+    // back up the last_calc by remainder so it gets included next tick
+    game.last_calculation = this_calculation - (diff - ticks_since_last * game.UI_REFRESH_INTERVAL);
 }
 
 function calcBuildCost(item, count){

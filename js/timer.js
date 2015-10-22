@@ -33,6 +33,7 @@ function stopTimers() {
 function startTimers() {
     if (typeof global_timer != "number") {
         //console.log('starting global_timer', global_timer);
+        game.last_calculation = new Date().getTime();
         startUIUpdater();
     } /* else
         console.log('global_timer already started', global_timer); */

@@ -26,7 +26,8 @@ function Builder() {
 	this.total_value_accel = 0; // rate of change of total value rate
 
 	// prestige-system
-	this.perpetual_motion_machine_levels = [5, 11, 17, 23, 25];
+	this.perpetual_motion_machine_levels = [3, 6, 11, 17, 23, 25];
+	this.perpetual_motion_activated = false;
 
 	// 5 items
 	//this.item_names = [ 'bit', 'part', 'block', 'thing', 'rube goldberg machine' ];

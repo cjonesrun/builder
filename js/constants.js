@@ -1,6 +1,6 @@
 var this_session_start_time = new Date().getTime();
 
-var game = (function () {
+var GameModule = function () {
 
 	var NAME = "builder";
 	var DESCRIPTION = "build. build. build!";
@@ -98,8 +98,9 @@ var game = (function () {
 		map: state
 	};
 
-})(); // END game Module
+}; // END game Module
 
+var game = new GameModule();
 console.log(JSON.stringify(game));
 
 console.log("from constants.js", game.map, game.baseCalc(10), game.num_items);

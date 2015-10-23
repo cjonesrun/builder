@@ -1,22 +1,21 @@
-getElement("tab_bar_div").addEventListener('click', function(e){
+var tabBarDiv = getElement("tab_bar_div");
+var mainTable = getElement('main_table');
+var messagesTable = getElement('messages_table');
+
+tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
 	
-	var div = getElement("tab_bar_div");
-
-	console.log("click on", e.target.id, 'with', (div.children.length-1), 'siblings');
+	console.log("click on", e.target.id, 'with', (tabBarDiv.children.length-1), 'siblings');
 	var newDiv = document.createElement("div");
-	newDiv.id = "tab_div_"+ (div.children.length+1);
+	newDiv.id = "tab_div_"+ (tabBarDiv.children.length+1);
 	newDiv.className = "tab_bar_div_child left";
-	newDiv.textContent = "Cluster "+ (div.children.length+1);
+	newDiv.textContent = "PMM "+ (tabBarDiv.children.length+1);
 
-	div.appendChild(newDiv);
-
-	//console.log(div);
-	//<div id="tab_div_4" class="tab_bar_div_child left">Cluster 4</div>")
+	tabBarDiv.appendChild(newDiv);
 });
 
 // main_table event listener
-getElement('main_table').addEventListener('click', function(e){
+mainTable.addEventListener('click', function(e){
 	its.clearAll();
 
 	if (e.target.nodeName === 'TEXT'){
@@ -88,7 +87,7 @@ getElement('main_table').addEventListener('click', function(e){
 });
 
 // message_table event listner
-getElement('messages_table').addEventListener('click', function(e){
+messagesTable.addEventListener('click', function(e){
 	its.clearAll();
 
   	if (e.target.nodeName === 'BUTTON'){
@@ -138,7 +137,7 @@ getElement('messages_table').addEventListener('click', function(e){
   }
 });
 
-getElement('main_table').addEventListener('mouseover', function(e){
+mainTable.addEventListener('mouseover', function(e){
 	if (e.target.nodeName === 'TEXT'){
 		var row = closestParentByClass(e.target, 'item-data-row');
 		var item_id = parseInt(row.getAttribute('item-id'));

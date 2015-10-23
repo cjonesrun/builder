@@ -130,9 +130,10 @@ function calculate() {
         		//console.log(i, "setting", next.name, "to active.");
         		
         		if (i == game.perpetual_motion_machine_levels[game.prestige_level]) {
-        			console.log(i, item.next, game.prestige_level, game.perpetual_motion_machine_levels[game.prestige_level]);
+        			//console.log(i, item.next, game.prestige_level, game.perpetual_motion_machine_levels[game.prestige_level]);
         			game.perpetual_motion_activated = true;
-        			console.log("ready to start perpetual motion from", item.name, "back to", game.map[0].name);
+        			console.log("starting perpetual motion from", item.name, "back to", game.map[0].name+".", "took", 
+        				timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000)));
         		} else {
         			next.active = true;
         		}
@@ -289,11 +290,16 @@ function buildUp(from, to) {
 
 // format the number for display
 function numberFormat(number, precision) {
-	if (typeof number === 'undefined')
+	if (number === undefined || typeof number === 'undefined')
 		return;
 	else if (number === Infinity)
 		return "&infin;";
-	else if (number == 0 || number >=1 && number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3) ) { // between 1 and 10^NUMERICAL_DISPLAY_PRECISION
+	else if (number == 0)
+		return numeral(number).format('0,0')
+	else if (number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3))
+		return numeral(number).format("0,0.0000");
+
+	/*else if (number == 0 || number >=1 && number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3) ) { // between 1 and 10^NUMERICAL_DISPLAY_PRECISION
 
 		if (number - Math.floor(number) > 0) { // a decimal number
 			return number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -306,7 +312,8 @@ function numberFormat(number, precision) {
 			return number.toPrecision(precision);
 		} else
 			return number.toPrecision(4);
-	}
+	}*/
+	return numeral(number).format("0,0."+game.NUMERICAL_DISPLAY_PRECISION);
 }
 
 function timeFormat(number) {

@@ -32,8 +32,8 @@ body { font-family: serif;
 }
 
 .tab_bar_div {
-    width: 100%;
-    height: 1em;
+    width: 75%;
+    height: auto;
     /*border: 1px solid gray;*/
     float:left;
     margin-left: 2em;
@@ -42,11 +42,14 @@ body { font-family: serif;
 }
 
 .tab_bar_div_child {
-    width: 10em;
+	//max-width: 10em;
+   	width:6em;
     height: 1em;
     text-align: center;
     border: 1px solid gray;
     display: block;
+    margin-right: 2px;
+    border-radius: 15px 50px 15px 15px; /* top-left, top-right, bottom-right, bottom-left */
 }
 
 .left {

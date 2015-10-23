@@ -22,7 +22,7 @@ var GameModule = function () {
 	var item_base = 1.7; /*1.3*/
 	var prestige_level = 0;
 	var prestige_base = 2;
-	var min_exponent = -324;	// min exponent is -324
+	var min_exponent = -3;	// min exponent is -324
 
 	var total_value = 0; // current total value
 	var total_value_rate = 0; // total_value rate of change per sec

@@ -2,34 +2,9 @@ function getElement(item){
 	return document.getElementById(item);
 }
 
-// calls function fcn and passes the remaining args in a params to fcn
-function delegate(fcn) {
-    //console.log('delegating', arguments);
-    var args = [].slice.apply(arguments);
-    return function() {
-        //console.log('inside', args.length, args.slice(1));
-        fcn.apply(this,args.slice(1));
-    }
-}
-
-function hasClass(elem, cls) {
-    var str = " " + elem.className + " ";
-    var testCls = " " + cls + " ";
-    return(str.indexOf(testCls) != -1) ;
-};
-
-function closestParentByClass(el, cls) {
-    while (el  && el !== document) {
-        if (hasClass(el, cls)) return el;
-        el = el.parentNode;
-    }
-    return null;
-};
-
 function prestigeMultiplier() {
     return Math.pow(game.prestige_base, game.prestige_level);
 }
-
 
 function updateUI() {
     var prev_build_rate = 0;
@@ -143,7 +118,7 @@ function calculate() {
             	//console.log('perpetual motion on', item.name, "from", ppm_item.name, 'of', calcBuildRate( game.perpetual_motion_machine_levels[game.prestige_level] ));
             	//game.map[0].count += calcBuildRate( game.perpetual_motion_machine_levels[game.prestige_level] );
             	//game.map[0].count += Math.floor( game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count / autoBuildLevel(0) );
-            	game.map[0].count += game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count; 
+            	game.map[0].count += ppm_item.count; 
             }
 
             
@@ -434,6 +409,44 @@ function updateExpandDataRowVisibility(row, element){
 	} else {
 		element.innerHTML = "-";
 		setVisible(rowToShow, true);
-	}
-	
+	}	
 }
+
+function setMessage(str_arr) {
+	addMessage(str_arr, true);
+}
+
+function addMessage(str_arr, clearFirst){
+	var dump = str_arr.join(" ");
+
+	if (!clearFirst)
+		dump += "\n" + document.getElementById( 'messages' ).value;
+
+	var lines = dump.split("\n");
+	if (lines.length > 20) {
+		dump = '';
+		for (var i =0; i<20; i++)
+			dump += lines[i] +'\n'; 
+	}
+	document.getElementById( 'messages' ).value = dump;
+
+	//console.log( (messagesWindow.value.match(/\n/g) || []).length);
+	// TODO: trim the log to, say, 1,000 characters
+}
+
+function clearMessages() {
+	setMessage( [] );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

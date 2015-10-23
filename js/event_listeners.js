@@ -1,3 +1,20 @@
+getElement("tab_bar_div").addEventListener('click', function(e){
+	its.clearAll();
+	
+	var div = getElement("tab_bar_div");
+
+	console.log("click on", e.target.id, 'with', (div.children.length-1), 'siblings');
+	var newDiv = document.createElement("div");
+	newDiv.id = "tab_div_"+ (div.children.length+1);
+	newDiv.className = "tab_bar_div_child left";
+	newDiv.textContent = "Cluster "+ (div.children.length+1);
+
+	div.appendChild(newDiv);
+
+	//console.log(div);
+	//<div id="tab_div_4" class="tab_bar_div_child left">Cluster 4</div>")
+});
+
 // main_table event listener
 getElement('main_table').addEventListener('click', function(e){
 	its.clearAll();

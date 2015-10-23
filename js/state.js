@@ -1,16 +1,19 @@
+// instantiate the game
+var game = new GameModule();
+
+
 function loadGameState() {
-    /*var encodedState = window.localStorage['builder'];
+    var encodedState = window.localStorage['builder'];
     var state;
     try {
         if (encodedState === "null" || encodedState === null)
             throw "null encodedState state";
         state = atob(encodedState);
     } catch (err) {
-        console.log('malformed state obj', encodedState);
-        state = JSON.stringify(new Builder());
+        console.log('malformed state obj:[', err, '].', encodedState);
+        state = JSON.stringify(new GameModule());
     }
-
-    game = JSON.parse(state);*/
+    game = extend(new GameModule(), JSON.parse(state));
 }
 
 
@@ -66,7 +69,7 @@ function loadState() {
 }
 
 function hardReset() {
-    window.localStorage['builder'] = null;
+    window.localStorage['builder'] = null; /*btoa(JSON.stringify(new GameModule()));*/
     location.reload();
 }
 
@@ -74,7 +77,7 @@ function reset() {
     // stop timers.
     //stopTimers();
 
-    game = new Builder();
+    game = new GameModule();
     //console.log(JSON.stringify(game));
 
     saveState();

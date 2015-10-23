@@ -2,8 +2,10 @@
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding">
 
-<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+
+<script type="text/javascript" src="js/constants.js"></script>
 
 <html>
 	<head>
@@ -11,23 +13,27 @@
 	</head>
 	<body>
 		<div id='top_div'>
-			<p>
-				<div id='total_value_div'>
-					<b><text title="total value">v</text></b>
-					<text id="total_value" title="total value">0</text>
-					<b><text title="delta value">&beta;<sub>v</text></b>
-					<text id="total_value_rate" title="beta value">0/s</text>
-					<b><text title="gamma value">&gamma;<sub>v</sub></text></b>
-					<text id="total_value_accel" title="gamma value">0/s<sup>2</sup></text>
-					<br>
-					<b><text><i>t</i></text></b>
-					<text id="running" title="total building time"></text>
-					
-				</div>
-			</p>
-		</div>
+			<div id='total_value_div'>
+				<b><text title="total value">v</text></b>
+				<text id="total_value" title="total value">0</text>
+				<b><text title="delta value">&beta;<sub>v</text></b>
+				<text id="total_value_rate" title="beta value">0/s</text>
+				<b><text title="gamma value">&gamma;<sub>v</sub></text></b>
+				<text id="total_value_accel" title="gamma value">0/s<sup>2</sup></text>
+				<br>
+				<b><text><i>t</i></text></b>
+				<text id="running" title="total building time"></text>
+				
+			</div>
 
-		<div></div>
+			<div id="tab_bar_div" class="tab_bar_div" data-visible="true">
+				<div id="tab_div_1" class="tab_bar_div_child left">Cluster 1</div>
+				<div id="tab_div_2" class="tab_bar_div_child left">Cluster 2</div>
+				<div id="tab_div_3" class="tab_bar_div_child left">Cluster 3</div>
+				<div id="tab_div_4" class="tab_bar_div_child left">Cluster 4</div>
+			</div>
+
+		</div>
 
 		<div id="items_div">
 			<p>
@@ -118,9 +124,9 @@
 
 
 <script>
-its.a('app loaded');
-
 addMessage(['perpetual machine of order', game.prestige_level +".", "goal is get to item", game.perpetual_motion_machine_levels[game.prestige_level]+"." ]);
+
+its.a('app loaded');
 
 // +'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()), 'initialized' ] );
 </script>

@@ -99,39 +99,3 @@ var GameModule = function () {
 	};
 
 }; // END game Module
-
-var game = new GameModule();
-console.log(JSON.stringify(game));
-
-console.log("from constants.js", game.map, game.baseCalc(10), game.num_items);
-
-var messagesWindow;
-function setMessage(str_arr) {
-	addMessage(str_arr, true);
-}
-
-function addMessage(str_arr, clearFirst){
-	if (!messagesWindow)
-		messagesWindow = document.getElementById( 'messages' );
-	var dump = str_arr.join(" ");
-
-	if (!clearFirst)
-		dump += "\n" + messagesWindow.value;
-
-	var lines = dump.split("\n");
-	if (lines.length > 20) {
-		dump = '';
-		for (var i =0; i<20; i++)
-			dump += lines[i] +'\n'; 
-	}
-	messagesWindow.value = dump;
-
-	//console.log( (messagesWindow.value.match(/\n/g) || []).length);
-	// TODO: trim the log to, say, 1,000 characters
-}
-
-function clearMessages() {
-	if (!messagesWindow)
-		messagesWindow = document.getElementById( 'messages' );
-	setMessage( [] );
-}

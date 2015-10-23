@@ -297,7 +297,7 @@ function numberFormat(number, precision) {
 	else if (number == 0)
 		return numeral(number).format('0,0')
 	else if (number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3))
-		return numeral(number).format("0,0.0000");
+		return numeral(number).format("0,0." + (game.NUMERICAL_DISPLAY_PRECISION));
 
 	/*else if (number == 0 || number >=1 && number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3) ) { // between 1 and 10^NUMERICAL_DISPLAY_PRECISION
 

@@ -28,7 +28,6 @@
 			</div>
 
 			<div id="tab_bar_div" class="tab_bar_div" data-visible="true">
-				<div id="tab_div_0" class="tab_bar_div_child left" title="perpetual motion machine #0">PMM 0</div>
 			</div>
 
 		</div>
@@ -103,7 +102,7 @@
 			<p>notes:
 			<ul>
 				<li>build a rube goldberg machine.</li>
-				<li>when a rube goldberg machine starts building rube-goldberg machines, perpetual motion is attained.</li>
+				<!--li>when a rube goldberg machine starts building rube-goldberg machines, perpetual motion is attained.</li-->
 				<li>more info about the game is coming. for now, build things to build more things.</li>
 			</ul>
 			</p>
@@ -122,9 +121,9 @@
 
 
 <script>
-addMessage(['perpetual machine of order', game.prestige_level +".", "goal is get to item", game.perpetual_motion_machine_levels[game.prestige_level]+"." ]);
+addMessage(['perpetual machine of order', game.pmm.current_level +".", "goal is get to item", game.pmm.levels[game.pmm.current_level]+"." ]);
 
 its.a('app loaded');
 
-// +'^'+game.prestige_level,'=', numberFormat(prestigeMultiplier()), 'initialized' ] );
+// +'^'+game.pmm.current_level,'=', numberFormat(prestigeMultiplier()), 'initialized' ] );
 </script>

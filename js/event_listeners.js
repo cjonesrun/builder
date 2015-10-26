@@ -1,17 +1,28 @@
-var tabBarDiv = getElement("tab_bar_div");
 var mainTable = getElement('main_table');
 var messagesTable = getElement('messages_table');
+var tabBarDiv = getElement("tab_bar_div");
 
 tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
 	
-	console.log("click on", e.target.id, 'with', (tabBarDiv.children.length-1), 'siblings');
-	var newDiv = document.createElement("div");
-	newDiv.id = "tab_div_"+ (tabBarDiv.children.length+1);
-	newDiv.className = "tab_bar_div_child left";
-	newDiv.textContent = "PMM "+ (tabBarDiv.children.length+1);
+	if (e.target.id === tabBarDiv.id)
+		return;
 
-	tabBarDiv.appendChild(newDiv);
+	//console.log("click on", e.target.id, e.target.getAttribute("pmm-index"));
+
+	var ppm_index = e.target.getAttribute("pmm-index");
+
+	game.pmm.state[ppm_index]++;
+	console.log(game.pmm.state[ppm_index]);
+
+	e.target.textContent = "PPM" + ppm_index + ": " + game.pmm.state[ppm_index];
+
+	/*var newDiv = document.createElement("div");
+	newDiv.id = "tab_div_"+ (tabBarDiv.children.length);
+	newDiv.className = "tab_bar_div_child left";
+	newDiv.textContent = "PMM "+ (tabBarDiv.children.length);
+
+	tabBarDiv.appendChild(newDiv);*/
 });
 
 // main_table event listener

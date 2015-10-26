@@ -10,7 +10,7 @@
 - figure out a prestige strategy 
     - each item represents a fraction of the total 'value'. prestige can be tied to this value.
 	- when to enable prestige upgrade
-	- each escalation increase build&rate increases by PRESTIGE_BASE^PRESTIGE_LEVEL (i.e. 2^0 then 2^1, then 2^2)
+	- each escalation increase build&rate increases by pmm.base^pmm.current_level (i.e. 2^0 then 2^1, then 2^2)
 	- each escalation reduces the build/s division ( div by )
 
 - reveal item rows in descending item # (i.e build table upside down)
@@ -22,7 +22,7 @@
 		- eg. 1st cluster: start with 5 items, once item #5 starts producing bits (item 0), perpetual motion PM can be "bought", reducing value to 0 (i.e. selling all items)
 			  2nd cluster: has, say, 10 items. once item 10 starts producing bits (item 0), next PM level can be "bought". 
 			  etc...
-		- PMMs will speed things up a bit with level increase, the more you pay for a PPM (i'e the more you let the builder run in PPM mode), the more it will speed things up.
+		- PMMs will speed things up a bit with level increase, the more you pay for a PMM (i'e the more you let the builder run in PMM mode), the more it will speed things up.
 	
 	- detemine activation criteria for
 		- build pull/push buttons

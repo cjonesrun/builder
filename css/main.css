@@ -43,7 +43,9 @@ body { font-family: serif;
 
 .tab_bar_div_child {
 	//max-width: 10em;
-   	width:6em;
+   	width:auto;
+   	padding-left: 1em;
+   	padding-right: 1em;
     height: 1em;
     text-align: center;
     border: 1px solid gray;

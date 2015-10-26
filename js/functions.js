@@ -3,7 +3,7 @@ function getElement(item){
 }
 
 function prestigeMultiplier() {
-    return Math.pow(game.prestige_base, game.prestige_level);
+    return Math.pow(game.pmm.base, game.pmm.current_level);
 }
 
 function updateUI() {
@@ -26,9 +26,10 @@ function updateUI() {
     	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
 		rate.textContent = i > 0 ? numberFormat(game.map[i].rate) + "/s" : "";
 
-    	if (game.perpetual_motion_activated && i == game.perpetual_motion_machine_levels[game.prestige_level]){
-    		//console.log('using this', game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count, autoBuildLevel(0));
-    		build.textContent = numberFormat( game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count ) + "/s";
+    	if (game.pmm.activated && i == game.pmm.levels[game.pmm.current_level]){
+    		//console.log('using this', game.map[game.pmm.levels[game.pmm.current_level]].count, autoBuildLevel(0));
+    		build.textContent = numberFormat( game.map[game.pmm.levels[game.pmm.current_level]].base * 
+    			game.map[game.pmm.levels[game.pmm.current_level]].count ) + "/s";
     	} else
     		build.textContent = numberFormat(build_rate) + "/s";
 
@@ -47,9 +48,9 @@ function handleRow(i, row, i_next, next_row){
 	var show = game.map[i].count >= game.map[i].base || game.map[i_next].active;
 
 	if (show) {
-		if (game.perpetual_motion_activated && i >= game.perpetual_motion_machine_levels[game.prestige_level]){
+		if (game.pmm.activated && i >= game.pmm.levels[game.pmm.current_level]){
 			setVisible(next_row, false);
-		} else if (i >= game.perpetual_motion_machine_levels[game.prestige_level]) {
+		} else if (i >= game.pmm.levels[game.pmm.current_level]) {
 			setVisible(next_row, false);
 		} else {
 			setVisible(next_row, true);
@@ -99,9 +100,9 @@ function calculate() {
             var prev = game.map[item.previous];
 
             var next;
-            if (i > game.perpetual_motion_machine_levels[game.prestige_level])
+            if (i > game.pmm.levels[game.pmm.current_level])
             	break;
-            else if ( game.perpetual_motion_activated && i == game.perpetual_motion_machine_levels[game.prestige_level]){
+            else if ( game.pmm.activated && i == game.pmm.levels[game.pmm.current_level]){
             	next = game.map[0];
 			}
             else
@@ -113,12 +114,13 @@ function calculate() {
             item.count += adjust;
             if (i>0) {
             	item.count += calcBuildRate( item.previous );
-            } else if (game.perpetual_motion_activated) {
-            	var ppm_item = game.map[game.perpetual_motion_machine_levels[game.prestige_level]];
-            	//console.log('perpetual motion on', item.name, "from", ppm_item.name, 'of', calcBuildRate( game.perpetual_motion_machine_levels[game.prestige_level] ));
-            	//game.map[0].count += calcBuildRate( game.perpetual_motion_machine_levels[game.prestige_level] );
-            	//game.map[0].count += Math.floor( game.map[game.perpetual_motion_machine_levels[game.prestige_level]].count / autoBuildLevel(0) );
-            	game.map[0].count += ppm_item.count; 
+            } else if (game.pmm.activated) {
+            	var pmm_item = game.map[game.pmm.levels[game.pmm.current_level]];
+            	//console.log('perpetual motion on', item.name, "from", pmm_item.name, 'of', calcBuildRate( game.pmm.levels[game.pmm.current_level] ));
+            	//game.map[0].count += calcBuildRate( game.pmm.levels[game.pmm.current_level] );
+            	//game.map[0].count += Math.floor( game.map[game.pmm.levels[game.pmm.current_level]].count / autoBuildLevel(0) );
+
+            	game.map[0].count += pmm_item.base *  pmm_item.count; 
             }
 
             
@@ -129,9 +131,11 @@ function calculate() {
         	} else if (i < game.num_items() -1 && (item.count >= autoBuildLevel(i) && !next.active)){
         		//console.log(i, "setting", next.name, "to active.");
         		
-        		if (i == game.perpetual_motion_machine_levels[game.prestige_level]) {
-        			//console.log(i, item.next, game.prestige_level, game.perpetual_motion_machine_levels[game.prestige_level]);
-        			game.perpetual_motion_activated = true;
+        		if (i == game.pmm.levels[game.pmm.current_level]) {
+        			//console.log(i, item.next, game.pmm.current_level, game.pmm.levels[game.pmm.current_level]);
+        			game.pmm.activated = true;
+
+        			enablePMM(game.pmm.current_level);
         			console.log("starting perpetual motion from", item.name, "back to", game.map[0].name+".", "took", 
         				timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000)));
         		} else {
@@ -155,6 +159,23 @@ function calculate() {
     
     // back up the last_calc by remainder so it gets included next tick
     game.last_calculation = this_calculation - (diff - ticks_since_last * game.UI_REFRESH_INTERVAL);
+}
+
+function enablePMM(index){
+
+	game.pmm.state[index] = 0;
+
+	var tabBarDiv = getElement("tab_bar_div");
+
+	var newDiv = document.createElement("div");
+	newDiv.id = "tab_div_"+ (tabBarDiv.children.length);
+	newDiv.className = "tab_bar_div_child left";
+	newDiv.setAttribute("pmm-index", index);
+	newDiv.textContent = "Click to activate PMM"+ (tabBarDiv.children.length);
+
+	tabBarDiv.appendChild(newDiv);
+
+
 }
 
 function calcBuildCost(item, count){
@@ -293,27 +314,14 @@ function numberFormat(number, precision) {
 	if (number === undefined || typeof number === 'undefined')
 		return;
 	else if (number === Infinity)
-		return "&infin;";
-	else if (number == 0)
-		return numeral(number).format('0,0')
-	else if (number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3))
-		return numeral(number).format("0,0." + (game.NUMERICAL_DISPLAY_PRECISION));
-
-	/*else if (number == 0 || number >=1 && number < Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3) ) { // between 1 and 10^NUMERICAL_DISPLAY_PRECISION
-
-		if (number - Math.floor(number) > 0) { // a decimal number
-			return number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		return "∞";
+	else if (number == 0 || number == Math.floor(number)){
+		if (number > Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3)) {
+			return number.toPrecision(4)/*.replace(/0+$/g, "")*/;
 		}
-
-		//return number;
-		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	} else {
-		if (typeof precision !== 'undefined') {
-			return number.toPrecision(precision);
-		} else
-			return number.toPrecision(4);
-	}*/
-	return numeral(number).format("0,0."+game.NUMERICAL_DISPLAY_PRECISION);
+		return numeral(number).format('0,0');
+	}
+	return number.toPrecision(4).replace(/0+$/g, "");
 }
 
 function timeFormat(number) {

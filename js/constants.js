@@ -1,4 +1,5 @@
 var this_session_start_time = new Date().getTime();
+var DECIMAL_FORMAT = "0,0.0000";
 
 var GameModule = function () {
 
@@ -12,7 +13,6 @@ var GameModule = function () {
 
 	// how much things are slowed down when  accumulating "offline"
 	var warp_reduction = 0.25;
-
 	
 	var game_started = new Date().getTime();    // when this game started
 	var last_calculation = new Date().getTime();
@@ -20,17 +20,20 @@ var GameModule = function () {
 
 	var base = 10;
 	var item_base = 1.7; /*1.3*/
-	var prestige_level = 0;
-	var prestige_base = 2;
 	var min_exponent = -3;	// min exponent is -324
 
 	var total_value = 0; // current total value
 	var total_value_rate = 0; // total_value rate of change per sec
 	var total_value_accel = 0; // rate of change of total value rate
 
-	// prestige-system
-	var perpetual_motion_machine_levels = [3, 6, 11, 17, 23, 25];
-	var perpetual_motion_activated = false;
+	var pmm = {
+		base: 2,
+		current_level: 0,
+
+		levels: [3, 6, 11, 17, 23, 25],
+		activated: false,
+		state: []
+	};
 
 	var item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 
 						'device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil', 
@@ -45,6 +48,10 @@ var GameModule = function () {
 	var baseCalc = function (pow) {
 		return Math.round( base * Math.pow(item_base, pow));
 	};
+
+	var getItemName = function(i){
+		return item_names[i];
+	}
   
   	var state = [];
 	for (var i=0; i < item_names.length; i++) {
@@ -57,7 +64,7 @@ var GameModule = function () {
 			id: i,
 			previous: (i>0) ? i-1 : null,
 			next: (i < item_names.length-1) ? i+1 : null,
-			active: i===0 ? true : false
+			active: i===0 ? true : false,
 		});		
 	};
 
@@ -66,6 +73,7 @@ var GameModule = function () {
 		// public functions
 		num_items: getNumberOfItems,
 		baseCalc: baseCalc,
+		name: getItemName,
 		
 		// "constants"
 		NAME: NAME,
@@ -77,11 +85,6 @@ var GameModule = function () {
 		NUMERICAL_DISPLAY_PRECISION: NUMERICAL_DISPLAY_PRECISION,
 
 		// public variables
-		prestige_level: prestige_level,
-		prestige_base: prestige_base,
-		perpetual_motion_machine_levels: perpetual_motion_machine_levels,
-
-		
 		game_started: game_started,
 		last_calculation: last_calculation,
 		last_save: last_save,
@@ -95,7 +98,8 @@ var GameModule = function () {
 		warp_reduction: warp_reduction,
 
 		// game state
-		map: state
+		map: state,
+		pmm: pmm
 	};
 
 }; // END game Module

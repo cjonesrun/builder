@@ -54,6 +54,19 @@ body { font-family: serif;
     border-radius: 15px 50px 15px 15px; /* top-left, top-right, bottom-right, bottom-left */
 }
 
+#build_single {
+	width: 1em;
+	height: 1em;
+   	padding-left: 0.5em;
+   	padding-right: 0.5em;
+    height: 1em;
+    text-align: center;
+    border: 1px solid gray;
+    display: block;
+    margin-right: 2px;
+    font-size: 0.8em;
+    border-radius: 5px 5px 5px 5px; /* top-left, top-right, bottom-right, bottom-left */
+}
 .left {
     float:left;
 }

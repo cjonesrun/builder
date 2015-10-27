@@ -27,10 +27,6 @@ body { font-family: serif;
 	width: 1em;
 }
 
-.pull_down, .pull_up, .push_down, .push_up{
-	//height: 1em;
-}
-
 .tab_bar_div {
     width: 75%;
     height: auto;
@@ -51,22 +47,32 @@ body { font-family: serif;
     border: 1px solid gray;
     display: block;
     margin-right: 2px;
-    border-radius: 15px 50px 15px 15px; /* top-left, top-right, bottom-right, bottom-left */
+    border-radius: 3px 3px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
 }
 
-#build_single {
-	width: 1em;
-	height: 1em;
-   	padding-left: 0.5em;
-   	padding-right: 0.5em;
+.builder_cel {
+	width: 2.6em;
+}
+.builder_div {
+	/*min-width: 1em;
+	width: auto;*/
+	width: 3em;
     height: 1em;
     text-align: center;
     border: 1px solid gray;
     display: block;
-    margin-right: 2px;
+    
     font-size: 0.8em;
-    border-radius: 5px 5px 5px 5px; /* top-left, top-right, bottom-right, bottom-left */
+    border-radius: 3px 3px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
+    color: black;
+    background: linear-gradient(white,lightgray);
 }
+
+.builder_div:active {
+	background: linear-gradient(lightgray,white);
+	/*color:white;*/
+}
+
 .left {
     float:left;
 }
@@ -86,6 +92,7 @@ textarea[class="main-message-area"]{
 
 table[class="data-test"]{
 	/*border: 1px solid black;*/
+	table-layout: fixed;
 }
 
 table tr{
@@ -96,6 +103,7 @@ table tr{
 table th,td{
 	/*border: 1px solid black;*/
 	vertical-align: top;
+	width: auto;
 }
 
 table td [class="expanded-item-data-col"]{

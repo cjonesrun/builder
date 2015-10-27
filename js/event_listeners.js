@@ -32,14 +32,33 @@ mainTable.addEventListener('mousedown', function(e){ e.preventDefault(); }, fals
 mainTable.addEventListener('click', function(e){
 	its.clearAll();
 
-	var btnClass = e.target.className;
-	var row = closestParentByClass(e.target, 'item-data-row');
-  	var item_id = parseInt(row.getAttribute('item-id'));
-  	switch (btnClass) {
-  		case "build_single":
-  		console.log(e.which);
-  			build(item_id, 0);
-  		break;
+	if (e.target.nodeName === 'DIV'){
+		var btnClass = e.target.className;
+		var row = closestParentByClass(e.target, 'item-data-row');
+	  	var item_id = parseInt(row.getAttribute('item-id'));
+
+	  	if (hasClass(e.target, "build_single"))
+	  		build(item_id, 0);
+	  	else if (hasClass(e.target, "build_half"))
+	  		build(item_id, 0.5);
+	  	else if (hasClass(e.target, "build_all"))
+	  		build(item_id, 1);
+	  	else if (hasClass(e.target, "pull_down"))
+	  		buildDown(0, item_id);
+	  	else if (hasClass(e.target, "push_down"))
+	  		buildDown(item_id, game.num_items()-1);
+	  	else if (hasClass(e.target, "rate_build_single"))
+	  		buildRateInc(item_id, 0);
+	  	else if (hasClass(e.target, "rate_build_half"))	 
+	  		buildRateInc(item_id, 0.5); 		
+	  	else if (hasClass(e.target, "rate_build_all"))
+	  		buildRateInc(item_id, 1);
+	  	else if (hasClass(e.target, "pull_up"))
+	  		buildUp(game.num_items()-1,item_id);
+	  	else if (hasClass(e.target, "push_up"))
+	  		buildUp(item_id, 0);
+	  	else
+	  		its.a('main_table event handle. no button handler for ' + btnClass);
   	}
 
 	if (e.target.nodeName === 'TEXT'){
@@ -57,59 +76,7 @@ mainTable.addEventListener('click', function(e){
 	  			//its.a('main_table event handle. no anchor handler for ' + aClass);
 	  		break;
 	  	}
-
-	} else if (e.target.nodeName === 'BUTTON'){
-	  	var row = closestParentByClass(e.target, 'item-data-row');
-	    var item_id = parseInt(row.getAttribute('item-id'));
-	  	var btnClass = e.target.className;
-	  	
-	  	switch (btnClass) {
-	  		case "build_single":
-	  		console.log(e.which);
-	  			build(item_id, 0);
-	  		break;
-
-	  		case "build_half":
-	  			build(item_id, 0.5);
-	  		break;
-
-	  		case "build_all":
-	  			build(item_id, 1);
-	  		break;
-
-	  		case "pull_down":
-	  			buildDown(0, item_id);
-	  		break;
-
-	  		case "push_down":
-	  			buildDown(item_id, game.num_items()-1);
-			break;
-
-			case "rate_build_single":
-				buildRateInc(item_id, 0);
-			break;
-
-			case "rate_build_half":
-				buildRateInc(item_id, 0.5);
-			break;
-
-			case "rate_build_all":
-				buildRateInc(item_id, 1);
-			break;
-
-			case "pull_up":
-				buildUp(game.num_items()-1,item_id);
-			break;
-
-			case "push_up":
-				buildUp(item_id, 0);
-			break;
-
-	  		default:
-	  			its.a('main_table event handle. no button handler for ' + btnClass);
-	  		break;
-	  	}    
-  }
+	} 
 });
 
 // message_table event listner
@@ -164,25 +131,12 @@ messagesTable.addEventListener('click', function(e){
 });
 
 mainTable.addEventListener('mouseover', function(e){
-	if (e.target.nodeName === 'TEXT'){
+	if (e.target.nodeName === 'DIV'){
+		var btnClass = e.target.className;
 		var row = closestParentByClass(e.target, 'item-data-row');
-		var item_id = parseInt(row.getAttribute('item-id'));
+	  	var item_id = parseInt(row.getAttribute('item-id'));
 
-		var txtID = e.target.id;
-		//console.log(e.target);
-		switch (txtID) {
-			case "rate":
-	  		break;
-		}
-
-	}
-
-	if (e.target.nodeName === 'BUTTON'){
-		var row = closestParentByClass(e.target, 'item-data-row');
-	    var item_id = parseInt(row.getAttribute('item-id'));
-
-	    var btnClass = e.target.className;
-	    var item, prev, next, scale;
+	  	var item, prev, next, scale;
 
 	    item = game.map[item_id];
 		if (item_id > 0)
@@ -191,47 +145,31 @@ mainTable.addEventListener('mouseover', function(e){
 		if (item_id < game.num_items()-1)
 			next = game.map[game.map[item_id].next];
 
-	    switch (btnClass) {
-	  		case "build_single":
-	  			updateBuilderElementTitle(e.target, item, prev, 0);
-	  		break;
-	  		case "build_half":
-	  			updateBuilderElementTitle(e.target, item, prev, 0.5);
-	  		break;
-	  		case "build_all":
-	  			updateBuilderElementTitle(e.target, item, prev, 1);
-	  		break;
-
-	  		/*case "pull_down":
-	  		break;
-
-	  		case "push_down":
-			break;*/
-
-			case "rate_build_single":
-				updateBuilderElementTitle(e.target, item, next, 0);
-			break;
-
-			case "rate_build_half":
-				updateBuilderElementTitle(e.target, item, next, 0.5);
-			break;
-
-			case "rate_build_all":
-				updateBuilderElementTitle(e.target, item, next, 1);
-			break;
-
-			/*case "pull_up":
-			break;
-
-			case "push_up":
-			break;*/
-
-	  		default:
-	  			return;
-	  	}	  	
-	}
+	  	if (hasClass(e.target, "build_single"))
+	  		updateBuilderElementTitle(e.target, item, prev, 0);
+	  	else if (hasClass(e.target, "build_half"))
+	  		updateBuilderElementTitle(e.target, item, prev, 0.5);
+	  	else if (hasClass(e.target, "build_all"))
+	  		updateBuilderElementTitle(e.target, item, prev, 1);
+	  	/*else if (hasClass(e.target, "pull_down"))
+	  		buildDown(0, item_id);
+	  	else if (hasClass(e.target, "push_down"))
+	  		buildDown(item_id, game.num_items()-1);*/
+	  	else if (hasClass(e.target, "rate_build_single"))
+	  		updateBuilderElementTitle(e.target, item, next, 0);
+	  	else if (hasClass(e.target, "rate_build_half"))	 
+	  		updateBuilderElementTitle(e.target, item, next, 0.5);
+	  	else if (hasClass(e.target, "rate_build_all"))
+	  		updateBuilderElementTitle(e.target, item, next, 1);
+	  	/*else if (hasClass(e.target, "pull_up"))
+	  		buildUp(game.num_items()-1,item_id);
+	  	else if (hasClass(e.target, "push_up"))
+	  		buildUp(item_id, 0);
+	  	else
+	  		its.a('main_table event handle. no button handler for ' + btnClass);*/
+  	}
 });
-
+	
 function updateBuilderElementTitle(el, item, other_item, scale){
 	if (other_item === undefined){
 		el.title = item.name + ' free';

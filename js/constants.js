@@ -8,8 +8,8 @@ var GameModule = function () {
 	var VERSION = 0.1;
 
 	var SAVE_INTERVAL = 5000;
-	var UI_REFRESH_INTERVAL = 500;
-	var TICK_INTERVAL = 100;
+	var UI_REFRESH_INTERVAL = 1000;
+	var TICK_INTERVAL = 1000;
 	var NUMERICAL_DISPLAY_PRECISION = 5;
 
 	// how much things are slowed down when  accumulating "offline"

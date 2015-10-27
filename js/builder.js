@@ -33,6 +33,16 @@ function button(id, str, title, onclick) {
     return t1;
 }
 
+function div(id, title, bind, classAttr, str) {
+    var c = document.createElement("div");
+    c.setAttribute("id", id);
+    c.setAttribute("title", title);
+    c.setAttribute("bind", bind);
+    c.setAttribute("class", classAttr);
+    c.innerHTML = str;
+    return c;
+}
+
 function addToCell(cell, element, classAttr) {
     if (typeof classAttr !== 'undefined')
         cell.setAttribute("class", classAttr)
@@ -95,27 +105,38 @@ function populateTable()
 
         // assign observer to the game item
         //Object.observe(game.map[i], numberFormattedContent(count_div, build_div, rate_div, i));
-        
-        //addToCell(row.cells[col_index++], button("build_single", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
-        //addToCell(row.cells[col_index++], text("build_single", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
-        addToCell(row.cells[col_index++], div("build_single", 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name, "", "build_single", '1'));
+    
+        addToCell(row.cells[col_index++], div("build_single", 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name, "", 
+            "build_single builder_div", '1'), "builder_cel");
 
-        if (i>0) { // skip cells 6,7,8 for i=0
-            addToCell(row.cells[col_index++], button("build_half", '1/2', 'build 1/2 the max number of ' + game.map[i].name));
-            addToCell(row.cells[col_index++], button("build_all", 'max', "build max number of " + game.map[i].name));
-            addToCell(row.cells[col_index++], button("pull_down", '&#8626;', "pull all builds down to "+ game.map[i].name));
-        } else
-            col_index += 3;
-        addToCell(row.cells[col_index++], button("push_down", '&#8615;', "push all builds down from "+ game.map[i].name));
+        if (i>0) { // skip next 3 cells for i=0
+            addToCell(row.cells[col_index++], div("build_half", 'build 1/2 the max number of ' + game.map[i].name, "", "build_half builder_div", '1/2'), "builder_cel");
+            addToCell(row.cells[col_index++], div("build_all", "build max number of " + game.map[i].name, "", "build_all builder_div", 'max'), "builder_cel");
+            addToCell(row.cells[col_index++], div("pull_down", 'pull all builds down to  ' + game.map[i].name, "", "pull_down builder_div", '&#8626;'), "builder_cel");
+        } else {
+            row.cells[col_index++].className = "builder_cel";
+            row.cells[col_index++].className = "builder_cel";
+            row.cells[col_index++].className = "builder_cel";
+        }
+        addToCell(row.cells[col_index++], div("push_down", "push all builds down from "+ game.map[i].name, "", "push_down builder_div", '&#8615;'), "builder_cel");
        
-        if (i < game.num_items()-1) { // skip 9 thru 12 for last row
+        if (i < game.num_items()-1) { // skip next 4 cells for last row
             if (i>0){
-                addToCell(row.cells[col_index++], button("rate_build_single", '1', "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s"));
-                addToCell(row.cells[col_index++], button("rate_build_half", '1/2', "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name));
-                addToCell(row.cells[col_index++], button("rate_build_all", 'max', "rate+ " + game.map[i].name + " by using max available " + game.map[i].next));
-                addToCell(row.cells[col_index++], button("pull_up", '&#8624;', "pull all rate+ up to "+ game.map[i].name));
-            } if (i>1)
-                addToCell(row.cells[col_index++], button("push_up", '&#8613;', "push all rate+ up from "+ game.map[i].name));
+                addToCell(row.cells[col_index++], div("rate_build_single", "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s","", "rate_build_single builder_div", '1'), "builder_cel");
+                addToCell(row.cells[col_index++], div("rate_build_all", "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name, "", "rate_build_all builder_div", '1/2'), "builder_cel");
+                addToCell(row.cells[col_index++], div("rate_build_all", "rate+ " + game.map[i].name + " by using max available " + game.map[i].next, "","rate_build_all builder_div",'max'), "builder_cel");
+                addToCell(row.cells[col_index++], div("pull_up", "pull all rate+ up to "+ game.map[i].name, "", "pull_up builder_div", '&#8624;'), "builder_cel");
+            } else {
+                row.cells[col_index++].className = "builder_cel";
+                row.cells[col_index++].className = "builder_cel";
+                row.cells[col_index++].className = "builder_cel";
+                row.cells[col_index++].className = "builder_cel";
+            }
+
+            if (i>1)
+                addToCell(row.cells[col_index++], div("push_up", "push all rate+ up from "+ game.map[i].name, "", "push_up builder_div", '&#8613;'), "builder_cel");
+            else 
+                row.cells[col_index++].className = "builder_cel";
         }
     }
     return main_table;
@@ -130,17 +151,6 @@ function numberFormattedContent(count, build, rate, index) {
         rate.textContent = numberFormat( game.map[index].rate )+"/s";
         build.textContent = numberFormat( calcBuildRate( index ) )+"/s";
     };
-}
-
-
-function div(id, title, bind, classAttr, str) {
-    var c = document.createElement("div");
-    c.setAttribute("id", id);
-    c.setAttribute("title", title);
-    c.setAttribute("bind", bind);
-    c.setAttribute("class", classAttr);
-    c.textContent = str;
-    return c;
 }
 
 function setVisible(element, visible) {

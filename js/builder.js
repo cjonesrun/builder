@@ -1,6 +1,7 @@
 function text(id, str, title, attr_arr){
     var t1 = document.createElement("text");
     t1.setAttribute("id", id);
+    t1.setAttribute("class", id);
     t1.innerHTML = str;
     
     if (title === undefined)
@@ -95,8 +96,10 @@ function populateTable()
         // assign observer to the game item
         //Object.observe(game.map[i], numberFormattedContent(count_div, build_div, rate_div, i));
         
-        addToCell(row.cells[col_index++], button("build_single", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
-       
+        //addToCell(row.cells[col_index++], button("build_single", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
+        //addToCell(row.cells[col_index++], text("build_single", '1', 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name));
+        addToCell(row.cells[col_index++], div("build_single", 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name, "", "build_single", '1'));
+
         if (i>0) { // skip cells 6,7,8 for i=0
             addToCell(row.cells[col_index++], button("build_half", '1/2', 'build 1/2 the max number of ' + game.map[i].name));
             addToCell(row.cells[col_index++], button("build_all", 'max', "build max number of " + game.map[i].name));

@@ -10,12 +10,12 @@ tabBarDiv.addEventListener('click', function(e){
 
 	//console.log("click on", e.target.id, e.target.getAttribute("pmm-index"));
 
-	var ppm_index = e.target.getAttribute("pmm-index");
+	var pmm_index = e.target.getAttribute("pmm-index");
 
-	game.pmm.state[ppm_index]++;
-	console.log(game.pmm.state[ppm_index]);
+	game.pmm.state[pmm_index]++;
+	console.log(game.pmm.state[pmm_index]);
 
-	e.target.textContent = "PPM" + ppm_index + ": " + game.pmm.state[ppm_index];
+	e.target.textContent = "PPM" + pmm_index + ": " + game.pmm.state[pmm_index];
 
 	/*var newDiv = document.createElement("div");
 	newDiv.id = "tab_div_"+ (tabBarDiv.children.length);
@@ -25,9 +25,22 @@ tabBarDiv.addEventListener('click', function(e){
 	tabBarDiv.appendChild(newDiv);*/
 });
 
+// prevents text select when clicking
+mainTable.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+
 // main_table event listener
 mainTable.addEventListener('click', function(e){
 	its.clearAll();
+
+	var btnClass = e.target.className;
+	var row = closestParentByClass(e.target, 'item-data-row');
+  	var item_id = parseInt(row.getAttribute('item-id'));
+  	switch (btnClass) {
+  		case "build_single":
+  		console.log(e.which);
+  			build(item_id, 0);
+  		break;
+  	}
 
 	if (e.target.nodeName === 'TEXT'){
 		var row = closestParentByClass(e.target, 'item-data-row');
@@ -44,6 +57,7 @@ mainTable.addEventListener('click', function(e){
 	  			//its.a('main_table event handle. no anchor handler for ' + aClass);
 	  		break;
 	  	}
+
 	} else if (e.target.nodeName === 'BUTTON'){
 	  	var row = closestParentByClass(e.target, 'item-data-row');
 	    var item_id = parseInt(row.getAttribute('item-id'));
@@ -51,6 +65,7 @@ mainTable.addEventListener('click', function(e){
 	  	
 	  	switch (btnClass) {
 	  		case "build_single":
+	  		console.log(e.which);
 	  			build(item_id, 0);
 	  		break;
 

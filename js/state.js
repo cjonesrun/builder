@@ -19,8 +19,7 @@ function loadGameState() {
 
 // initialize the game state from the given encoded state and star/stop timers
 function builderInit() {
-    clearInterval(global_timer);
-    clearInterval(state_save_timer);
+    stopTimers();
     
     updateUI(); // functions.js
 
@@ -29,8 +28,7 @@ function builderInit() {
        Object.getNotifier(game.map[i]).performChange("update", function() { console.log('honk'); return {init: "initialized" }; });
     }*/
 
-    startUIUpdater();
-    startStateSaver();
+    startTimers();
 }
 
 // write the encoded state out to local storage

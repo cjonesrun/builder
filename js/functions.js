@@ -40,7 +40,8 @@ function updateUI() {
 
     //console.log( game.total_value, game.total_value_rate, game.total_value_accel);
     updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
-    getElement("running").innerHTML = timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000));
+    getElement("running").textContent = timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000));
+    getElement("tick_rate").textContent = numberFormat(game.tickRate()) + "/s";
 }
 
 function handleRow(i, row, i_next, next_row){
@@ -82,8 +83,8 @@ function calculateItem(index) {
 function calculate() {
     var this_calculation = new Date().getTime();
     var diff = this_calculation - game.last_calculation;
-    var ticks_since_last = Math.floor(diff / game.UI_REFRESH_INTERVAL); // ticks since last calc
-    //console.log('calculating for last', ticks_since_last, 'ticks (', game.UI_REFRESH_INTERVAL/1000, " tick/s)");
+    var ticks_since_last = Math.floor(diff / game.TICK_INTERVAL); // ticks since last calc
+    //console.log('calculating for last', ticks_since_last, 'ticks (', game.TICK_INTERVAL/1000, " tick/s)");
     
     // for now, forget about less than 1s.
     if (ticks_since_last == 0)
@@ -109,7 +110,7 @@ function calculate() {
             	next = game.map[item.next];
 
 
-            var adjust = game.map[i].rate * (game.UI_REFRESH_INTERVAL/1000);
+            var adjust = game.map[i].rate * (game.TICK_INTERVAL/1000);
             
             item.count += adjust;
             if (i>0) {
@@ -158,7 +159,7 @@ function calculate() {
     game.total_value = total_value;
     
     // back up the last_calc by remainder so it gets included next tick
-    game.last_calculation = this_calculation - (diff - ticks_since_last * game.UI_REFRESH_INTERVAL);
+    game.last_calculation = this_calculation - (diff - ticks_since_last * game.TICK_INTERVAL);
 }
 
 function enablePMM(index){

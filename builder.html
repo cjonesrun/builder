@@ -23,8 +23,10 @@
 				<text id="total_value_accel" title="gamma value">0/s<sup>2</sup></text>
 				<br>
 				<b><text><i>t</i></text></b>
-				<text id="running" title="total building time"></text>
-				
+				<div id="running" class="inline" title="total building time"></div>
+				<br>
+				<b><text><i>tick</i></text></b>
+				<div id="tick_rate" class="inline" title="tick rate"></div>
 			</div>
 
 			<div id="tab_bar_div" class="tab_bar_div" data-visible="true">
@@ -91,6 +93,10 @@
 									<text>ms</text-->
 									<button class="reset_button" title="reset game">reset game</button>
 									<button class="hard_reset" title="blow away local storage" onclick="hardReset();">hard reset</button>
+									<br>
+									Slider<input type="range" id='tick_rate_slider'></input>
+
+				
 								</td>
 							</tr>
 						</table>
@@ -121,7 +127,7 @@
 
 
 <script>
-addMessage(['perpetual machine of order', game.pmm.current_level +".", "goal is get to item", game.pmm.levels[game.pmm.current_level]+"." ]);
+addMessage(['perpetual machine of order', game.pmm.current_level +".", "goal is to build to enough", game.name( game.pmm.levels[game.pmm.current_level] ), "to start building", game.name(0)+"." ]);
 
 its.a('app loaded');
 

@@ -25,6 +25,7 @@
 		- PMMs will speed things up a bit with level increase, the more you pay for a PMM (i'e the more you let the builder run in PMM mode), the more it will speed things up.
 	
 	- detemine activation criteria for
+		- new items (make this interactive)
 		- build pull/push buttons
 		- rate+ pull/push buttons
 		- build 1/2, max buttons

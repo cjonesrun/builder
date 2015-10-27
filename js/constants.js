@@ -8,7 +8,8 @@ var GameModule = function () {
 	var VERSION = 0.1;
 
 	var SAVE_INTERVAL = 5000;
-	var UI_REFRESH_INTERVAL = 1000;
+	var UI_REFRESH_INTERVAL = 500;
+	var TICK_INTERVAL = 100;
 	var NUMERICAL_DISPLAY_PRECISION = 5;
 
 	// how much things are slowed down when  accumulating "offline"
@@ -30,7 +31,8 @@ var GameModule = function () {
 		base: 2,
 		current_level: 0,
 
-		levels: [3, 6, 11, 17, 23, 25],
+		//levels: [3, 6, 11, 17, 23, 25],
+		levels: [7, 15, 25],
 		activated: false,
 		state: []
 	};
@@ -51,6 +53,10 @@ var GameModule = function () {
 
 	var getItemName = function(i){
 		return item_names[i];
+	}
+
+	var tickRate = function(){
+		return 1000 / TICK_INTERVAL;
 	}
   
   	var state = [];
@@ -74,6 +80,7 @@ var GameModule = function () {
 		num_items: getNumberOfItems,
 		baseCalc: baseCalc,
 		name: getItemName,
+		tickRate: tickRate,
 		
 		// "constants"
 		NAME: NAME,
@@ -83,6 +90,7 @@ var GameModule = function () {
 		SAVE_INTERVAL: SAVE_INTERVAL,
 		UI_REFRESH_INTERVAL: UI_REFRESH_INTERVAL,
 		NUMERICAL_DISPLAY_PRECISION: NUMERICAL_DISPLAY_PRECISION,
+		TICK_INTERVAL: TICK_INTERVAL,
 
 		// public variables
 		game_started: game_started,

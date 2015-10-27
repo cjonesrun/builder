@@ -62,6 +62,10 @@ body { font-family: serif;
     float:right;    
 }
 
+.inline {
+	display:inline-block;
+}
+
 textarea[class="main-message-area"]{
 	width: 35em;
 	height: 25em;

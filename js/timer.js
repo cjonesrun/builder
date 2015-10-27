@@ -1,9 +1,16 @@
-var global_timer; // main timer for auto block & thing building
+var ui_timer; // main timer for auto block & thing building
 var state_save_timer;
+var calclator_timer;
+
+function startCalculatorTime() {
+    calclator_timer = setInterval(function(){ 
+        calculate();
+    }, game.TICK_INTERVAL);
+    
+}
 
 function startUIUpdater() {
-    global_timer = setInterval(function(){ 
-        calculate();
+    ui_timer = setInterval(function(){ 
         updateUI();
 	}, game.UI_REFRESH_INTERVAL);
 }
@@ -15,28 +22,37 @@ function startStateSaver() {
 }
 
 function stopTimers() {
-    if (typeof global_timer == "number") {
-        //console.log('stopping global_timer', global_timer);
-        clearInterval(global_timer);
-        global_timer = false;
+    if (typeof ui_timer == "number") {
+        //console.log('stopping ui_timer', ui_timer);
+        clearInterval(ui_timer);
+        ui_timer = false;
     } /*else
-        console.log('global_timer already stopped', global_timer);*/
+        console.log('ui_timer already stopped', ui_timer);*/
+
+    if (typeof calclator_timer == "number") {
+        clearInterval(calclator_timer);
+        calclator_timer = false;
+    }
 
     if (typeof state_save_timer == "number") {
         //console.log('stopping state_save_timer', state_save_timer);
         clearInterval(state_save_timer);
         state_save_timer = false;
     } /* else
-        console.log('global_timer already stopped', state_save_timer); */
+        console.log('ui_timer already stopped', state_save_timer); */
 }
 
 function startTimers() {
-    if (typeof global_timer != "number") {
-        //console.log('starting global_timer', global_timer);
+    if (typeof ui_timer != "number") {
+        //console.log('starting ui_timer', ui_timer);
         game.last_calculation = new Date().getTime();
         startUIUpdater();
     } /* else
-        console.log('global_timer already started', global_timer); */
+        console.log('ui_timer already started', ui_timer); */
+
+    if (typeof calclator_timer != "number") {
+        startCalculatorTime();
+    }
 
     if (typeof state_save_timer != "number") {
         //console.log('starting state_save_timer', state_save_timer);
@@ -47,7 +63,7 @@ function startTimers() {
 
 function update_timer_interval( )
 {
-	clearInterval(global_timer);
+	clearInterval(ui_timer);
 
 	game.UI_REFRESH_INTERVAL = numberFormat( parseInt( document.getElementById("timer").value ) );
 	
@@ -57,7 +73,7 @@ function update_timer_interval( )
 function pauseResume(button)
 {
     //console.log('state_save_timer', state_save_timer, button);
-    if (global_timer) {
+    if (ui_timer) {
         addMessage( ['pausing timers.'] );
         button.innerHTML = 'resume';
         stopTimers();

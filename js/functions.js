@@ -28,15 +28,27 @@ function updateUI() {
 
     	if (game.pmm.activated && i == game.pmm.levels[game.pmm.current_level]){
     		//console.log('using this', game.map[game.pmm.levels[game.pmm.current_level]].count, autoBuildLevel(0));
-    		build.textContent = numberFormat( game.map[game.pmm.levels[game.pmm.current_level]].base * 
-    			game.map[game.pmm.levels[game.pmm.current_level]].count ) + "/s";
+    		//build.textContent = numberFormat( game.map[game.pmm.levels[game.pmm.current_level]].base * 
+    		//	game.map[game.pmm.levels[game.pmm.current_level]].count ) + "/s";
+			var pmm_item = game.map[game.pmm.levels[game.pmm.current_level]];
+			//build.textContent = numberFormat(pmm_item.count * Math.pow(game.pmm.base, game.pmm.state[game.pmm.current_level]));
     	} else
-    		build.textContent = numberFormat(build_rate) + "/s";
+    		//build.textContent = numberFormat(build_rate) + "/s";
 
     	updateItemInfo(rows[i], game.map[i].rate + prev_build_rate);
 
 		prev_build_rate = build_rate;
     }
+
+    
+    if (game.pmm.state !== undefined && game.pmm.state.length > 0) {
+    	for (var i=0; i<game.pmm.state.length; i++){
+    		if (game.pmm.state[i] > 0){
+    			enablePMM(i, game.pmm.state[i]);
+    		}
+    	}
+    }
+
 
     //console.log( game.total_value, game.total_value_rate, game.total_value_accel);
     updateTotalValue(game.total_value, game.total_value_rate, game.total_value_accel);
@@ -114,14 +126,21 @@ function calculate() {
             
             item.count += adjust;
             if (i>0) {
-            	item.count += calcBuildRate( item.previous );
+            	//item.count += calcBuildRate( item.previous ); // this is for "free" auto-building
+            	if (item.auto_pull && prev.count >= prev.base){ // this is for auto-building that consumes previous items
+	            	item.count += item.auto_pull ? 1 : 0;
+	            	prev.count -= prev.base;
+	            }
             } else if (game.pmm.activated) {
             	var pmm_item = game.map[game.pmm.levels[game.pmm.current_level]];
             	//console.log('perpetual motion on', item.name, "from", pmm_item.name, 'of', calcBuildRate( game.pmm.levels[game.pmm.current_level] ));
             	//game.map[0].count += calcBuildRate( game.pmm.levels[game.pmm.current_level] );
             	//game.map[0].count += Math.floor( game.map[game.pmm.levels[game.pmm.current_level]].count / autoBuildLevel(0) );
 
-            	game.map[0].count += pmm_item.base *  pmm_item.count; 
+            	var mult = Math.pow(game.pmm.base, game.pmm.state[game.pmm.current_level]);
+            	
+            	//console.log(pmm_item.name, game.pmm.state[game.pmm.current_level], mult, pmm_item.count * mult);
+            	game.map[0].count += pmm_item.count * mult; 
             }
 
             
@@ -136,7 +155,7 @@ function calculate() {
         			//console.log(i, item.next, game.pmm.current_level, game.pmm.levels[game.pmm.current_level]);
         			game.pmm.activated = true;
 
-        			enablePMM(game.pmm.current_level);
+        			enablePMM(game.pmm.current_level, 0); // initialize this pmm with zero
         			console.log("starting perpetual motion from", item.name, "back to", game.map[0].name+".", "took", 
         				timeFormat( Math.floor( (new Date().getTime() - game.game_started) / 1000)));
         		} else {
@@ -162,21 +181,26 @@ function calculate() {
     game.last_calculation = this_calculation - (diff - ticks_since_last * game.TICK_INTERVAL);
 }
 
-function enablePMM(index){
+function enablePMM(index, init){
 
-	game.pmm.state[index] = 0;
+	game.pmm.state[index] = init;
 
 	var tabBarDiv = getElement("tab_bar_div");
 
-	var newDiv = document.createElement("div");
-	newDiv.id = "tab_div_"+ (tabBarDiv.children.length);
-	newDiv.className = "tab_bar_div_child left";
-	newDiv.setAttribute("pmm-index", index);
-	newDiv.textContent = "Click to activate PMM"+ (tabBarDiv.children.length);
+	var id = "tab_div_"+ index;
+	var pmm = tabBarDiv.querySelector("#" + id);
+	if (pmm === undefined || pmm === null){
+		var newDiv = document.createElement("div");
+		newDiv.id = id;
+		newDiv.className = "tab_bar_div_child left";
+		newDiv.setAttribute("pmm-index", index);
 
-	tabBarDiv.appendChild(newDiv);
-
-
+		if (init === 0)
+			newDiv.textContent = "Click to activate PMM"+ (tabBarDiv.children.length);
+		else 
+			newDiv.textContent =  "PMM" + index + ": " + game.pmm.state[index];
+		tabBarDiv.appendChild(newDiv);
+	}
 }
 
 function calcBuildCost(item, count){
@@ -322,7 +346,8 @@ function numberFormat(number, precision) {
 		}
 		return numeral(number).format('0,0');
 	}
-	return number.toPrecision(4).replace(/0+$/g, "");
+	var ret = number.toPrecision(4);
+	return ret.indexOf("e")>=0?ret:ret.replace(/0+$/g, "");
 }
 
 function timeFormat(number) {

@@ -123,7 +123,7 @@ function populateTable()
         if (i < game.num_items()-1) { // skip next 4 cells for last row
             if (i>0){
                 addToCell(row.cells[col_index++], div("rate_build_single", "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s","", "rate_build_single builder_div", '1'), "builder_cel");
-                addToCell(row.cells[col_index++], div("rate_build_all", "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name, "", "rate_build_all builder_div", '1/2'), "builder_cel");
+                addToCell(row.cells[col_index++], div("rate_build_half", "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name, "", "rate_build_half builder_div", '1/2'), "builder_cel");
                 addToCell(row.cells[col_index++], div("rate_build_all", "rate+ " + game.map[i].name + " by using max available " + game.map[i].next, "","rate_build_all builder_div",'max'), "builder_cel");
                 addToCell(row.cells[col_index++], div("pull_up", "pull all rate+ up to "+ game.map[i].name, "", "pull_up builder_div", '&#8624;'), "builder_cel");
             } else {

@@ -7,6 +7,7 @@ slider.addEventListener('change', function(e){
 	console.log(e, e.target.value);
 
 });
+
 tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
 	
@@ -16,22 +17,10 @@ tabBarDiv.addEventListener('click', function(e){
 	//console.log("click on", e.target.id, e.target.getAttribute("pmm-index"));
 
 	var pmm_index = e.target.getAttribute("pmm-index");
-
 	game.pmm.state[pmm_index]++;
-	console.log(game.pmm.state[pmm_index]);
-
-	e.target.textContent = "PPM" + pmm_index + ": " + game.pmm.state[pmm_index];
-
-	/*var newDiv = document.createElement("div");
-	newDiv.id = "tab_div_"+ (tabBarDiv.children.length);
-	newDiv.className = "tab_bar_div_child left";
-	newDiv.textContent = "PMM "+ (tabBarDiv.children.length);
-
-	tabBarDiv.appendChild(newDiv);*/
+	
+	e.target.textContent = "PMM" + pmm_index + ": " + game.pmm.state[pmm_index];
 });
-
-// prevents text select when clicking
-mainTable.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
 
 // main_table event listener
 mainTable.addEventListener('click', function(e){
@@ -62,8 +51,8 @@ mainTable.addEventListener('click', function(e){
 	  		buildUp(game.num_items()-1,item_id);
 	  	else if (hasClass(e.target, "push_up"))
 	  		buildUp(item_id, 0);
-	  	else
-	  		its.a('main_table event handle. no button handler for ' + btnClass);
+	  	/*else
+	  		its.a('main_table event handle. no button handler for ' + btnClass);*/
   	}
 
 	if (e.target.nodeName === 'TEXT'){
@@ -186,6 +175,11 @@ function updateBuilderElementTitle(el, item, other_item, scale){
 			el.title = numberFormat(count) + ' ' + item.name + ' needs '+ numberFormat( calcBuildCost(other_item, count)) + ' ' + other_item.name;
 	}
 }
+
+
+// prevents text select when clicking
+mainTable.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+tabBarDiv.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
 
 window.addEventListener('focus', function(e) {
 	//console.log('focus gained... resuming', e);

@@ -48,6 +48,13 @@ body { font-family: serif;
     display: block;
     margin-right: 2px;
     border-radius: 3px 3px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
+	font-size: 0.8em;
+    color: black;
+    background: linear-gradient(white,lightgray);
+}
+
+.tab_bar_div_child:active {
+	background: linear-gradient(lightgray,white);
 }
 
 .builder_cel {

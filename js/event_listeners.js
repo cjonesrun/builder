@@ -1,7 +1,12 @@
 var mainTable = getElement('main_table');
 var messagesTable = getElement('messages_table');
 var tabBarDiv = getElement("tab_bar_div");
+var slider = getElement("tick_rate_slider");
 
+slider.addEventListener('change', function(e){
+	console.log(e, e.target.value);
+
+});
 tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
 	

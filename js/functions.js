@@ -144,11 +144,12 @@ function calculate() {
             	game.map[0].count += pmm_item.count * mult; 
             }
 
-            if (i>game.num_items()-1){
+            if (i<game.num_items()-1){
+            	/*console.log('auto-up', item.auto_up);
             	if (item.auto_up && next.count >= next.base){ // this is for auto-building that consumes next items
 	            	item.count += 1;
 	            	prev.count -= prev.base;
-	            }
+	            }*/
             }
 			// activate next?
             if (game.map[i].count >= game.map[i].base && i<game.num_items()-1)

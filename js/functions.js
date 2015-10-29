@@ -58,6 +58,7 @@ function updateUI() {
 
 function handleRow(i, row, i_next, next_row){
 	// current row visibility
+	console.log()
 	var show = game.map[i].count >= game.map[i].base || game.map[i_next].active;
 
 	if (show) {
@@ -127,8 +128,8 @@ function calculate() {
             item.count += adjust;
             if (i>0) {
             	//item.count += calcBuildRate( item.previous ); // this is for "free" auto-building
-            	if (item.auto_pull && prev.count >= prev.base){ // this is for auto-building that consumes previous items
-	            	item.count += item.auto_pull ? 1 : 0;
+            	if (item.auto_down && prev.count >= prev.base){ // this is for auto-building that consumes previous items
+	            	item.count += 1;
 	            	prev.count -= prev.base;
 	            }
             } else if (game.pmm.activated) {
@@ -143,7 +144,16 @@ function calculate() {
             	game.map[0].count += pmm_item.count * mult; 
             }
 
-            
+            if (i>game.num_items()-1){
+            	if (item.auto_up && next.count >= next.base){ // this is for auto-building that consumes next items
+	            	item.count += 1;
+	            	prev.count -= prev.base;
+	            }
+            }
+			// activate next?
+            if (game.map[i].count >= game.map[i].base && i<game.num_items()-1)
+            	game.map[i+1].active = true;
+
             // bail out if no active rows
 			if (!item.active){
         		done = true;

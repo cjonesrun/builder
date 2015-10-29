@@ -3,11 +3,6 @@ var messagesTable = getElement('messages_table');
 var tabBarDiv = getElement("tab_bar_div");
 var slider = getElement("tick_rate_slider");
 
-slider.addEventListener('change', function(e){
-	console.log(e, e.target.value);
-
-});
-
 tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
 	
@@ -26,11 +21,12 @@ tabBarDiv.addEventListener('click', function(e){
 mainTable.addEventListener('click', function(e){
 	its.clearAll();
 
+	var row = closestParentByClass(e.target, 'item-data-row');
+	var item_id = parseInt(row.getAttribute('item-id'));
+
 	if (e.target.nodeName === 'DIV'){
 		var btnClass = e.target.className;
-		var row = closestParentByClass(e.target, 'item-data-row');
-	  	var item_id = parseInt(row.getAttribute('item-id'));
-
+		
 	  	if (hasClass(e.target, "build_single"))
 	  		build(item_id, 0);
 	  	else if (hasClass(e.target, "build_half"))
@@ -56,8 +52,6 @@ mainTable.addEventListener('click', function(e){
   	}
 
 	if (e.target.nodeName === 'TEXT'){
-		var row = closestParentByClass(e.target, 'item-data-row');
-	    var item_id = parseInt(row.getAttribute('item-id'));
 	  	var expandAction = e.target.getAttribute("expand-action");
 	  	
 	  	switch (expandAction) {
@@ -70,7 +64,29 @@ mainTable.addEventListener('click', function(e){
 	  			//its.a('main_table event handle. no anchor handler for ' + aClass);
 	  		break;
 	  	}
-	} 
+	}
+	if (e.target.nodeName === 'INPUT' && e.target.type.toLowerCase() === "checkbox"){
+		var type = e.target.name;
+
+		switch (type) {
+			case "auto_build_up":
+
+				if (item_id < game.num_items()-1) {
+					console.log("auto building up from", game.map[item_id].name,"to", game.map[item_id-1].name);
+					game.map[item_id].auto_up = e.target.checked
+				} else {
+					console.log("nothing to build up from");
+				}
+				
+			break;
+
+			case "auto_build_down":
+				game.map[item_id].auto_down = e.target.checked
+
+				console.log("auto building down to " + game.map[item_id+1].name + " from " + game.map[item_id].name, e.target.checked);
+			break;
+		}
+	}
 });
 
 // message_table event listner
@@ -187,4 +203,8 @@ window.addEventListener('focus', function(e) {
 
 window.addEventListener('blur', function(e) {
 	//console.log('focus lost... pausing',e );
+});
+
+slider.addEventListener('change', function(e){
+	console.log('slider val', e.target.value);
 });

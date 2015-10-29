@@ -71,7 +71,8 @@ var GameModule = function () {
 			previous: (i>0) ? i-1 : null,
 			next: (i < item_names.length-1) ? i+1 : null,
 			active: i===0 ? true : false,
-			auto_pull: false
+			auto_up: false,
+			auto_down: false
 		});		
 	};
 

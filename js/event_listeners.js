@@ -22,6 +22,8 @@ mainTable.addEventListener('click', function(e){
 	its.clearAll();
 
 	var row = closestParentByClass(e.target, 'item-data-row');
+	if (row === null)
+		return;
 	var item_id = parseInt(row.getAttribute('item-id'));
 
 	if (e.target.nodeName === 'DIV'){
@@ -72,10 +74,10 @@ mainTable.addEventListener('click', function(e){
 			case "auto_build_up":
 
 				if (item_id < game.num_items()-1) {
-					console.log("auto building up from", game.map[item_id].name,"to", game.map[item_id-1].name);
+					//console.log("auto building up", e.target.checked?"ON":"OFF", "from", game.map[item_id].name+"->"+game.map[item_id-1].name);
 					game.map[item_id].auto_up = e.target.checked
 				} else {
-					console.log("nothing to build up from");
+					//console.log("nothing to build up from");
 				}
 				
 			break;
@@ -83,7 +85,7 @@ mainTable.addEventListener('click', function(e){
 			case "auto_build_down":
 				game.map[item_id].auto_down = e.target.checked
 
-				console.log("auto building down to " + game.map[item_id+1].name + " from " + game.map[item_id].name, e.target.checked);
+				//console.log("auto building down", e.target.checked?"ON":"OFF", "to", game.map[item_id+1].name+"->"+game.map[item_id].name);
 			break;
 		}
 	}

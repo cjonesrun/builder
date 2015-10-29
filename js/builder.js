@@ -106,7 +106,7 @@ function populateTable()
         // assign observer to the game item
         //Object.observe(game.map[i], numberFormattedContent(count_div, build_div, rate_div, i));
     
-        if (i>0 && i<game.num_items()-1){
+        if (i>0){ // not for first item
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
             checkbox.name = "auto_build_down";
@@ -114,7 +114,7 @@ function populateTable()
             checkbox.setAttribute("item-id", i);
             checkbox.id = "auto_build_down_"+i;
             
-            checkbox.title = "auto build down to " + game.map[i+1].name + " from " + game.map[i].name;
+            checkbox.title = "auto build down from " + game.map[i-1].name + " to " + game.map[i].name;
             addToCell(row.cells[col_index], checkbox);
 
             var label = document.createElement('label')
@@ -122,7 +122,7 @@ function populateTable()
             label.innerHTML = "&#8615;";
             addToCell(row.cells[col_index], label);
         }
-        if (i>0){
+        if (i>0 && i<game.num_items()-2){ // not for item 0 or last item
             checkbox = document.createElement('input');
             checkbox.type = "checkbox";
             checkbox.name = "auto_build_up";
@@ -130,7 +130,7 @@ function populateTable()
             checkbox.setAttribute("item-id", i);
             checkbox.id = "auto_build_up_"+i;
             
-            checkbox.title = "auto build up to " + game.map[i-1].name + " from " + game.map[i].name;
+            checkbox.title = "auto build up from " + game.map[i+1].name + " to " + game.map[i].name;
             addToCell(row.cells[col_index], checkbox);
 
             label = document.createElement('label')

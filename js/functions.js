@@ -19,6 +19,9 @@ function updateUI() {
     	var build = rows[i].querySelector("#build");
     	var rate = rows[i].querySelector("#rate");
 
+    	var up = rows[i].querySelector("[name='auto_build_up']");
+    	var down = rows[i].querySelector("[name='auto_build_down']");
+    	
     	if (i<rows.length-1)
     		handleRow(i, rows[i], i+1, rows[i+1]);
 
@@ -32,8 +35,12 @@ function updateUI() {
     		//	game.map[game.pmm.levels[game.pmm.current_level]].count ) + "/s";
 			var pmm_item = game.map[game.pmm.levels[game.pmm.current_level]];
 			//build.textContent = numberFormat(pmm_item.count * Math.pow(game.pmm.base, game.pmm.state[game.pmm.current_level]));
-    	} else
+    	} else {
     		//build.textContent = numberFormat(build_rate) + "/s";
+    	}
+
+    	if (up !== null) up.checked = game.map[i].auto_up;
+    	if (down !== null) down.checked = game.map[i].auto_down;
 
     	updateItemInfo(rows[i], game.map[i].rate + prev_build_rate);
 
@@ -122,15 +129,25 @@ function calculate() {
             else
             	next = game.map[item.next];
 
-
-            var adjust = game.map[i].rate * (game.TICK_INTERVAL/1000);
-            
-            item.count += adjust;
             if (i>0) {
+				var adjust = game.map[i].rate * (game.TICK_INTERVAL/1000);
+            	if (item.auto_down && prev.count >= prev.base) {
+            		var build = Math.floor(Math.min(adjust, prev.count/prev.base));
+            		//console.log( adjust, item.name, 'needs', adjust*prev.base,prev.name,'have', prev.count, 'can build', build);
+            		//its.s( adjust, item.name, 'needs', adjust*prev.base,prev.name,'have', prev.count, 'can build', build);
+					item.count += build;
+					prev.count -= build * prev.base;
+            	}
+
             	//item.count += calcBuildRate( item.previous ); // this is for "free" auto-building
             	if (item.auto_down && prev.count >= prev.base){ // this is for auto-building that consumes previous items
 	            	item.count += 1;
 	            	prev.count -= prev.base;
+	            }
+
+	            if (item.auto_up && item.next!=null && next.count >= next.base){
+	            	item.rate += 1;
+	            	next.count -= next.base;
 	            }
             } else if (game.pmm.activated) {
             	var pmm_item = game.map[game.pmm.levels[game.pmm.current_level]];
@@ -144,13 +161,6 @@ function calculate() {
             	game.map[0].count += pmm_item.count * mult; 
             }
 
-            if (i<game.num_items()-1){
-            	/*console.log('auto-up', item.auto_up);
-            	if (item.auto_up && next.count >= next.base){ // this is for auto-building that consumes next items
-	            	item.count += 1;
-	            	prev.count -= prev.base;
-	            }*/
-            }
 			// activate next?
             if (game.map[i].count >= game.map[i].base && i<game.num_items()-1)
             	game.map[i+1].active = true;

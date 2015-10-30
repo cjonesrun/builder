@@ -19,7 +19,7 @@ var GameModule = function () {
 	var last_calculation = new Date().getTime();
 	var last_save;                           // last time the game was saved  
 
-	var base = 10;
+	var base = 2;
 	var item_base = 1.7; /*1.3*/
 	var min_exponent = -3;	// min exponent is -324
 

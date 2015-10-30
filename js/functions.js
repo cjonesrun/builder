@@ -162,16 +162,20 @@ function calculate() {
             }
 
 			// activate next?
-            if (game.map[i].count >= game.map[i].base && i<game.num_items()-1)
+            if (game.map[i].count >= game.map[i].base && i<game.pmm.levels[game.pmm.current_level] )
             	game.map[i+1].active = true;
 
-            // bail out if no active rows
+            
+            /*if (i == game.pmm.levels[game.pmm.current_level])
+            	console.log(item.name, item.count, autoBuildLevel(i), game.pmm.activated, next.name, next.active);*/
+
+			// bail out if no active rows
 			if (!item.active){
         		done = true;
        			break;
         	} else if (i < game.num_items() -1 && (item.count >= autoBuildLevel(i) && !next.active)){
         		//console.log(i, "setting", next.name, "to active.");
-        		
+      
         		if (i == game.pmm.levels[game.pmm.current_level]) {
         			//console.log(i, item.next, game.pmm.current_level, game.pmm.levels[game.pmm.current_level]);
         			game.pmm.activated = true;
@@ -243,10 +247,11 @@ function calcItemValue(i) {
 
 
 function autoBuildLevel(i) {
-	var pow = 2 + i / game.base;
-	var denom = Math.pow(game.map[i].base,pow);
+	/*var pow = 2 + i / game.base;
+	var denom = Math.floor(Math.pow(game.map[i].base,pow));
 
-	return denom;
+	return denom;*/
+	return game.map[i].base ;
 }
 
 function calcBuildRate(i) {

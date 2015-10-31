@@ -140,10 +140,10 @@ function calculate() {
             	}
 
             	//item.count += calcBuildRate( item.previous ); // this is for "free" auto-building
-            	if (item.auto_down && prev.count >= prev.base){ // this is for auto-building that consumes previous items
+            	/*if (item.auto_down && prev.count >= prev.base){ // this is for auto-building that consumes previous items
 	            	item.count += 1;
 	            	prev.count -= prev.base;
-	            }
+	            }*/
 
 	            if (item.auto_up && item.next!=null && next.count >= next.base){
 	            	item.rate += 1;

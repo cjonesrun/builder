@@ -14,7 +14,7 @@ tabBarDiv.addEventListener('click', function(e){
 	var pmm_index = e.target.getAttribute("pmm-index");
 	game.pmm.state[pmm_index]++;
 	var pmm_item = game.map[game.pmm.levels[game.pmm.current_level]];
-	c/*onsole.log(pmm_item.name);
+	/*console.log(pmm_item.name);
 	pmm_item.count = 0;
 	game.map[0].count = 0;*/
 	

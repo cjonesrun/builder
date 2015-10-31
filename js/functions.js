@@ -143,6 +143,9 @@ function calculate() {
             	game.map[0].count += pmm_item.count * mult; 
             }
 
+            // activate next?
+            if (game.map[i].count >= game.map[i].base && i<game.pmm.levels[game.pmm.current_level] )
+            	game.map[i+1].active = true;
             
             // bail out if no active rows
 			if (!item.active){

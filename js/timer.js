@@ -74,11 +74,11 @@ function pauseResume(button)
 {
     //console.log('state_save_timer', state_save_timer, button);
     if (ui_timer) {
-        addMessage( ['pausing timers.'] );
+        addMessage( 'pausing timers.' );
         button.innerHTML = 'resume';
         stopTimers();
     } else {
-        addMessage( ['resuming timers.'] );
+        addMessage( 'resuming timers.' );
         button.innerHTML = 'pause';
         startTimers();
     }

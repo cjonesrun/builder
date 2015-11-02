@@ -43,9 +43,10 @@ mainTable.addEventListener('click', function(e){
 	  		buildDown(0, item_id);
 	  	else if (hasClass(e.target, "push_down"))
 	  		buildDown(item_id, game.num_items()-1);
-	  	else if (hasClass(e.target, "rate_build_single"))
-	  		buildRateInc(item_id, 0);
-	  	else if (hasClass(e.target, "rate_build_half"))	 
+	  	else if (hasClass(e.target, "rate_build_single")){
+	  		//buildRateInc(item_id, 0);
+	  		buildR(item_id);
+	  	} else if (hasClass(e.target, "rate_build_half"))	 
 	  		buildRateInc(item_id, 0.5); 		
 	  	else if (hasClass(e.target, "rate_build_all"))
 	  		buildRateInc(item_id, 1);
@@ -57,20 +58,11 @@ mainTable.addEventListener('click', function(e){
 	  		its.a('main_table event handle. no button handler for ' + btnClass);*/
   	}
 
-	if (e.target.nodeName === 'TEXT'){
-	  	var expandAction = e.target.getAttribute("expand-action");
-	  	
-	  	switch (expandAction) {
-	  		case "expand-data-row":
-				updateExpandDataRowVisibility(row, row.querySelector(".expander"));
-    		break;
-
-	  		default:
-	  			//console.log(e.target);
-	  			//its.a('main_table event handle. no anchor handler for ' + aClass);
-	  		break;
-	  	}
+  	var expandAction = e.target.getAttribute("expand-action");
+	if (expandAction !== null){
+	  	updateExpandDataRowVisibility(row, row.querySelector(".expander"));
 	}
+
 	if (e.target.nodeName === 'INPUT' && e.target.type.toLowerCase() === "checkbox"){
 		var type = e.target.name;
 

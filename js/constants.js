@@ -1,5 +1,6 @@
 var this_session_start_time = new Date().getTime();
 var DECIMAL_FORMAT = "0,0.0000";
+var MESSAGE_WINDOW_LINES = 20;
 
 var GameModule = function () {
 
@@ -19,9 +20,11 @@ var GameModule = function () {
 	var last_calculation = new Date().getTime();
 	var last_save;                           // last time the game was saved  
 
-	var base = 2;
-	var item_base = 1.7; /*1.3*/
-	var min_exponent = -3;	// min exponent is -324
+	var base = 10;
+	var item_base = 1.3; /*1.3*/
+	var min_exponent = -324;	// min exponent is -324
+
+	var cost_calc_base = -5;
 
 	var total_value = 0; // current total value
 	var total_value_rate = 0; // total_value rate of change per sec
@@ -41,7 +44,9 @@ var GameModule = function () {
 						'device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil', 
 						'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 
 						'whatchamacalit', 'paraphernalia', 'thingamajig','apparatus', 'appliance', 'furnishing', 
-						'rig', 'rube goldberg'];
+						'rig', 'rube goldberg'];	
+  	// game state
+  	var state = [];
 	
 	var getNumberOfItems = function () {
 		return item_names.length;
@@ -58,15 +63,19 @@ var GameModule = function () {
 	var tickRate = function(){
 		return 1000 / TICK_INTERVAL;
 	}
-  
-  	var state = [];
+
+	// initialize
 	for (var i=0; i < item_names.length; i++) {
 		state.push( {
 			name: item_names[i],
 			base: baseCalc(i),
-			multipliers : [],
+			value: Math.pow(base, min_exponent + parseInt(i) +1),
+
+			upgrades : 1,
+			multiplier : Math.pow(base, (i/2+cost_calc_base)),
 			count: 0,
-			rate: 0,
+
+			rate: 1,
 			id: i,
 			previous: (i>0) ? i-1 : null,
 			next: (i < item_names.length-1) ? i+1 : null,

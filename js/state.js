@@ -42,9 +42,9 @@ function saveState()
     var json = JSON.stringify(game);
     window.localStorage['builder'] = btoa(json);
     
-    //addMessage( [ "->state saved. size", window.localStorage['builder'].length, "bytes. compressed", lzw_encode(window.localStorage['builder']).length, 'bytes. json', json.length ] );
+    //addMessage( "->state saved. size", window.localStorage['builder'].length, "bytes. compressed", lzw_encode(window.localStorage['builder']).length, 'bytes. json', json.length ] );
 
-    /*addMessage( [ "->state saved. json size", json.length, "encoded size", window.localStorage['builder'].length, "bytes. compressed would be", lzw_encode(window.localStorage['builder']).length, 'bytes. compressed json would be', lzw_encode(json).length, 'bytes' ] );*/
+    /*addMessage( "->state saved. json size", json.length, "encoded size", window.localStorage['builder'].length, "bytes. compressed would be", lzw_encode(window.localStorage['builder']).length, 'bytes. compressed json would be', lzw_encode(json).length, 'bytes' ] );*/
 
     return window.localStorage['builder'];
 }

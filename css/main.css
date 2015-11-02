@@ -64,7 +64,7 @@ body { font-family: serif;
 	/*min-width: 1em;
 	width: auto;*/
 	width: 3em;
-    height: 1em;
+    height: auto;
     text-align: center;
     border: 1px solid gray;
     display: block;
@@ -73,6 +73,11 @@ body { font-family: serif;
     border-radius: 3px 3px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
     color: black;
     background: linear-gradient(white,lightgray);
+}
+
+.expander{
+	width: auto;
+	vertical-align: top;
 }
 
 .builder_div:active {

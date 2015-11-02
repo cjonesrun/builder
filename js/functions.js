@@ -27,7 +27,8 @@ function updateUI() {
 
     	count.textContent = numberFormat(game.map[i].count);
     	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
-		rate.textContent = i > 0 ? numberFormat(game.map[i].rate) + "/s" : "";
+		//rate.textContent = i > 0 ? numberFormat(game.map[i].rate) + "/s" : "";
+		rate.textContent = numberFormat(game.map[i].rate);
 
     	if (game.pmm.activated && i == game.pmm.levels[game.pmm.current_level]){
     		//console.log('using this', game.map[game.pmm.levels[game.pmm.current_level]].count, autoBuildLevel(0));
@@ -38,6 +39,8 @@ function updateUI() {
     	} else {
     		//build.textContent = numberFormat(build_rate) + "/s";
     	}
+
+    	build.textContent = numberFormat(Math.pow(game.item_base, game.map[i].upgrades));
 
     	if (up !== null) up.checked = game.map[i].auto_up;
     	if (down !== null) down.checked = game.map[i].auto_down;
@@ -99,8 +102,50 @@ function calculateItem(index) {
 
 }
 
-// calculate changes since last calculation.
 function calculate() {
+	var this_calculation = new Date().getTime();
+    var diff = this_calculation - game.last_calculation;
+    var ticks_since_last = Math.floor(diff / game.TICK_INTERVAL); // ticks since last calc
+    //console.log('calculating for last', ticks_since_last, 'ticks (', game.TICK_INTERVAL/1000, " tick/s)");
+
+    if (ticks_since_last == 0)
+        return;
+    else if (ticks_since_last > 25 ) {
+    	// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity and show a message
+        addMessage('you\'ve been gone for', timeFormat(ticks_since_last)+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) );
+    }
+
+	var done = false;
+    for (var j = 0; j<ticks_since_last; j++) {
+        for (var i=0; i < game.num_items() && !done; i++) {
+        	var item = game.map[i];
+
+        	// activate next item if 
+        	if (item.count >= item.base && item.next !== null)
+            	game.map[item.next].active = true;
+
+
+       		if (!item.active){
+       			done=true;
+       			break;
+       		}
+
+
+    		item.count *= item.rate;
+    		item.value *= item.rate;
+    		//console.log(item.name, item.value);
+    		//console.log(item.name, item.count, item.rate, item.multiplier);
+       		
+
+    	}
+    }
+
+    // back up the last_calc by remainder so it gets included next tick
+    game.last_calculation = this_calculation - (diff - ticks_since_last * game.TICK_INTERVAL);
+}
+
+// calculate changes since last calculation.
+function OLDcalculate() {
     var this_calculation = new Date().getTime();
     var diff = this_calculation - game.last_calculation;
     var ticks_since_last = Math.floor(diff / game.TICK_INTERVAL); // ticks since last calc
@@ -111,7 +156,7 @@ function calculate() {
         return;
     else if (ticks_since_last > 25 ) {
     	// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity and show a message
-        addMessage(['you\'ve been gone for', timeFormat(ticks_since_last)+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) ]);
+        addMessage('you\'ve been gone for', timeFormat(ticks_since_last)+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) );
     }
 
     var done = false;
@@ -269,7 +314,7 @@ function build(i, scale) {
 	var item = game.map[i];
 	// smallest item && level, free
 	if (item.previous == null){ 
-		//addMessage( [ 'building 1', item.name ] );
+		//addMessage( 'building 1', item.name );
 		item.count +=  prestigeMultiplier();
 	} else {
 		var prev = game.map[item.previous];
@@ -281,13 +326,28 @@ function build(i, scale) {
 			prev.count -= cost;
 			item.count +=  to_build * prestigeMultiplier();
 			
-			addMessage( ['building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name ] );
+			addMessage( 'building', numberFormat(to_build), item.name, 'costing', numberFormat(cost), prev.name );
 		} else {
-			addMessage( [ 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
-				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) ]);
+			addMessage( 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
+				(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(prev.base/scale)) );
 		}
 	}
 	updateUI();
+}
+
+function buildR(item_id){
+	var item = game.map[item_id];
+	
+	var cost = Math.pow(game.item_base, item.upgrades);
+	if (item.count >= cost){
+		console.log('upgrading', item.name, "to", item.upgrades, "cost", cost);
+		item.count /= cost;
+		item.rate += item.multiplier;
+		item.upgrades += 1;
+	}
+	else {
+		console.log("can't upgrade", item.name, "have", item.count, "need", cost);
+	}
 }
 
 function buildRateInc(i, scale) {
@@ -307,10 +367,10 @@ function buildRateInc(i, scale) {
 		item.rate += to_build;
 		next.count -= cost;
 
-		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );
+		addMessage( 'building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name );
 	} else {
-		addMessage( [ 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
-			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) ]);
+		addMessage( 'can\'t build', item.name, "rate+. insufficient", next.name+".", 'have', numberFormat(next.count), 'need',
+			(cost > 0) ? numberFormat(cost) : numberFormat(Math.ceil(next.base/scale)) );
 	}
 	updateUI();
 }
@@ -328,7 +388,7 @@ function buildDown(from, to) {
 		var to_build = calcBuildCount(item, 1);
 		var cost = calcBuildCost(item, to_build);
 		if (to_build > 0) {
-			addMessage( [ 'building', numberFormat(to_build), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) ] );
+			addMessage( 'building', numberFormat(to_build), game.map[item.next].name, 'from',  numberFormat(itemCount), item.name, 'total', numberFormat(cost) );
 			game.map[i].count -= cost;
 			game.map[item.next].count += to_build
 		} else if (!game.map[item.next].active) {
@@ -351,7 +411,7 @@ function buildUp(from, to) {
 		var cost = to_build * item.base;
 
 		if (to_build > 0) {
-			addMessage( [ 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) ]);
+			addMessage( 'building', numberFormat(to_build), previous.name, 'rate+ from', numberFormat(item.count), item.name, 'total', numberFormat(cost) );
 			item.count -= cost;
 			previous.rate += to_build;
 
@@ -372,7 +432,7 @@ function numberFormat(number, precision) {
 		}
 		return numeral(number).format('0,0');
 	}
-	var ret = number.toPrecision(4);
+	var ret = number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3);
 	return ret.indexOf("e")>=0?ret:ret.replace(/0+$/g, "");
 }
 
@@ -420,6 +480,9 @@ function updateItemInfo(row, rate) {
 		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');
 	addLI(list, "each " + item.name + " is worth " + numberFormat(calcItemValue(i)));
 	addLI(list, "total " + item.name + " value is " + numberFormat(calcTotalItemValue(i)));
+	addLI(list, "upgrades " + item.upgrades);
+	addLI(list, "multiplier " + item.multiplier);
+	addLI(list, "next upgrade " + numberFormat(Math.pow(game.item_base, item.upgrades)));
 	info_row.getElementsByClassName("expanded-item-data-col")[0].appendChild(list);
 	
 	// update title text from the LI items
@@ -479,26 +542,21 @@ function updateExpandDataRowVisibility(row, element){
 	}	
 }
 
-function setMessage(str_arr) {
-	addMessage(str_arr, true);
+function setMessage() {
+	document.getElementById( 'messages' ).value = "";
+	addMessage(arguments);
 }
 
-function addMessage(str_arr, clearFirst){
-	var dump = str_arr.join(" ");
-
-	if (!clearFirst)
-		dump += "\n" + document.getElementById( 'messages' ).value;
-
+function addMessage(){
+	var dump = [].slice.apply(arguments).join(" ");
+	
 	var lines = dump.split("\n");
-	if (lines.length > 20) {
+	if (lines.length > MESSAGE_WINDOW_LINES) {
 		dump = '';
-		for (var i =0; i<20; i++)
+		for (var i =0; i<MESSAGE_WINDOW_LINES; i++)
 			dump += lines[i] +'\n'; 
 	}
 	document.getElementById( 'messages' ).value = dump;
-
-	//console.log( (messagesWindow.value.match(/\n/g) || []).length);
-	// TODO: trim the log to, say, 1,000 characters
 }
 
 function clearMessages() {

@@ -24,7 +24,7 @@ var GameModule = function () {
 	var item_base = 1.3; /*1.3*/
 	var min_exponent = -324;	// min exponent is -324
 
-	var cost_calc_base = -5;
+	var cost_calc_base = -4;
 
 	var total_value = 0; // current total value
 	var total_value_rate = 0; // total_value rate of change per sec
@@ -72,7 +72,7 @@ var GameModule = function () {
 			value: Math.pow(base, min_exponent + parseInt(i) +1),
 
 			upgrades : 1,
-			multiplier : Math.pow(base, (i/2+cost_calc_base)),
+			multiplier : Math.pow(base, cost_calc_base) /*Math.pow(base, (i/2+cost_calc_base))*/,
 			count: 0,
 
 			rate: 1,

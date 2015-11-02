@@ -340,13 +340,13 @@ function buildR(item_id){
 	
 	var cost = Math.pow(game.item_base, item.upgrades);
 	if (item.count >= cost){
-		console.log('upgrading', item.name, "to", item.upgrades, "cost", cost);
+		addMessage('upgrading', item.name, "to level", item.upgrades, "cost", numberFormat(cost));
 		item.count /= cost;
 		item.rate += item.multiplier;
 		item.upgrades += 1;
 	}
 	else {
-		console.log("can't upgrade", item.name, "have", item.count, "need", cost);
+		addMessage("can't upgrade", item.name, "have", numberFormat(item.count), "need", numberFormat(cost));
 	}
 }
 
@@ -542,25 +542,23 @@ function updateExpandDataRowVisibility(row, element){
 	}	
 }
 
-function setMessage() {
-	document.getElementById( 'messages' ).value = "";
-	addMessage(arguments);
+// arguments is a list of literals to join with single-spaces, then added to the top of the 
+// message window with a limit of MESSAGE_WINDOW_LINES lines
+function addMessage(){
+	var new_line = [].slice.apply(arguments).join(" ");
+	var lines = document.getElementById( 'messages' ).value.split("\n", MESSAGE_WINDOW_LINES-1);
+	lines.unshift(new_line);
+	document.getElementById( 'messages' ).value = lines.join("\n");
 }
 
-function addMessage(){
-	var dump = [].slice.apply(arguments).join(" ");
-	
-	var lines = dump.split("\n");
-	if (lines.length > MESSAGE_WINDOW_LINES) {
-		dump = '';
-		for (var i =0; i<MESSAGE_WINDOW_LINES; i++)
-			dump += lines[i] +'\n'; 
-	}
-	document.getElementById( 'messages' ).value = dump;
+function setMessage() {
+	document.getElementById( 'messages' ).value = "";
+	var new_line = [].slice.apply(arguments).join(" ");
+	addMessage(new_line);
 }
 
 function clearMessages() {
-	setMessage( [] );
+	setMessage();
 }
 
 

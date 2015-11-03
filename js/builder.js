@@ -146,7 +146,7 @@ function populateTable()
             addToCell(row.cells[col_index], label);
         }*/
 
-        addToCell(row.cells[col_index++], div("build_single", 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name, "", 
+        addToCell(row.cells[col_index++], div("build_single_"+i, 'build ' + numberFormat(prestigeMultiplier()) + ' ' + game.map[i].name, "", 
             "build_single builder_div", '1'), "builder_cel");
 
         

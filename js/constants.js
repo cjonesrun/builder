@@ -81,7 +81,12 @@ var GameModule = function () {
 			next: (i < item_names.length-1) ? i+1 : null,
 			active: i===0 ? true : false,
 			auto_up: false,
-			auto_down: false
+			auto_down: false,
+			stats: {
+				manual_click_build: 0,
+				manual_click_upgrade: 0,
+				auto_build: 0
+			}
 		});		
 	};
 

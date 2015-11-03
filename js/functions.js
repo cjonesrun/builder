@@ -131,6 +131,7 @@ function calculate() {
        		}
 
 
+       		item.stats.auto_build += (item.count* item.rate - item.count);
     		item.count *= item.rate;
     		item.value *= item.rate;
     		//console.log(item.name, item.value);
@@ -341,17 +342,18 @@ function buildB(item_id){
 	if (item.previous == null){ 
 		//addMessage( 'building 1', item.name );
 		item.count +=  prestigeMultiplier();
+		item.stats.manual_click_build++;
 	} else {
 		var prev = game.map[item.previous];
-		var cost = prev.base * prev.rate;/*Math.pow(game.item_base, prev.upgrades);*/
-
-		//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
-		if (cost > 0 && prev.count >= cost) {
-			prev.count /= cost;
+		var cost = prev.base *  Math.pow(1+item.stats.manual_click_build,2) / 500;/*Math.pow(game.item_base, prev.upgrades);*/
+		var cost = Math.pow( game.map[0].rate, game.map[0].stats.manual_click_build);
+		if (cost >= 0 && prev.count >= cost) {
+			prev.count -= cost;
 			//prev.rate += prev.multiplier;
 			//prev.upgrades += 1;
 			item.count +=  prestigeMultiplier();
-			
+			item.stats.manual_click_build++;
+
 			addMessage( 'building 1', item.name, 'costing', numberFormat(cost), prev.name );
 		} else {
 			addMessage( 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
@@ -366,6 +368,8 @@ function buildR(item_id){
 	
 	var cost = Math.pow(game.item_base, item.upgrades);
 	if (item.count >= cost){
+		item.stats.manual_click_upgrade++;
+
 		addMessage('upgrading', item.name, "to level", item.upgrades, "cost", numberFormat(cost));
 		item.count /= cost;
 		item.rate += item.multiplier;
@@ -498,17 +502,20 @@ function updateItemInfo(row, rate) {
 	var list = buildUL();
 
 	addLI(list, numberFormat(item.base) + ' ' + item.name + '->' + ((i != game.num_items()-1) ? next.name : item.name));
-    addLI(list, 'starts building ' + ((i != game.num_items()-1) ? next.name : item.name ) + ' @' + 
+	addLI(list, 'starts building ' + ((i != game.num_items()-1) ? next.name : item.name ) + ' @' + 
     		numberFormat(Math.ceil(starts_building_at)) + " " + item.name);
-    addLI(list, "accruing " + numberFormat(rate)+ " " + item.name + '/s net');
-
-    if (i != game.num_items()-1)
-		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');
+	addLI(list, "base multiplier " + item.multiplier);
+    
+    /*if (i != game.num_items()-1)
+		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');*/
 	addLI(list, "each " + item.name + " is worth " + numberFormat(calcItemValue(i)));
 	addLI(list, "total " + item.name + " value is " + numberFormat(calcTotalItemValue(i)));
-	addLI(list, "upgrades " + item.upgrades);
-	addLI(list, "multiplier " + item.multiplier);
+	
+	addLI(list, "upgraded multiplier " + numberFormat(rate)+ " " + item.name + '');
 	addLI(list, "next upgrade " + numberFormat(Math.pow(game.item_base, item.upgrades)));
+	addLI(list, "stats: build [click=" + numberFormat(item.stats.manual_click_build) + ", auto=" + numberFormat(item.stats.auto_build) +
+		"] upgrade [click=" + numberFormat(item.stats.manual_click_upgrade) + ", auto=not implemented]" );
+	
 	info_row.getElementsByClassName("expanded-item-data-col")[0].appendChild(list);
 	
 	// update title text from the LI items

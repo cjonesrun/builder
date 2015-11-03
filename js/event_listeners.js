@@ -33,9 +33,10 @@ mainTable.addEventListener('click', function(e){
 	if (e.target.nodeName === 'DIV'){
 		var btnClass = e.target.className;
 		
-	  	if (hasClass(e.target, "build_single"))
-	  		build(item_id, 0);
-	  	else if (hasClass(e.target, "build_half"))
+	  	if (hasClass(e.target, "build_single")){
+	  		//build(item_id, 0);
+	  		buildB(item_id);
+	  	}else if (hasClass(e.target, "build_half"))
 	  		build(item_id, 0.5);
 	  	else if (hasClass(e.target, "build_all"))
 	  		build(item_id, 1);

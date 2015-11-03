@@ -72,7 +72,7 @@ var GameModule = function () {
 			value: Math.pow(base, min_exponent + parseInt(i) +1),
 
 			upgrades : 1,
-			multiplier : Math.pow(base, cost_calc_base) /*Math.pow(base, (i/2+cost_calc_base))*/,
+			multiplier : (1+i)*Math.pow(base, cost_calc_base) /*Math.pow(base, (i/2+cost_calc_base))*/,
 			count: 0,
 
 			rate: 1,

@@ -335,6 +335,32 @@ function build(i, scale) {
 	updateUI();
 }
 
+function buildB(item_id){
+	var item = game.map[item_id];
+	// smallest item && level, free
+	if (item.previous == null){ 
+		//addMessage( 'building 1', item.name );
+		item.count +=  prestigeMultiplier();
+	} else {
+		var prev = game.map[item.previous];
+		var cost = Math.pow(game.item_base, prev.upgrades);
+
+		//console.log( 'building', to_build, item.name, 'using', cost, prev.name, item.count, prev.base, prestigeMultiplier());
+		if (cost > 0 && prev.count >= cost) {
+			prev.count /= cost;
+			prev.rate += prev.multiplier;
+			prev.upgrades += 1;
+			item.count +=  prestigeMultiplier();
+			
+			addMessage( 'building 1', item.name, 'costing', numberFormat(cost), prev.name );
+		} else {
+			addMessage( 'can\'t build', item.name+".", 'insufficient', prev.name+".", 'have', numberFormat(prev.count), 'need',
+				numberFormat(Math.pow(game.item_base, prev.upgrades)) );
+		}
+	}
+	updateUI();
+}
+
 function buildR(item_id){
 	var item = game.map[item_id];
 	

@@ -346,7 +346,7 @@ function buildB(item_id){
 	} else {
 		var prev = game.map[item.previous];
 		var cost = prev.base *  Math.pow(1+item.stats.manual_click_build,2) / 500;/*Math.pow(game.item_base, prev.upgrades);*/
-		var cost = Math.pow( game.map[0].rate, game.map[0].stats.manual_click_build);
+		var cost = Math.pow( prev.rate, prev.stats.manual_click_build);
 		if (cost >= 0 && prev.count >= cost) {
 			prev.count -= cost;
 			//prev.rate += prev.multiplier;
@@ -573,6 +573,21 @@ function updateExpandDataRowVisibility(row, element){
 		element.innerHTML = "-";
 		setVisible(rowToShow, true);
 	}	
+}
+
+function showGameStats(){
+	clearMessages();
+
+	var finalDump = "";
+	for (var i=0; i<game.num_items(); i++){
+		if (!game.map[i].active)
+			continue;
+		//console.log(game.map[i].stats)
+		var stats = game.map[i].stats;
+		finalDump += game.map[i].name + " " + JSON.stringify(stats, null, "\t")+"\n";
+	}
+	// bypass the MESSAGE_WINDOW_LINES limit for this
+	document.getElementById( 'messages' ).value = finalDump;
 }
 
 // arguments is a list of literals to join with single-spaces, then added to the top of the 

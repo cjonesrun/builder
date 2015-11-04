@@ -61,7 +61,7 @@ function startTimers() {
         console.log('state_save_timer already started', state_save_timer); */
 }
 
-function update_timer_interval( )
+function updateTimerInterval( )
 {
 	clearInterval(ui_timer);
 

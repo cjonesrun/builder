@@ -129,7 +129,11 @@ messagesTable.addEventListener('click', function(e){
 			break;
     
     		case "tick_button":
-    			update_timer_interval();
+    			updateTimerInterval();
+    		break;
+
+    		case "stats":
+    			showGameStats();
     		break;
 
 	  		default:

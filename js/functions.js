@@ -134,6 +134,9 @@ function calculate() {
        		item.stats.auto_build += (item.count* item.rate - item.count);
     		item.count *= item.rate;
     		item.value *= item.rate;
+
+    		if (item.previous != null)
+    			game.map[item.previous].count /= item.rate;
     		//console.log(item.name, item.value);
     		//console.log(item.name, item.count, item.rate, item.multiplier);
        		
@@ -515,8 +518,9 @@ function updateItemInfo(row, rate) {
 	addLI(list, "next upgrade " + numberFormat(Math.pow(game.item_base, item.upgrades)));
 	if (item.previous != null){
 		var prev = game.map[item.previous];
-		addLI(list, "next build " + numberFormat( Math.pow( prev.rate, prev.stats.manual_click_build)));
-	}
+		addLI(list, "next build " + numberFormat( Math.pow( prev.rate, prev.stats.manual_click_build)) + " " + prev.name);
+	} else
+		addLI(list, "next build free");
 	addLI(list, "stats: build [click=" + numberFormat(item.stats.manual_click_build) + ", auto=" + numberFormat(item.stats.auto_build) +
 		"] upgrade [click=" + numberFormat(item.stats.manual_click_upgrade) + ", auto=not implemented]" );
 	

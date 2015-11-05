@@ -1,7 +1,6 @@
 var mainTable = getElement('main_table');
 var messagesTable = getElement('messages_table');
 var tabBarDiv = getElement("tab_bar_div");
-var slider = getElement("tick_rate_slider");
 
 tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
@@ -208,6 +207,8 @@ window.addEventListener('blur', function(e) {
 	//console.log('focus lost... pausing',e );
 });
 
-slider.addEventListener('change', function(e){
-	console.log('slider val', e.target.value);
-});
+var slider = getElement("tick_rate_slider");
+if (slider != null)
+	slider.addEventListener('change', function(e){
+		console.log('slider val', e.target.value);
+	});

@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
+
+<script type="text/javascript" src="js/constants.js"></script>
+
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" type="text/css" href="css/main2.css">
+	</head>
+	<body>
+		<div id='top_div'>
+			<div id='total_value_div'>
+				<b><text title="total value">v</text></b>
+				<text id="total_value" title="total value">0</text>
+				<b><text title="delta value">&beta;<sub>v</text></b>
+				<text id="total_value_rate" title="beta value">0/s</text>
+				<b><text title="gamma value">&gamma;<sub>v</sub></text></b>
+				<text id="total_value_accel" title="gamma value">0/s<sup>2</sup></text>
+				<br>
+				<b><text><i>t</i></text></b>
+				<div id="running" class="inline" title="total building time"></div>
+				<br>
+				<b><text><i>tick</i></text></b>
+				<div id="tick_rate" class="inline" title="tick rate"></div>
+			</div>
+
+			<div id="tab_bar_div" class="tab_bar_div" data-visible="true">
+			</div>
+
+		</div>
+
+		<div id="items_div">
+			<p>
+			<table>
+				<tr>
+					<td>
+						<table id='main_table' class="data-test">
+							<tr>
+								<th class="expand-button-display"></th>
+								<th class="item-index-display">#</th>
+								
+								<th align="left">name</th>
+								<th class="numeric-display">count</th>
+								<th class="numeric-display">*</th>
+								<th class="numeric-display">next</th>
+								<th colspan=3>build</th>	
+								<th colspan=2>&#8615;</th>
+								<th colspan=3>upgrade</th>
+								<th colspan=2>&#8613;</th>
+							</tr>
+
+							<tr id='main-item-row-to-clone' data-visible="false">
+								<td></td> <td></td> <td></td> <td></td> <td></td>
+								<td></td> <td></td> <td></td> <td></td> <td></td>
+								<td></td> <td></td> <td></td> <td></td> <td></td>
+								<td></td>
+							</tr>
+
+							<tr id='expanded-item-row-to-clone' data-visible="false">
+								<td></td>
+								<td colspan=14 class="expanded-item-data-col"></td>
+								<td></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table id='messages_table' class="data-test">
+							<tr>
+								<td align=middle><text><b>messages</b></text></td>								
+							</tr>
+							<tr>
+								<td><textarea id="messages" class="main-message-area"></textarea></td>								
+							</tr>
+							<tr>
+								<td align=right>
+									<button class="pause_button" title="pause/resume game ticker">pause</button>
+									<button class="save_button" title="save game state">save</button>
+									<button class="clear_button" title="clear messages">clear</button>
+									<button class="export_button" title="export serialized game state to messages">export</button>
+									<button class="load_button" title="load serialized game state from messages">load</button>
+									<button class="export_json_button" title="show game state JSON">JSON</button>
+									<button class="stats" title="show game stats">stats</button>
+								</td>
+							</tr>
+							<tr>
+								<td align=right>
+									<!--button class="tick_button" title="set game tick interval">tick</button>
+									<text size=6 id="timer">1000</text>
+									<text>ms</text-->
+									<button class="reset_button" title="reset game">reset game</button>
+									<button class="hard_reset" title="blow away local storage" onclick="hardReset();">hard reset</button>
+									<!--br>
+									Slider
+									<input type="range" id='tick_rate_slider' min="100" value="100" max="5000" step="100"></input-->
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table></p>
+		</div>
+		<div id="notes_div">
+			<p>notes:
+			<ul>
+				<li>build a rube goldberg machine.</li>
+				<!--li>when a rube goldberg machine starts building rube-goldberg machines, perpetual motion is attained.</li-->
+				<li>more info about the game is coming. for now, build things to build more things.</li>
+			</ul>
+			</p>
+		</div>
+		<div id="its-wrapper"></div>
+	</body>
+</html>
+
+
+<script type="text/javascript" src="js/state.js"></script>
+<script type="text/javascript" src="js/timer.js"></script>
+<script type="text/javascript" src="js/builder.js"></script>
+<script type="text/javascript" src="js/event_listeners.js"></script>
+
+<script src='http://brandonbrule.github.io/itsa/js/itsa.js'></script>
+
+
+<script>
+addMessage('perpetual machine of order', game.pmm.current_level +".", "goal is to build to enough", game.name( game.pmm.levels[game.pmm.current_level] ), "to start building", game.name(0)+".");
+
+its.a('app loaded');
+
+// +'^'+game.pmm.current_level,'=', numberFormat(prestigeMultiplier()), 'initialized' ] );
+</script>

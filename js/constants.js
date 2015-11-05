@@ -34,7 +34,8 @@ var GameModule = function () {
 		base: 1.01,
 		current_level: 0,
 
-		levels: [3, 6, 11, 17, 23, 25],
+		levels: [25],
+		//levels: [3, 6, 11, 17, 23, 25],
 		//levels: [7, 15, 25],
 		activated: false,
 		state: []

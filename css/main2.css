@@ -1,0 +1,15 @@
+
+#messages_table{
+	width: 100%;
+	text-align: center;
+}
+textarea[class="main-message-area"]{
+	width: 95%;
+	height: 10em;
+}
+
+/*table[class="data-test"]{
+	border: 1px solid black;
+	table-layout: auto;
+}
+*/

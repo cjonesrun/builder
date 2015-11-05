@@ -345,7 +345,7 @@ function buildB(item_id){
 		item.stats.manual_click_build++;
 	} else {
 		var prev = game.map[item.previous];
-		var cost = prev.base *  Math.pow(1+item.stats.manual_click_build,2) / 500;/*Math.pow(game.item_base, prev.upgrades);*/
+		//var cost = prev.base *  Math.pow(1+item.stats.manual_click_build,2) / 500;/*Math.pow(game.item_base, prev.upgrades);*/
 		var cost = Math.pow( prev.rate, prev.stats.manual_click_build);
 		if (cost >= 0 && prev.count >= cost) {
 			prev.count -= cost;
@@ -504,7 +504,7 @@ function updateItemInfo(row, rate) {
 	addLI(list, numberFormat(item.base) + ' ' + item.name + '->' + ((i != game.num_items()-1) ? next.name : item.name));
 	addLI(list, 'starts building ' + ((i != game.num_items()-1) ? next.name : item.name ) + ' @' + 
     		numberFormat(Math.ceil(starts_building_at)) + " " + item.name);
-	addLI(list, "base multiplier " + item.multiplier);
+	addLI(list, "base multiplier " + numberFormat(item.multiplier));
     
     /*if (i != game.num_items()-1)
 		addLI(list, 'building ' + numberFormat(calcBuildRate( i ))  + " " + next.name + '/s');*/
@@ -513,6 +513,10 @@ function updateItemInfo(row, rate) {
 	
 	addLI(list, "upgraded multiplier " + numberFormat(rate)+ " " + item.name + '');
 	addLI(list, "next upgrade " + numberFormat(Math.pow(game.item_base, item.upgrades)));
+	if (item.previous != null){
+		var prev = game.map[item.previous];
+		addLI(list, "next build " + numberFormat( Math.pow( prev.rate, prev.stats.manual_click_build)));
+	}
 	addLI(list, "stats: build [click=" + numberFormat(item.stats.manual_click_build) + ", auto=" + numberFormat(item.stats.auto_build) +
 		"] upgrade [click=" + numberFormat(item.stats.manual_click_upgrade) + ", auto=not implemented]" );
 	

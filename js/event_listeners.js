@@ -1,12 +1,14 @@
+var last_user_action = new Date().getTime();
+document.addEventListener('click', function(e){
+	//console.log('something clicked');
+	var timeSinceLastAction = new Date().getTime()-last_user_action;
+	//console.log('time between user actions:', timeFormat(timeSinceLastAction/1000));
+	last_user_action = new Date().getTime();
+});
+
 var mainTable = getElement('main_table');
 var messagesTable = getElement('messages_table');
 var tabBarDiv = getElement("tab_bar_div");
-var slider = getElement("tick_rate_slider");
-
-slider.addEventListener('change', function(e){
-	console.log(e, e.target.value);
-
-});
 
 tabBarDiv.addEventListener('click', function(e){
 	its.clearAll();
@@ -188,3 +190,9 @@ window.addEventListener('focus', function(e) {
 window.addEventListener('blur', function(e) {
 	//console.log('focus lost... pausing',e );
 });
+
+var slider = getElement("tick_rate_slider");
+if (slider !== null)
+	slider.addEventListener('change', function(e){
+		console.log(e, e.target.value);
+	});

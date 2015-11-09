@@ -57,6 +57,7 @@ function updateUI() {
 }
 
 function handleRow(i, row, i_next, next_row){
+
 	// current row visibility
 	var show = game.map[i].count >= game.map[i].base || game.map[i_next].active;
 
@@ -93,6 +94,7 @@ function calculateItem(index) {
 
 // calculate changes since last calculation.
 function calculate() {
+	var timer = new Date().getTime();
     var this_calculation = new Date().getTime();
     var diff = this_calculation - game.last_calculation;
     var ticks_since_last = Math.floor(diff / game.TICK_INTERVAL); // ticks since last calc
@@ -182,6 +184,7 @@ function calculate() {
     
     // back up the last_calc by remainder so it gets included next tick
     game.last_calculation = this_calculation - (diff - ticks_since_last * game.TICK_INTERVAL);
+    //console.log(new Date().getTime(), timer, (new Date().getTime()-timer) + "ms.");
 }
 
 function enablePMM(index, init){
@@ -281,7 +284,9 @@ function buildRateInc(i, scale) {
 
 	//console.log( 'building', to_build, item.name, 'using', cost, next.name, item.count, next.base, prestigeMultiplier());
 	if (to_build > 0 && next.count >= cost) {
-		item.rate += to_build;
+		//item.rate += to_build;
+		console.log(next.name, next.rate);
+		next.rate += to_build;
 		next.count -= cost;
 
 		addMessage( ['building', numberFormat(to_build), item.name, 'rate+ costing', numberFormat(cost), next.name ] );

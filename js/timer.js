@@ -2,17 +2,14 @@ var ui_timer; // main timer for auto block & thing building
 var state_save_timer;
 var calclator_timer;
 
-function startCalculatorTime() {
-    calclator_timer = setInterval(function(){ 
-        calculate();
-    }, game.TICK_INTERVAL);
-    
+function runCalculator(){
+    calculate();
+    calculor_time = setTimeout(runCalculator, game.TICK_INTERVAL);
 }
 
-function startUIUpdater() {
-    ui_timer = setInterval(function(){ 
-        updateUI();
-	}, game.UI_REFRESH_INTERVAL);
+function runUIUpdater(){
+    updateUI();
+    ui_timer = setTimeout(runUIUpdater, game.UI_REFRESH_INTERVAL);
 }
 
 function startStateSaver() {
@@ -24,19 +21,19 @@ function startStateSaver() {
 function stopTimers() {
     if (typeof ui_timer == "number") {
         //console.log('stopping ui_timer', ui_timer);
-        clearInterval(ui_timer);
+        clearTimeout(ui_timer);
         ui_timer = false;
     } /*else
         console.log('ui_timer already stopped', ui_timer);*/
 
     if (typeof calclator_timer == "number") {
-        clearInterval(calclator_timer);
+        clearTimeout(calclator_timer);
         calclator_timer = false;
     }
 
     if (typeof state_save_timer == "number") {
         //console.log('stopping state_save_timer', state_save_timer);
-        clearInterval(state_save_timer);
+        clearTimeout(state_save_timer);
         state_save_timer = false;
     } /* else
         console.log('ui_timer already stopped', state_save_timer); */
@@ -46,12 +43,12 @@ function startTimers() {
     if (typeof ui_timer != "number") {
         //console.log('starting ui_timer', ui_timer);
         game.last_calculation = new Date().getTime();
-        startUIUpdater();
+        runUIUpdater();
     } /* else
         console.log('ui_timer already started', ui_timer); */
 
     if (typeof calclator_timer != "number") {
-        startCalculatorTime();
+        runCalculator();
     }
 
     if (typeof state_save_timer != "number") {

@@ -121,17 +121,17 @@ function populateTable()
         addToCell(row.cells[col_index++], div("push_down", "push all builds down from "+ game.map[i].name, "", "push_down builder_div", '&#8615;'), "builder_cel");
        
         if (i < game.num_items()-1) { // skip next 4 cells for last row
-            if (i>0){
+            /*if (i>0){*/
                 addToCell(row.cells[col_index++], div("rate_build_single", "rate+ " + game.map[i].name + " by " + numberFormat(prestigeMultiplier()) + "/s","", "rate_build_single builder_div", '1'), "builder_cel");
                 addToCell(row.cells[col_index++], div("rate_build_half", "rate+ " + game.map[i].name + " by using 1/2 available " + game.map[game.map[i].next].name, "", "rate_build_half builder_div", '1/2'), "builder_cel");
                 addToCell(row.cells[col_index++], div("rate_build_all", "rate+ " + game.map[i].name + " by using max available " + game.map[i].next, "","rate_build_all builder_div",'max'), "builder_cel");
                 addToCell(row.cells[col_index++], div("pull_up", "pull all rate+ up to "+ game.map[i].name, "", "pull_up builder_div", '&#8624;'), "builder_cel");
-            } else {
+            /*} else {
                 row.cells[col_index++].className = "builder_cel";
                 row.cells[col_index++].className = "builder_cel";
                 row.cells[col_index++].className = "builder_cel";
                 row.cells[col_index++].className = "builder_cel";
-            }
+            }*/
 
             if (i>1)
                 addToCell(row.cells[col_index++], div("push_up", "push all rate+ up from "+ game.map[i].name, "", "push_up builder_div", '&#8613;'), "builder_cel");

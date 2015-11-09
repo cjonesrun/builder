@@ -20,7 +20,7 @@ var GameModule = function () {
 	var last_save;                           // last time the game was saved  
 
 	var base = 10;
-	var item_base = 1.7; /*1.3*/
+	var item_base = 1.4; /*1.3*/
 	var min_exponent = -3;	// min exponent is -324
 
 	var total_value = 0; // current total value

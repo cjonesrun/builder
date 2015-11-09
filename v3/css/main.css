@@ -1,0 +1,32 @@
+/* Invisible Container */
+[data-visible="false"]{
+  display: none;
+}
+
+.numeric-display{
+	text-align: left;
+	width: 6em;
+}
+
+.item-name-display{
+	text-align: left;
+	width: 11em;
+}
+
+.item-index-display{
+	text-align: center;
+	width: 1em;
+}
+
+.expand-button-display{
+	text-align: center;
+	width: 1em;
+}
+
+.top-level-div {
+	/*border: 1px solid black;*/
+}
+
+table,tr,td{
+	border: 1px solid black;
+}

@@ -127,3 +127,37 @@ function numberFormat(number, precision) {
     var ret = number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3);
     return ret.indexOf("e")>=0?ret:ret.replace(/0+$/g, "");
 }
+
+// create a text element
+function text(id, className, innerHTML, title, attr_map){
+    return decorateElement(document.createElement("text"), id, className, innerHTML, title, attr_map);
+}
+
+// create div element
+function div(id, className, innerHTML, title, attr_map){
+    return decorateElement(document.createElement("div"), id, className, innerHTML, title, attr_map);
+}
+function decorateElement(element, id, className, innerHTML, title, attr_map){
+    element.setAttribute("id", id);
+    element.setAttribute("class", className);
+    element.innerHTML = str;
+    
+    if (title === undefined || title === null )
+        element.title = id;
+    else element.title = title;
+    
+    addAttributes(element, attr_map);
+
+    return element;
+}
+
+function addAttributes(element, map) {
+    // map of attribute k/v pairs
+    if (map === undefined || map === null) 
+        return;
+    else {
+        for (attr in map) {
+            element.setAttribute(attr, map[attr]);
+        }
+    }
+}

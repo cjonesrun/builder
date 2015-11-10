@@ -4,7 +4,7 @@
 }
 
 div,table,tr,td{
-	border: 1px solid black;
+	/*border: 1px solid black;*/
 }
 
 .numeric-display{
@@ -18,7 +18,7 @@ div,table,tr,td{
 }
 
 .item-index-display{
-	text-align: center;
+	text-align: left;
 	width: 1em;
 }
 

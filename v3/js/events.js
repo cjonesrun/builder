@@ -1,8 +1,8 @@
 var last_user_action = new Date().getTime();
 document.addEventListener('click', function(e){
 	var timeSinceLastAction = new Date().getTime()-last_user_action;
-	if (timeSinceLastAction > 10000)
-		addMessage('time between user actions:', timeFormat(timeSinceLastAction));
+	/*if (timeSinceLastAction > 10000)
+		addMessage('time between user actions:', timeFormat(timeSinceLastAction));*/
 	last_user_action = new Date().getTime();
 });
 
@@ -18,6 +18,10 @@ main_table.addEventListener('click', function(e){
 		var btnClass = e.target.className;
 		
 	  	if (hasClass(e.target, "build_single")){
+	  		build(item_id, 1);
+	  	} else if (hasClass(e.target, "auto_single")){
+	  		auto(item_id, 1);
+	  	} else if (hasClass(e.target, "count")){
 	  		build(item_id, 1);
 	  	}
 	 }
@@ -43,9 +47,15 @@ main_table.addEventListener('click', function(e){
 	  	else
 	  		its.a('main_table event handle. no button handler for ' + btnClass);
   	}*/
+
+  	if (e.target.nodeName === 'INPUT' && e.target.type === 'checkbox'){
+  		//console.log(item_id, e.target.checked);
+  		toggle(item_id, e.target.checked);
+  	}
 });
 
 var options_div = document.getElementById('options_div');
+var message_div = document.getElementById('message-wrapper');
 
 options_div.addEventListener('click', function(e){
 	its.clearAll();
@@ -88,6 +98,12 @@ options_div.addEventListener('click', function(e){
 
     		case "stats":
     			showGameStats();
+    		break;
+
+    		case "message_button":
+    			
+    			setVisible(message_div, !isVisible(message_div));
+    			e.target.innerHTML= (isVisible(message_div)?"hide":"show") + " message box";
     		break;
 
 	  		default:

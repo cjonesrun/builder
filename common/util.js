@@ -38,6 +38,25 @@ function closestParentByClass(el, cls) {
     return null;
 };
 
+function setVisible(element, visible) {
+    if (element === null)
+        return;
+    if (visible) 
+        element.removeAttribute("data-visible");
+    else
+        element.setAttribute("data-visible", "false");
+}
+
+function isVisible(element) {
+    var vis = element.getAttribute("data-visible");
+    //console.log(vis, typeof vis);
+
+    if (vis === "false")
+        return false;
+    else
+        return true;
+}
+
 // LZW-compress a string
 function lzw_encode(s) {
     var dict = {};
@@ -126,6 +145,14 @@ function numberFormat(number, precision) {
     }
     var ret = number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3);
     return ret.indexOf("e")>=0?ret:ret.replace(/0+$/g, "");
+}
+
+// create a checkbox element
+function check(id, className, value, title, attr_map){
+    var cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.value = value;
+    return decorateElement(cb, id, className, value, title, attr_map);
 }
 
 // create a text element

@@ -43,22 +43,27 @@ function buildUI(){
         var col_index = 0;
 
         //(id, className, innerHTML, title, attr_map)
-        var txt = div("expand"+i, "expand-button-display builder_div", "+", 'expand ' + game.map[i].name, {"expand-action":"expand-data-row"});
-        addToCell(row.cells[col_index++], txt);
+        /*var txt = div("expand"+i, "expand-button-display builder_div", "+", 'expand ' + game.map[i].name, {"expand-action":"expand-data-row"});
+        addToCell(row.cells[col_index++], txt);*/
+        col_index++;
 
-        addToCell(row.cells[col_index++], text("index"+i, null, i, null, { "expand-action": "expand-data-row" }));
-        addToCell(row.cells[col_index++], text("name"+i, null, game.map[i].name, null, { "expand-action": "expand-data-row" }));
+        addToCell(row.cells[col_index++], text("index"+i, null, i, null, { "expand-action": "expand-data-row" }),"item-index-display");
+        addToCell(row.cells[col_index++], text("name"+i, null, game.map[i].name+" ["+game.map[i].base +"]", null, { "expand-action": "expand-data-row" }), "item-name-display");
 
         var count_div = div("count"+i, "count", "0", "", {});
-        var rate_div = div("rate"+i, "rate", "0", "", {});
+        var rate_div = div("auto"+i, "auto", "0", "", {});
         //var build_div = div("build_"+i, "build", "0", "", {});
 
+        var rate_cb = check("auto"+i, "auto", "0", "", {});
+
         addToCell(row.cells[col_index++], count_div, 'numeric-display');
-        addToCell(row.cells[col_index++], rate_div);
+        addToCell(row.cells[col_index++], rate_cb);
         //addToCell(row.cells[col_index++], build_div, 'numeric-display');
         col_index++;
-        addToCell(row.cells[col_index++], 
-        	div("build_single_"+i, "build_single builder_div", '1', 'build ' + numberFormat(1) + ' ' + game.map[i].name, {}), "builder_cel");
+        /*addToCell(row.cells[col_index++], 
+        	div("build_single_"+i, "build_single builder_div", '1', 'auto ' + numberFormat(1) + ' ' + game.map[i].name, {}), "builder_cel");*/
+        /*addToCell(row.cells[col_index++], 
+        	div("auto_single_"+i, "auto_single builder_div", '1+', 'auto' + numberFormat(1) + ' ' + game.map[i].name, {}), "builder_cel");*/
 /*        
         addToCell(row.cells[col_index++], div("build_half", 'build 1/2 the max number of ' + game.map[i].name, "", "build_half builder_div", '1/2'), "builder_cel");
         addToCell(row.cells[col_index++], div("build_all", "build max number of " + game.map[i].name, "", "build_all builder_div", 'max'), "builder_cel");

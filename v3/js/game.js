@@ -72,16 +72,17 @@ var BuilderModule = function () {
 			multiplier : Math.pow(base, cost_calc_base)/(i+1) /*Math.pow(base, (i/2+cost_calc_base))*/,
 			count: 0,
 
-			rate: 1,
+			rate: 0,
 			id: i,
 			previous: (i>0) ? i-1 : null,
 			next: (i < item_names.length-1) ? i+1 : null,
 			active: i===0 ? true : false,
+			decay: 1.01,
 			auto_up: false,
 			auto_down: false,
 			stats: {
-				manual_click_build: 0,
-				manual_click_upgrade: 0,
+				manual_build: 0,
+				manual_upgrade: 0,
 				auto_build: 0
 			}
 		});		

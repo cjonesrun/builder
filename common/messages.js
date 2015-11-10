@@ -23,7 +23,7 @@ if ( document.getElementById('message-wrapper') ) {
 	    'font-family: "Lucida Sans Typewriter";',
 	    'overflow-y: scroll;',
     	'max-height: 10em;',
-    	'min-height: 3em;',
+    	'min-height: 10em;',
 	  '}'].join('');
 
 	  style_tag.innerHTML = styles;

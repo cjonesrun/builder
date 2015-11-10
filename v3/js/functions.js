@@ -15,6 +15,8 @@ function calculate() {
 
 function build(item, howmany){
 	game.map[item].count += howmany;
+
+	updateUI();
 }
 
 

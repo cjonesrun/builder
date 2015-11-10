@@ -1,10 +1,22 @@
 function updateUI() {
-
+	var rows = document.getElementsByClassName("item-data-row");
+	for (var i = 0; i<rows.length; i++ ) {
+		var itemid = rows[i].getAttribute("item-id");
+		var count = rows[i].querySelector(".count");
+		count.innerHTML = numberFormat(game.map[itemid].count);
+    	count.title = 'inventory ' + count.innerHTML + ' ' + game.map[itemid].name;
+	}
 }
 
 function calculate() {
 
 }
+
+
+function build(item, howmany){
+	game.map[item].count += howmany;
+}
+
 
 function hardReset() {
 	clearState(game.NAME, pmm.NAME);

@@ -3,6 +3,10 @@
   display: none;
 }
 
+div,table,tr,td{
+	border: 1px solid black;
+}
+
 .numeric-display{
 	text-align: left;
 	width: 6em;
@@ -18,15 +22,40 @@
 	width: 1em;
 }
 
-.expand-button-display{
+/*.expand-button-display{
+	border: 1px solid red;
 	text-align: center;
 	width: 1em;
-}
+}*/
 
 .top-level-div {
 	/*border: 1px solid black;*/
 }
-
-table,tr,td{
+.expander{
 	border: 1px solid black;
+	text-align: center;
+	width: 1em;
+}
+
+.builder_cel {
+	width: 1em;
+}
+.builder_div {
+	/*min-width: 1em;
+	width: auto;*/
+	width: 1.5em;
+    height: auto;
+    text-align: center;
+    border: 1px solid gray;
+    display: block;
+    
+    font-size: 0.8em;
+    border-radius: 3px 3px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
+    color: black;
+    background: linear-gradient(white,lightgray);
+}
+
+.builder_div:active {
+	background: linear-gradient(lightgray,white);
+	/*color:white;*/
 }

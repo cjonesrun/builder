@@ -139,8 +139,9 @@ function div(id, className, innerHTML, title, attr_map){
 }
 function decorateElement(element, id, className, innerHTML, title, attr_map){
     element.setAttribute("id", id);
-    element.setAttribute("class", className);
-    element.innerHTML = str;
+    if (className !== undefined && className !== null)
+        element.setAttribute("class", className);
+    element.innerHTML = innerHTML;
     
     if (title === undefined || title === null )
         element.title = id;

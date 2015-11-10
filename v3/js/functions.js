@@ -44,8 +44,9 @@ function calculate() {
 	            	next.count += 1;
 
 	            	// trying half life decay
-	            	item.halflife=item.base; // 
-	            	item.count = item.count * Math.pow(0.5, 1 / item.halflife);
+	            	item.halflife=item.base;
+	            	var mult = Math.min(1, item.count/item.base);
+	            	item.count = item.count * Math.pow(0.5, 1 / (item.halflife*mult));
 
 	            	//item.count /= item.decay ; //+ (/*item.base + */item.stats.manual_build)/1000;
 	            	//item.decay *= item.decay > 1.5 ? 1.0 : 1.0001;

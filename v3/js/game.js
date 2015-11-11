@@ -34,10 +34,10 @@ var BuilderModule = function () {
 		//levels: [3, 6, 11, 17, 23, 25],
 		//levels: [7, 15, 25],
 		activated: false,
-		state: []
+		state: [0,0,0]
 	};
 
-	var item_names = [ 'bit', 'part', 'block', 'thing', 'object', 'widget', 
+	var item_names = [ 'bit', 'part', 'piece', 'block', 'thing', 'object', 'widget', 
 						'device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil', 
 						'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 
 						'whatchamacalit', 'paraphernalia', 'thingamajig','apparatus', 'appliance', 'furnishing', 
@@ -72,12 +72,12 @@ var BuilderModule = function () {
 			multiplier : Math.pow(base, cost_calc_base)/(i+1) /*Math.pow(base, (i/2+cost_calc_base))*/,
 			count: 0,
 
-			rate: 0,
+			rate: 1,
 			id: i,
 			previous: (i>0) ? i-1 : null,
 			next: (i < item_names.length-1) ? i+1 : null,
 			active: i===0 ? true : false,
-			halflife: baseCalc(i),
+			halflife: baseCalc(i)+base,
 			auto_up: false,
 			auto_down: false,
 			stats: {

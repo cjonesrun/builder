@@ -1,3 +1,7 @@
+body { font-family: serif; 
+	font: normal 1em Verdana;
+}
+
 /* Invisible Container */
 [data-visible="false"]{
   display: none;
@@ -28,9 +32,6 @@ div,table,tr,td{
 	width: 1em;
 }*/
 
-.top-level-div {
-	/*border: 1px solid black;*/
-}
 .expander{
 	border: 1px solid black;
 	text-align: center;
@@ -49,7 +50,7 @@ div,table,tr,td{
     border: 1px solid gray;
     display: block;
     
-    font-size: 0.8em;
+    //font-size: 0.8em;
     border-radius: 3px 3px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
     color: black;
     background: linear-gradient(white,lightgray);
@@ -58,4 +59,39 @@ div,table,tr,td{
 .builder_div:active {
 	background: linear-gradient(lightgray,white);
 	/*color:white;*/
+}
+
+
+.tab_bar_div {
+    width: 100%;
+    height: auto;
+    float:left;
+    /*margin-left: 1m;
+    margin-top: 1em;
+    margin-bottom: 1em;*/
+}
+
+.tab_bar_div_child {
+	max-width: 10em;
+   	width:auto;
+	padding-left: 1em;
+   	padding-right: 1em;
+    height: 1em;
+    float:left;
+    text-align: center;
+    border: 1px solid gray;
+    display: block;
+    margin-right: 0px;
+    border-radius: 25px 25px 3px 3px; /* top-left, top-right, bottom-right, bottom-left */
+	font-size: 0.8em;
+    color: black;
+    //background: linear-gradient(white,lightgray);
+}
+
+.tab_bar_div_child:hover {
+	background-color: red;
+}
+
+.tab_bar_div_child:active {
+	//background: linear-gradient(lightgray,white);
 }

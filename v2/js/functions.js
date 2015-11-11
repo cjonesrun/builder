@@ -262,19 +262,17 @@ function enablePMM(index, init){
 	var tabBarDiv = getElement("tab_bar_div");
 
 	var id = "tab_div_"+ index;
-	var pmm = tabBarDiv.querySelector("#" + id);
-	if (pmm === undefined || pmm === null){
-		var newDiv = document.createElement("div");
-		newDiv.id = id;
-		newDiv.className = "tab_bar_div_child left";
-		newDiv.setAttribute("pmm-index", index);
+	var newDiv = document.createElement("div");
+	newDiv.id = id;
+	newDiv.className = "tab_bar_div_child left";
+	newDiv.setAttribute("pmm-index", index);
 
-		if (init === 0)
-			newDiv.textContent = "Click to activate PMM"+ (tabBarDiv.children.length);
-		else 
-			newDiv.textContent =  "PMM" + index + ": " + game.pmm.state[index];
-		tabBarDiv.appendChild(newDiv);
-	}
+	if (init === 0)
+		newDiv.textContent = "Click to activate PMM"+ (tabBarDiv.children.length);
+	else 
+		newDiv.textContent =  "PMM" + index + ": " + game.pmm.state[index];
+	tabBarDiv.appendChild(newDiv);
+
 }
 
 function calcBuildCost(item, count){

@@ -45,16 +45,19 @@ function calculate() {
 	            	// slow decay down with this
 	            	//var add = Math.floor( Math.max(1, item.count/item.base) );
 	            	//item.halflife = item.halflife*add;
-	            	var hl = item.halflife/* - item.stats.manual_build;*/
+	            	/*var hl = item.halflife - item.stats.manual_build;*/
 	            	// speed up the decay as a function of manual_build clicks
-	            	if (i<2) 
+	            	/*if (i<2) 
 	            		console.log(item.name, item.count, item.base,item.halflife,
-	            			item.stats.manual_build, "halflife",(hl),"seconds");
-	            	item.count = item.count * Math.pow(0.5, 1 / (hl));
+	            			item.stats.manual_build, "halflife",(hl),"seconds");*/
+					var hl =  Math.pow(0.5, 1 / (item.halflife));
+	            	item.count = item.count * hl;
 
 	            	//next.count += 1;
-	            	if (next.count === 0) next.count = 1; // first one is free
-	            	next.count *= 1+(1-Math.pow(0.5, 1 / (hl)));
+	            	if (next.count === 0) 
+	            		next.count = 1; // first one is free
+	            	next.count *= 1+(1-hl);
+
 	            	//console.log( Math.pow(0.5, 1 / (hl)), next.count===0?1:next.count, 1+(1-Math.pow(0.5, 1 / (hl))));
 	            	//next.count /= (next.count===0?1:next.count) * (Math.pow(0.5, 1 / (hl)));
 

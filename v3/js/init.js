@@ -79,6 +79,27 @@ function buildUI(){
 	}
 }
 
+function buildTabBar(){
+	
+	var tabBarDiv = document.getElementById("tab_bar_div");
+	tabBarDiv.setAttribute("data-visible", "true");
+
+	for (var i = 0; i<game.pmm.levels.length; i++){
+		console.log(game.pmm.levels[i]);
+
+		var id = "tab_div_"+ i;
+		
+		var newDiv = document.createElement("div");
+		newDiv.id = id;
+		newDiv.className = "tab_bar_div_child left";
+		newDiv.setAttribute("pmm-index", i);
+		newDiv.setAttribute("data-visible", "true");
+		newDiv.innerHTML =  "PMM" + i + ": " + game.pmm.state[i];
+		
+		tabBarDiv.appendChild(newDiv);
+
+	}
+}
 
 // init from localstorage if present, before building ui & starting the timer
 var gstate = getFromLocalStorage(game.NAME);
@@ -87,6 +108,7 @@ game = extend(new BuilderModule(), gstate===null?new BuilderModule():gstate);
 var pstate = getFromLocalStorage(pmm.NAME);
 pmm = extend(new PerpetualMotionModule(), pstate===null?new PerpetualMotionModule():pstate);
 
+//buildTabBar();
 buildUI();
 
 builderInit();

@@ -22,6 +22,7 @@ if ( document.getElementById('message-wrapper') ) {
 	    'background: lightgray;',
 	    'font-family: "Lucida Sans Typewriter";',
 	    'overflow-y: scroll;',
+	    'overflow-x: scroll;',
     	'max-height: 10em;',
     	'min-height: 10em;',
 	  '}'].join('');

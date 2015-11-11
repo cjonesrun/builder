@@ -30,7 +30,7 @@ var BuilderModule = function () {
 		base: 1.01,
 		current_level: 0,
 
-		levels: [25],
+		levels: [5, 13, 25],
 		//levels: [3, 6, 11, 17, 23, 25],
 		//levels: [7, 15, 25],
 		activated: false,
@@ -77,7 +77,7 @@ var BuilderModule = function () {
 			previous: (i>0) ? i-1 : null,
 			next: (i < item_names.length-1) ? i+1 : null,
 			active: i===0 ? true : false,
-			decay: 1.01,
+			halflife: baseCalc(i),
 			auto_up: false,
 			auto_down: false,
 			stats: {

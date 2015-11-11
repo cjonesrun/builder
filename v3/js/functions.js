@@ -27,7 +27,7 @@ function calculate() {
         return;
     else if (ticks_since_last > 25 ) {
     	// a bit arbitrary, but if calc hasn't run in 25 ticks, assume no activity and show a message
-        addMessage('you\'ve been gone for', timeFormat(ticks_since_last)+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) );
+        //addMessage('you\'ve been gone for', timeFormat(ticks_since_last)+'.', 'value has warped ahead by', numberFormat( total_value - game.total_value ) );
     }
 
 	var done = false;
@@ -41,12 +41,25 @@ function calculate() {
             	
             	if (item.rate > 0 /*&& item.stats.manual_build > 0*/){
 	            	var next = game.map[item.next];
-	            	next.count += 1;
 
-	            	// trying half life decay
-	            	item.halflife=item.base;
-	            	var mult = Math.min(1, item.count/item.base);
-	            	item.count = item.count * Math.pow(0.5, 1 / (item.halflife*mult));
+	            	// slow decay down with this
+	            	//var add = Math.floor( Math.max(1, item.count/item.base) );
+	            	//item.halflife = item.halflife*add;
+	            	var hl = item.halflife/* - item.stats.manual_build;*/
+	            	// speed up the decay as a function of manual_build clicks
+	            	if (i<2) 
+	            		console.log(item.name, item.count, item.base,item.halflife,
+	            			item.stats.manual_build, "halflife",(hl),"seconds");
+	            	item.count = item.count * Math.pow(0.5, 1 / (hl));
+
+	            	//next.count += 1;
+	            	if (next.count === 0) next.count = 1; // first one is free
+	            	next.count *= 1+(1-Math.pow(0.5, 1 / (hl)));
+	            	//console.log( Math.pow(0.5, 1 / (hl)), next.count===0?1:next.count, 1+(1-Math.pow(0.5, 1 / (hl))));
+	            	//next.count /= (next.count===0?1:next.count) * (Math.pow(0.5, 1 / (hl)));
+
+	            	//item.count /= item.decay ; //+ (/*item.base + */item.stats.manual_build)/1000;
+	            	//item.decay *= item.decay > 1.5 ? 1.0 : 1.0001;
 
 	            	//item.count /= item.decay ; //+ (/*item.base + */item.stats.manual_build)/1000;
 	            	//item.decay *= item.decay > 1.5 ? 1.0 : 1.0001;

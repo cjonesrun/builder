@@ -4,8 +4,8 @@ Engine:
 
 - Rube Goldberg machines build items hierarchically based on manual input. However, if manual input stops, system will stall... until perpetual motion is attained.
 - build items one at a time. 
-- checking the 'build' checkbox will decay items into the next item (eg, bits into parts). 
-- higher item count has the benefit of longer 
+- checking the 'build' checkbox will decay items into the next item (eg, bits into parts) using a halflife calculation. 
+- higher item count has the benefit of longer halflife (slower decay) yeilding more items pruduced from decay
 
 Perpetual Motion
 

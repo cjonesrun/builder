@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/machines.css">
+		<title>rube goldberg machine</title>
+	</head>
+	
+	<body>
+		<div id='header_div' data-visible="true" class="">header content here</div>
+
+		<div id="tab_bar_div" data-visible="true" class="">tab bar content here</div>
+
+		<div id="machines_div" data-visible="true" class="pmm-collection"></div>
+
+		<div id='footer_div' data-visible="true" class="">footer content here</div>
+	</body>
+</html>
+
+<script type="text/javascript" src="../common/util.js"></script>
+
+<script>
+
+var intToGreekLetter = ["&alpha;", "&beta;", "&gamma;", "&delta;", "&epsilon;", "&zeta;", "&eta;", "&theta;", "&iota;", "&kappa;", "&lambda;", "&mu;"
+				, "&nu;", "&xi;", "&omicron;", "&pi;", "&rho;", "&sigmaf;", "&sigma;", "&tau;", "&upsilon;", "&phi;", "&chi;", "&psi;", "&omega;"];
+
+
+function PerpetualMotionMachine(id, name, description, items_arr) {
+	this.id = id;
+	this.NAME = name;
+	this.DESCRIPTION = description;
+	this.items = items_arr;
+	this.baseCalc = function(i){
+		return 10 * i;
+	}
+	this.state = [];
+	for (var i=0; i < this.items.length; i++) {
+		this.state.push( {
+			name: this.items[i],
+			base: this.baseCalc(i),
+			value: 10*(i+1),
+
+			upgrades : 1,
+			multiplier : 10,
+			count: 0,
+
+			rate: 1,
+			id: i,
+			previous: (i>0) ? i-1 : null,
+			next: (i < this.items.length-1) ? i+1 : null,
+			active: i===0 ? true : false,
+			halflife: this.base,
+			
+			stats: {
+				manual_build: 0,
+				manual_upgrade: 0,
+				auto_build: 0
+			}
+		});		
+	};
+};
+
+function Config(){
+	var pmm_defs = [];
+
+	/*pmm_defs.push(
+		new PerpetualMotionMachine();
+		);*/
+	
+};
+
+PerpetualMotionMachine.prototype.someFunction = function(x) {
+	console.log("some function with input", x, this.NAME, this.DESCRIPTION, this.items);
+};
+
+var machines = [];
+var machines_div = document.getElementById("machines_div");
+for (var i=0; i<10; i++) {
+	var p = new PerpetualMotionMachine(i, "machine:"+intToGreekLetter[i]+" | rate:123/s | acceleration:4/s<sup>2</sup> | time:2h31m14s | perpetual:false | efficiency:0.3 | sentience:0", "pmm desc "+intToGreekLetter[i], ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget']);
+	machines.push(p);
+
+	var d = div("pmm"+i, "pmm-container", "", "perpetual motion machine "+intToGreekLetter[i], {"pmm-id":i});
+	var title = div("pmm-title"+i, "pmm-title", p.NAME, "perpetual motion machine "+intToGreekLetter[i], {"pmm-id":i});
+	var content = div("pmm-content"+i, "pmm-content", null, "perpetual motion machine #"+i, {"pmm-id":i});
+
+	
+	// build the row.
+	for (var item in p.items){
+		var d1 = div("pmm-item"+item, "pmm-item-row", null, null, {"pmm-id":i});
+		var d_id = div("pmm-item-id"+item, "pmm-item-id", item, p.items[item]+" title", {"pmm-id":i, "ppm-item":item});
+		var d_name = div("pmm-item-name"+item, "pmm-item-name", p.items[item], p.items[item]+" title", {"pmm-id":i, "ppm-item":item});
+		var d_count = div("pmm-item-count"+item, "pmm-item-count", 0, p.items[item]+" count", {"pmm-id":i, "ppm-item":item});
+		
+		var d_check = document.createElement("div");
+		d_check.className = "pmm-item-auto-build";
+		d_check.appendChild( check("pmm-item-auto-build"+item, "pmm-item-auto-build", 0, p.items[item]+" auto build", {"pmm-id":i, "ppm-item":item}));
+
+		d1.appendChild(d_id);
+		d1.appendChild(d_name);
+		d1.appendChild(d_count);
+		d1.appendChild(d_check);
+
+		content.appendChild(d1);
+	}
+	
+	d.appendChild(title);
+	d.appendChild(content);
+	machines_div.appendChild(d);
+
+	// initial state
+	setVisible(content, i==0);
+	setVisible(d, i==0);
+	d.setAttribute("data-pmm-active", i===0);
+
+
+}
+// this is the last item div
+title.className += " pmm-last";
+
+machines_div.addEventListener('click', function(e){
+	if (hasClass(e.target,"pmm-title")) {
+		
+		// if the visible one was clicked, toggle visibility
+		var clicked = e.target;
+		var content = clicked.parentNode.querySelector(".pmm-content");
+		if (isVisible(content)){
+			setVisible(content, false);
+			clicked.parentNode.setAttribute("data-pmm-active","false");
+			return;
+		}
+
+		var allcontent = machines_div.querySelectorAll(".pmm-content");
+		for (var i=0; i<allcontent.length; i++){
+			setVisible(allcontent[i], false);
+			allcontent[i].parentNode.setAttribute("data-pmm-active","false");
+		}
+		
+		var content = e.target.parentNode.querySelector(".pmm-content");
+		setVisible(content, !isVisible(content))
+		e.target.parentNode.setAttribute("data-pmm-active",""+isVisible(content));
+	} else {
+		console.log(e.target);
+	}
+});
+
+// prevents text select when clicking
+machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+</script>

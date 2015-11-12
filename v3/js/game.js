@@ -161,8 +161,6 @@ function PerpetualMotionMachine(id, name, description, items_arr) {
 			}
 		});		
 	};
-	
-
 };
 
 PerpetualMotionMachine.prototype.someFunction = function(x) {

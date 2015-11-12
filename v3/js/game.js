@@ -168,7 +168,9 @@ function PerpetualMotionMachine(id, name, description, items_arr) {
 PerpetualMotionMachine.prototype.someFunction = function(x) {
 	console.log("some function with input", x, this.NAME, this.DESCRIPTION, this.items);
 }
-PerpetualMotionMachine.prototype.init = function(){
-	
-}
 
+var machines = [];
+var i = 0;
+machines.push(new PerpetualMotionMachine(i, "pmm"+i, "pmm desc "+(i++), []));
+machines.push(new PerpetualMotionMachine(i, "pmm"+i, "pmm desc "+(i++), []));
+machines.push(new PerpetualMotionMachine(i, "pmm"+i, "pmm desc "+(i++), []));

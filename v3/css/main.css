@@ -1,5 +1,5 @@
 body { font-family: serif; 
-	font: normal 1em Verdana;
+	font: normal 0.8em Verdana;
 }
 
 /* Invisible Container */
@@ -18,7 +18,7 @@ div,table,tr,td{
 
 .item-name-display{
 	text-align: left;
-	width: 11em;
+	width: 13em;
 }
 
 .item-index-display{

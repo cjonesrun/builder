@@ -40,7 +40,8 @@ var BuilderModule = function () {
 	var item_names = [ 'bit', 'part', 'piece', 'block', 'thing', 'object', 'widget', 
 						'device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil', 
 						'gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob', 
-						'whatchamacalit', 'paraphernalia', 'thingamajig','apparatus', 'appliance', 'furnishing', 
+						'instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 
+						'paraphernalia', 'thingamajig','apparatus', 'appliance', 'furnishing', 
 						'rig', 'rube goldberg'];	
 	// game state
   	var state = [];
@@ -125,3 +126,49 @@ var BuilderModule = function () {
 	};
 
 }; // END game Module
+
+
+function PerpetualMotionMachine(id, name, description, items_arr) {
+	this.id = id;
+	this.NAME = name;
+	this.DESCRIPTION = description;
+	this.items = items_arr;
+	this.baseCalc = function(i){
+		return 10 * i;
+	}
+	this.state = [];
+	for (var i=0; i < this.items.length; i++) {
+		this.state.push( {
+			name: this.items[i],
+			base: this.baseCalc(i),
+			value: 10*(i+1),
+
+			upgrades : 1,
+			multiplier : 10,
+			count: 0,
+
+			rate: 1,
+			id: i,
+			previous: (i>0) ? i-1 : null,
+			next: (i < this.items.length-1) ? i+1 : null,
+			active: i===0 ? true : false,
+			halflife: this.base,
+			
+			stats: {
+				manual_build: 0,
+				manual_upgrade: 0,
+				auto_build: 0
+			}
+		});		
+	};
+	
+
+};
+
+PerpetualMotionMachine.prototype.someFunction = function(x) {
+	console.log("some function with input", x, this.NAME, this.DESCRIPTION, this.items);
+}
+PerpetualMotionMachine.prototype.init = function(){
+	
+}
+

@@ -30,9 +30,17 @@
 <script type="text/javascript" src="js/events.js"></script>
 
 <script>
+var app = extend(new App(), getFromLocalStorage(app.NAME));
+for (var i=0; i<app.pmm_defs.length; i++){
+	var p = app.pmm_defs[i];
+	app.pmm_defs[i] = extend(new PerpetualMotionMachine(p.id, p.NAME, p.DESCRIPTION, p.items), p);
+}
 
 // from init.js
 buildUI();
 
 startTimers();
+
+updateUI();
+
 </script>

@@ -1,5 +1,6 @@
 function autoBuild(pmm, item, enabled){
-	console.log("auto build", pmm, item, enabled);
+	//console.log("auto build", pmm, item, enabled);
+	app.pmm_defs[pmm].state[item].auto_build = enabled;
 }
 
 function build(pmm, item, howmany){
@@ -11,23 +12,31 @@ function build(pmm, item, howmany){
 function updateUI(){
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		//console.log(i);
+		setVisible( getPMMContainer(i), app.pmm_defs[i].active );
 		for (var j=0; j<app.pmm_defs[i].state.length; j++) {
-			//console.log('updating', app.pmm_defs[i].NAME, app.pmm_defs[i].state[j].name);
-			machines_div.querySelector(".pmm-item-count[data-pmm='"+i+"'][data-pmm-item='"+j+"']").innerHTML = app.pmm_defs[i].state[j].count;
+			//if (j===0 && i===0) console.log('updating', app.pmm_defs[i].NAME, app.pmm_defs[i].state[j].name, app.pmm_defs[i].state[j].count);
+			//machines_div.querySelector(".pmm-item-count[data-pmm='"+i+"'][data-pmm-item='"+j+"']").innerHTML = app.pmm_defs[i].state[j].count;
+			updateItem(i,j);
 		}
 	}
 }
 
-function updateItem(pmm, item){
+function updateItem(pmm, item_id){
 	/*var machine = machines_div.querySelector("[data-pmm='"+pmm+"']");
 	console.log(machine);*/
-	var row = machines_div.querySelector(".pmm-item-row[data-pmm='"+pmm+"'][data-pmm-item='"+item+"']");
-	row.querySelector(".pmm-item-count").innerHTML = app.pmm_defs[pmm].state[item].count;
+	var item = app.pmm_defs[pmm].state[item_id];
+	var row = getItemDiv(pmm, item_id);
+	row.querySelector(".pmm-item-count").innerHTML = item.count;
+	row.querySelector(".pmm-item-auto-build[type='checkbox']").checked = item.auto_build;
 
 }
 
+function getPMMContainer(pmm){
+	return machines_div.querySelector(".pmm-container[data-pmm='"+pmm+"']")
+}
+
 function getItemDiv(pmm, item){
-	
+	return machines_div.querySelector(".pmm-item-row[data-pmm='"+pmm+"'][data-pmm-item='"+item+"']");
 }
 
 function calculate() {
@@ -56,6 +65,7 @@ function toggleContentVis(el){
 }
 
 function saveState(){
+	console.log('saving');
 	app.last_save = new Date().getTime();
-	//saveObj("PMM", app);
+	saveObj(app.NAME, app);
 }

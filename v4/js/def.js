@@ -57,6 +57,7 @@ PerpetualMotionMachine.prototype.autoBuildLevel = function(i) {
 
 
 function App(){
+	this.NAME = "PMM";
 	this.TICK_INTERVAL = 1000;
 	this.UI_REFRESH_INTERVAL = 1000;
 	this.SAVE_INTERVAL = 5000;

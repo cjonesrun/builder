@@ -14,15 +14,14 @@ div,table,tr,td{
 	//border: 1px solid black;
 }
 
-.collection .pmm{
-	border: 1px solid black;
-}
-
 .pmm-collection{
 	width: 100%;
+	float: left;
+	//border: 1px solid black;
 }
 
 .pmm-container {
+	width: 45%;
 	border: 1px solid black;
 	border-radius: 5px 5px 5px 5px; /* top-left, top-right, bottom-right, bottom-left */
 	padding-left: 1em;
@@ -34,11 +33,6 @@ div,table,tr,td{
 
 .pmm-container[data-pmm-active='true'] {
 	background: linear-gradient(to right, white, lightgray);
-}
-
-.pmm{
-	width: auto;
-	//float:left;
 }
 
 .pmm-title{

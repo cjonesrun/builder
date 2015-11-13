@@ -2,24 +2,27 @@ var ui_timer; // main timer for auto block & thing building
 var state_save_timer;
 var calculator_timer;
 
+var TICK_INTERVAL = 1000;
+var UI_REFRESH_INTERVAL = 1000;
+var SAVE_INTERVAL = 5000;
+
+
 function runCalculator(){
     calculate();
     //console.log('calculating');
-    calculator_timer = setTimeout(runCalculator, game.TICK_INTERVAL);
+    calculator_timer = setTimeout(runCalculator, TICK_INTERVAL);
 }
 
 function runUIUpdater(){
     updateUI();
     //console.log('updating');
-    ui_timer = setTimeout(runUIUpdater, game.UI_REFRESH_INTERVAL);
+    ui_timer = setTimeout(runUIUpdater, UI_REFRESH_INTERVAL);
 }
 
 function runStateSaver() {
-    game.last_save = new Date().getTime();
-
     saveState();
     //console.log('saving');
-    state_save_timer = setTimeout(runStateSaver, game.SAVE_INTERVAL);
+    state_save_timer = setTimeout(runStateSaver, SAVE_INTERVAL);
 }
 
 function stopTimers() {
@@ -42,7 +45,6 @@ function stopTimers() {
 function startTimers() {
     if (typeof ui_timer != "number") {
         //console.log('starting ui_timer', ui_timer);
-        game.last_calculation = new Date().getTime();
         runUIUpdater();
     } /* else
         console.log('ui_timer already started', ui_timer); */
@@ -70,4 +72,3 @@ function pauseResume(button)
         startTimers();
     }
 }
-

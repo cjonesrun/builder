@@ -22,7 +22,7 @@ function saveObj(key, val)
 
 // takes in an array of localStorage param names to be cleared
 function clearState(){
-    [].slice.apply(arguments).forEach(function go(x) { window.localStorage[x] = null;});
+    [].slice.apply(arguments).forEach(function go(x) { window.localStorage.clear(x);});
     location.reload();
 }
 

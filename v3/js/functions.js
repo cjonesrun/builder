@@ -159,6 +159,7 @@ function reset() {
 }
 
 function saveState(){
+	game.last_save = new Date().getTime();
 	saveObj(game.NAME, game);
 	saveObj(pmm.NAME, pmm);
 }

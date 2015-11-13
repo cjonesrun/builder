@@ -165,14 +165,14 @@ function div(id, className, innerHTML, title, attr_map){
     return decorateElement(document.createElement("div"), id, className, innerHTML, title, attr_map);
 }
 function decorateElement(element, id, className, innerHTML, title, attr_map){
-    element.setAttribute("id", id);
+     if (id !== undefined && id !== null)
+        element.setAttribute("id", id);
     if (className !== undefined && className !== null)
         element.setAttribute("class", className);
     element.innerHTML = innerHTML;
     
-    if (title === undefined || title === null )
-        element.title = id;
-    else element.title = title;
+    if (title !== undefined && title !== null )
+        element.title = title;
     
     addAttributes(element, attr_map);
 

@@ -32,14 +32,12 @@ function PerpetualMotionMachine(id, name, description, items_arr) {
 	this.NAME = name;
 	this.DESCRIPTION = description;
 	this.items = items_arr;
-	this.baseCalc = function(i){
-		return 10 * i;
-	}
+	this.active = false;
 	this.state = [];
 	for (var i=0; i < this.items.length; i++) {
 		this.state.push( {
 			name: this.items[i],
-			base: this.baseCalc(i),
+			base: this.baseCalc(this.id, i),
 			value: 10*(i+1),
 
 			upgrades : 1,
@@ -62,40 +60,58 @@ function PerpetualMotionMachine(id, name, description, items_arr) {
 	};
 };
 
+PerpetualMotionMachine.prototype.baseCalc = function(pmm, item) {
+	//console.log("baseCalc for pmm", pmm, "item", item, 'is', (1+item) * Math.pow(10, pmm));
+	return (1+item) * Math.pow(10, pmm);
+};
+
+
 function Config(){
-	var pmm_defs = [];
+	this.pmm_defs = [];
 
-	/*pmm_defs.push(
-		new PerpetualMotionMachine();
-		);*/
-	
+	var i=0;
+	this.pmm_defs.push(
+		new PerpetualMotionMachine(i,"machine:"+intToGreekLetter[i]+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0", "pmm desc "+intToGreekLetter[i], ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget'])
+	);
+	i++;
+	this.pmm_defs.push(
+		new PerpetualMotionMachine(i,"machine:"+intToGreekLetter[i]+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0", "pmm desc "+intToGreekLetter[i], ['device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil'])
+	);
+	i++;
+	this.pmm_defs.push(
+		new PerpetualMotionMachine(i,"machine:"+intToGreekLetter[i]+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0", "pmm desc "+intToGreekLetter[i], ['gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob'])
+	);
+	i++;
+	this.pmm_defs.push(
+		new PerpetualMotionMachine(i,"machine:"+intToGreekLetter[i]+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0", "pmm desc "+intToGreekLetter[i], ['instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 'paraphernalia'])
+	);
+	i++;
+	this.pmm_defs.push(
+		new PerpetualMotionMachine(i,"machine:"+intToGreekLetter[i]+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0", "pmm desc "+intToGreekLetter[i], ['thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'])
+	);
+
+
 };
+var conf = new Config();
 
-PerpetualMotionMachine.prototype.someFunction = function(x) {
-	console.log("some function with input", x, this.NAME, this.DESCRIPTION, this.items);
-};
-
-var machines = [];
 var machines_div = document.getElementById("machines_div");
-for (var i=0; i<10; i++) {
-	var p = new PerpetualMotionMachine(i, "machine:"+intToGreekLetter[i]+" | rate:123/s | acceleration:4/s<sup>2</sup> | time:2h31m14s | perpetual:false | efficiency:0.3 | sentience:0", "pmm desc "+intToGreekLetter[i], ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget']);
-	machines.push(p);
-
-	var d = div("pmm"+i, "pmm-container", "", "perpetual motion machine "+intToGreekLetter[i], {"pmm-id":i});
-	var title = div("pmm-title"+i, "pmm-title", p.NAME, "perpetual motion machine "+intToGreekLetter[i], {"pmm-id":i});
-	var content = div("pmm-content"+i, "pmm-content", null, "perpetual motion machine #"+i, {"pmm-id":i});
+for (var i=0; i<conf.pmm_defs.length; i++) {
+	var p = conf.pmm_defs[i];
+	var d = div("pmm"+i, "pmm-container", "", "perpetual motion machine "+intToGreekLetter[i], {"data-mm-id":i});
+	var title = div("pmm-title"+i, "pmm-title", p.NAME, "perpetual motion machine "+intToGreekLetter[i], {"data-pmm":i});
+	var content = div("pmm-content"+i, "pmm-content", null, "perpetual motion machine #"+i, {"data-pmm":i});
 
 	
 	// build the row.
 	for (var item in p.items){
-		var d1 = div("pmm-item"+item, "pmm-item-row", null, null, {"pmm-id":i});
-		var d_id = div("pmm-item-id"+item, "pmm-item-id", item, p.items[item]+" title", {"pmm-id":i, "ppm-item":item});
-		var d_name = div("pmm-item-name"+item, "pmm-item-name", p.items[item], p.items[item]+" title", {"pmm-id":i, "ppm-item":item});
-		var d_count = div("pmm-item-count"+item, "pmm-item-count", 0, p.items[item]+" count", {"pmm-id":i, "ppm-item":item});
+		var d1 = div("pmm-item"+item, "pmm-item-row", null, null, {"data-pmm":i});
+
+		var d_id = div("pmm-item-id"+item, "pmm-item-id", item, p.items[item]+" title", {"data-pmm":i, "data-pmm-item":item});
+		var d_name = div("pmm-item-name"+item, "pmm-item-name", p.items[item], p.items[item]+" title", {"data-pmm":i, "data-pmm-item":item});
+		var d_count = div("pmm-item-count"+item, "pmm-item-count", 0, p.items[item]+" count", {"data-pmm":i, "data-pmm-item":item});
 		
-		var d_check = document.createElement("div");
-		d_check.className = "pmm-item-auto-build";
-		d_check.appendChild( check("pmm-item-auto-build"+item, "pmm-item-auto-build", 0, p.items[item]+" auto build", {"pmm-id":i, "ppm-item":item}));
+		var d_check = div("", "pmm-item-auto-build", null, null, {"data-pmm":i, "data-pmm-item":item});
+		d_check.appendChild( check("pmm-item-auto-build"+item, "pmm-item-auto-build", 0, p.items[item]+" auto build", {"data-pmm":i, "data-pmm-item":item}));
 
 		d1.appendChild(d_id);
 		d1.appendChild(d_name);
@@ -113,38 +129,75 @@ for (var i=0; i<10; i++) {
 	setVisible(content, i==0);
 	setVisible(d, i==0);
 	d.setAttribute("data-pmm-active", i===0);
-
-
+	conf.pmm_defs[i].active = i===0;
 }
-// this is the last item div
-title.className += " pmm-last";
 
 machines_div.addEventListener('click', function(e){
 	if (hasClass(e.target,"pmm-title")) {
-		
-		// if the visible one was clicked, toggle visibility
-		var clicked = e.target;
-		var content = clicked.parentNode.querySelector(".pmm-content");
-		if (isVisible(content)){
-			setVisible(content, false);
-			clicked.parentNode.setAttribute("data-pmm-active","false");
-			return;
-		}
-
-		var allcontent = machines_div.querySelectorAll(".pmm-content");
-		for (var i=0; i<allcontent.length; i++){
-			setVisible(allcontent[i], false);
-			allcontent[i].parentNode.setAttribute("data-pmm-active","false");
-		}
-		
-		var content = e.target.parentNode.querySelector(".pmm-content");
-		setVisible(content, !isVisible(content))
-		e.target.parentNode.setAttribute("data-pmm-active",""+isVisible(content));
-	} else {
-		console.log(e.target);
+		toggleContentVis(e.target);
+	} else if (hasClass(e.target,"pmm-item-count") || 
+		hasClass(e.target,"pmm-item-id") ||
+		hasClass(e.target,"pmm-item-name")) {
+		build(e.target.getAttribute("data-pmm"), e.target.getAttribute("data-pmm-item"), 1);
+	} else if (hasClass(e.target,"pmm-item-auto-build")) {
+		autoBuild( e.target.getAttribute("data-pmm"), e.target.getAttribute("data-pmm-item"), e.target.checked);
 	}
+
 });
 
 // prevents text select when clicking
 machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+
+function autoBuild(pmm, item, enabled){
+	console.log("auto build", pmm, item, enabled);
+}
+function build(pmm, item, howmany){
+	console.log( "build", pmm, item, howmany, conf.pmm_defs[pmm].state[item]);
+	conf.pmm_defs[pmm].state[item].count++;
+	updateUI();
+}
+
+function updateUI(){
+	for (var i=0; i<conf.pmm_defs.length; i++) {
+		//console.log(i);
+		for (var j=0; j<conf.pmm_defs[i].state.length; j++) {
+			//console.log('updating', conf.pmm_defs[i].NAME, conf.pmm_defs[i].state[j].name);
+			document.getElementById("pmm-item-count"+j).innerHTML = conf.pmm_defs[i].state[j].count;
+		}
+	}
+
+	/*var machines = machines_div.querySelectorAll(".pmm-container");
+	for (var i=0; i<machines.length; i++){
+		var items = machines[i].querySelectorAll(".pmm-item-row");
+		for (var j=0; j<items.length; j++){
+			//items[j].getElementById("pmm-item-count"+j).innerHTML = conf.pmm_defs[i].state[j].count;
+			items[j].querySelector(".pmm-item-count").innerHTML = conf.pmm_defs[i].state[j].count;
+		}
+
+		setVisible(machines[i], conf.pmm_defs[i].active);
+	}*/
+
+}
+
+function toggleContentVis(el){
+	// if the visible one was clicked, toggle visibility
+	var clicked = el;
+	var content = clicked.parentNode.querySelector(".pmm-content");
+	
+	if (isVisible(content)){
+		setVisible(content, false);
+		clicked.parentNode.setAttribute("data-pmm-active","false");
+		return;
+	}
+
+	var allcontent = machines_div.querySelectorAll(".pmm-content");
+	for (var i=0; i<allcontent.length; i++){
+		setVisible(allcontent[i], false);
+		allcontent[i].parentNode.setAttribute("data-pmm-active","false");
+	}
+	
+	var content = clicked.parentNode.querySelector(".pmm-content");
+	setVisible(content, !isVisible(content))
+	clicked.parentNode.setAttribute("data-pmm-active",""+isVisible(content));
+}
 </script>

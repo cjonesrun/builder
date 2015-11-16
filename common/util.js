@@ -133,17 +133,22 @@ function timeFormat(numberInMillis) {
 
 // format the number for display
 function numberFormat(number, precision) {
+    if (precision === undefined || precision === null){
+        NUMERICAL_DISPLAY_PRECISION = 5;
+    } else
+        NUMERICAL_DISPLAY_PRECISION = precision;
+
     if (number === undefined || typeof number === 'undefined')
         return;
     else if (number === Infinity)
         return "∞";
     else if (number == 0 || number == Math.floor(number)){
-        if (number > Math.pow(game.base, game.NUMERICAL_DISPLAY_PRECISION+3)) {
-            return number.toPrecision(4)/*.replace(/0+$/g, "")*/;
-        }
+        /*if (number > Math.pow(game.base, NUMERICAL_DISPLAY_PRECISION+3)) {
+            return number.toPrecision(4);//.replace(/0+$/g, "")
+        }*/
         return numeral(number).format('0,0');
     }
-    var ret = number.toPrecision(game.NUMERICAL_DISPLAY_PRECISION+3);
+    var ret = number.toPrecision(NUMERICAL_DISPLAY_PRECISION+3);
     return ret.indexOf("e")>=0?ret:ret.replace(/0+$/g, "");
 }
 

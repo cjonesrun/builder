@@ -38,11 +38,13 @@ function buildMachineDiv() {
 		d.appendChild(content);
 		machines_div.appendChild(d);
 
-		// initial state
-		setVisible(content, i==0);
-		setVisible(d, i==0);
+		// initial state, show content of first machine
+		setVisible(content, i===0);
 		d.setAttribute("data-pmm-active", i===0);
-		app.pmm_defs[i].active = i===0;
+
+		if (i===0)
+			p.active = true;
+		setVisible(d, p.active);
 	}
 }
 

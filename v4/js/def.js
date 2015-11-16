@@ -24,8 +24,8 @@ function PerpetualMotionMachine(id, name, description, items_arr) {
 			upgrades : 1,
 			multiplier : 10,
 			count: 0,
-			halflife: this.base,
-
+			halflife: this.halfLifeCalc(this.id, i),
+			
 			auto_build: false,
 			
 			previous: (i>0) ? i-1 : null,
@@ -40,15 +40,23 @@ function PerpetualMotionMachine(id, name, description, items_arr) {
 		});		
 	};
 };
-
+var GAME_BASE = 10;
+var PMM_BASE = 1.3;
+var ITEM_BASE = 1.4;
 PerpetualMotionMachine.prototype.baseCalc = function(pmm, item) {
 	//console.log("baseCalc for pmm", pmm, "item", item, 'is', (1+item) * Math.pow(10, pmm));
-	return (1+item) * Math.pow(10, 1+pmm);
+	//return (1+item) * Math.pow(10, 1+pmm);
+	return Math.round( (1+pmm) * GAME_BASE * Math.pow(ITEM_BASE, item));
+};
+
+PerpetualMotionMachine.prototype.halfLifeCalc = function(pmm, item) {
+	// inverse the base
+	return Math.round( (1+pmm) * GAME_BASE * Math.pow(ITEM_BASE, this.items.length-item-1));
 };
 
 PerpetualMotionMachine.prototype.display = function() {
 	//"machine:"+this.NAME+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0"
-	return "machine:"+this.NAME;
+	return "machine:"+this.NAME + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency+" | sentience:" + this.sentience;
 };
 
 PerpetualMotionMachine.prototype.autoBuildLevel = function(i) {

@@ -17,3 +17,62 @@ machines_div.addEventListener('click', function(e){
 
 });
 
+var options_div = document.getElementById('options_div');
+var message_div = document.getElementById('message-wrapper');
+
+options_div.addEventListener('click', function(e){
+	//its.clearAll();
+
+  	if (e.target.nodeName === 'BUTTON'){
+	  	var btnClass = e.target.className;
+	  	
+	  	switch (btnClass) {
+	  		case "save_button":
+				saveState();
+			break;
+
+			case "reset_button":
+				reset();
+			break;
+
+			case "hard_reset":
+				hardReset();
+			break;
+
+			case "export_button":
+				exportEncodedState();
+			break;
+
+			case "export_json_button":
+				exportJSON();
+			break;
+
+			case "load_button":
+				loadState();
+			break;
+			
+			case "clear_button":
+				clearMessages();
+			break;
+
+			case "pause_button":
+				pauseResume(e.target);
+			break;
+
+    		case "stats":
+    			showGameStats();
+    		break;
+
+    		case "message_button":
+    			
+    			setVisible(message_div, !isVisible(message_div));
+    			e.target.innerHTML= (isVisible(message_div)?"hide":"show") + " message box";
+    		break;
+
+	  		default:
+	  			addMessage('no handler for ', btnClass);
+	  		break;
+	  	}    
+  }
+});
+

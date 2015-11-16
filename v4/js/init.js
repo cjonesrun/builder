@@ -11,8 +11,8 @@ function buildMachineDiv() {
 
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		var p = app.pmm_defs[i];
-		var d = div("pmm"+i, "pmm-container", "", "perpetual motion machine "+intToGreekLetter[i], {"data-pmm":i});
-		var title = div("pmm-title"+i, "pmm-title", p.display(), "perpetual motion machine "+intToGreekLetter[i], {"data-pmm":i});
+		var d = div("pmm"+i, "pmm-container", "", "perpetual motion machine:"+p.NAME, {"data-pmm":i});
+		var title = div("pmm-title"+i, "pmm-title", p.display(), "perpetual motion machine:"+p.NAME, {"data-pmm":i});
 		var content = div("pmm-content"+i, "pmm-content", null, "perpetual motion machine #"+i, {"data-pmm":i});
 		
 		// build the row.
@@ -39,7 +39,7 @@ function buildMachineDiv() {
 		machines_div.appendChild(d);
 
 		// initial state, show content of first machine
-		setVisible(content, i===0);
+		//setVisible(content, i===0);
 		d.setAttribute("data-pmm-active", i===0);
 
 		if (i===0)

@@ -40,7 +40,7 @@ function addMessage(){
 	var lines = document.getElementById( 'message-wrapper' ).innerText.split("\n", MESSAGE_WINDOW_LINES-1);
 	//console.log(lines);
 	lines.unshift(new_line);
-	document.getElementById( 'message-wrapper' ).innerText = lines.join("\n");
+	document.getElementById( 'message-wrapper' ).innerHTML = lines.join("\n");
 }
 
 function setMessage() {

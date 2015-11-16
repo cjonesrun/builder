@@ -20,6 +20,7 @@ function updateUI(){
 			break;
 
 		machine.querySelector(".pmm-title").innerHTML = app.pmm_defs[i].display();
+		machine.querySelector(".pmm-title").title = app.pmm_defs[i].display();
 		setVisible( machine, app.pmm_defs[i].active );
 		for (var j=0; j<app.pmm_defs[i].state.length; j++) {
 			//if (j===0 && i===0) console.log('updating', app.pmm_defs[i].NAME, app.pmm_defs[i].state[j].name, app.pmm_defs[i].state[j].count);
@@ -65,9 +66,14 @@ function calculate() {
 					var next = machine.state[item.next]
 					next.active = true;
 
-					// N1=N0*Math.exp(-1*Math.log(2)/75)
+					// N1=N0*Math.exp(-1*Math.log(2)/75) - decay constant (lamda) 
 					// N1=N0* (1/2)^(t/halflife)
 					var hl =  Math.pow(0.5, 1 / (item.halflife));
+					var lamda = Math.log(2)/item.halflife;
+
+					console.log("hl:", item.halflife, hl, "lamda:", lamda, Math.exp(-1*lamda));
+
+
 		            item.count = item.count * hl;
 
 	            	//next.count += 1;
@@ -86,21 +92,21 @@ function toggleContentVis(el){
 	// if the visible one was clicked, toggle visibility
 	var clicked = el;
 	var content = clicked.parentNode.querySelector(".pmm-content");
-	
+	setVisible(content, true);
 	if (isVisible(content)){
-		setVisible(content, false);
+		//setVisible(content, false);
 		clicked.parentNode.setAttribute("data-pmm-active","false");
 		return;
 	}
 
 	var allcontent = machines_div.querySelectorAll(".pmm-content");
 	for (var i=0; i<allcontent.length; i++){
-		setVisible(allcontent[i], false);
+		//setVisible(allcontent[i], false);
 		allcontent[i].parentNode.setAttribute("data-pmm-active","false");
 	}
 	
 	var content = clicked.parentNode.querySelector(".pmm-content");
-	setVisible(content, !isVisible(content))
+	//setVisible(content, !isVisible(content))
 	clicked.parentNode.setAttribute("data-pmm-active",""+isVisible(content));
 }
 
@@ -112,4 +118,31 @@ function saveState(){
 
 function hardReset() {
 	clearState(app.NAME);
+}
+
+function showGameStats(){
+	clearMessages();
+
+	var finalDump = "";
+	for (var i=0; i<app.pmm_defs.length; i++){
+		if (!app.pmm_defs[i].active)
+			continue;
+		
+		var machine = app.pmm_defs[i];
+		for (var j=0; j<machine.items.length; j++){
+			if (!machine.state[j].active){
+				break;
+			}
+			var stats = machine.state[j].stats;
+			finalDump += machine.NAME +":"+machine.state[j].name + " " + JSON.stringify(stats, null, "\t")+"\n";
+		}
+	}
+
+
+	// bypass the MESSAGE_WINDOW_LINES limit for this
+	setMessage( finalDump );
+
+	for (var i=0; i<intToGreekLetter.length; i++) {
+		addMessage(intToGreekLetter[i]);
+	}
 }

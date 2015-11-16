@@ -1,6 +1,34 @@
-var intToGreekLetter = ["&alpha;", "&beta;", "&gamma;", "&delta;", "&epsilon;", "&zeta;", "&eta;", "&theta;", "&iota;", "&kappa;", "&lambda;", "&mu;"
-				, "&nu;", "&xi;", "&omicron;", "&pi;", "&rho;", "&sigmaf;", "&sigma;", "&tau;", "&upsilon;", "&phi;", "&chi;", "&psi;", "&omega;"];
+var greekKeys = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu"
+				, "nu", "xi", "omicron", "pi", "rho", "sigmaf", "sigma", "tau", "upsilon", "phi", "chi;", "psi", "omega"];
 
+
+var greek = {
+	alpha: { html:"&alpha;", small:"α" },
+	beta: { html:"&beta;", small:"β" },
+	gamma: { html:"&gamma;", small:"γ" },
+	delta: { html:"&delta;", small:"δ" },
+	epsilon: { html:"&epsilon;", small:"ε" },
+	zeta: { html:"&zeta;", small:"ζ" },
+	eta: { html:"&eta;", small:"η" },
+	theta: { html:"&theta;", small:"θ" },
+	iota: { html:"&iota;", small:"ι" },
+	kappa: { html:"&kappa;", small:"κ" },
+	lambda: { html:"&lambda;", small:"λ" },
+	mu: { html:"&mu;", small:"μ" },
+	nu: { html:"&nu;", small:"ν" },
+	xi: { html:"&xi;", small:"ξ" },
+	omicron: { html:"&omicron;", small:"ο" },
+	pi: { html:"&pi;", small:"π" },
+	rho: { html:"&rho;", small:"ρ" },
+	sigmaf: { html:"&sigmaf;", small:"ς" },
+	sigma: { html:"&sigma;", small:"σ" },
+	tau: { html:"&tau;", small:"τ" },
+	upsilon: { html:"&upsilon;", small:"υ" },
+	phi: { html:"&phi;", small:"φ" },
+	chi: { html:"&chi;", small:"χ" },
+	psi: { html:"&psi;", small:"ψ" },
+	omega: { html:"&omega;", small:"ω" }
+}
 
 function PerpetualMotionMachine(id, name, description, items_arr) {
 	this.id = id;
@@ -56,7 +84,7 @@ PerpetualMotionMachine.prototype.halfLifeCalc = function(pmm, item) {
 
 PerpetualMotionMachine.prototype.display = function() {
 	//"machine:"+this.NAME+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0"
-	return "machine:"+this.NAME + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency+" | sentience:" + this.sentience;
+	return "machine:"+greek[greekKeys[this.id]].small + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency+" | sentience:" + this.sentience;
 };
 
 PerpetualMotionMachine.prototype.autoBuildLevel = function(i) {
@@ -72,26 +100,26 @@ function App(){
 
 	this.last_save = new Date().getTime();
 	this.pmm_defs = [];
-
+	console.log(greek)
 	var i=0;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i, intToGreekLetter[i], "", ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget'])
+		new PerpetualMotionMachine(i, greek.alpha.html, "", ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget'])
 	);
 	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,intToGreekLetter[i], "", ['device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil'])
+		new PerpetualMotionMachine(i, greek.beta.html, "", ['device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil'])
 	);
 	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,intToGreekLetter[i], "", ['gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob'])
+		new PerpetualMotionMachine(i,greek.gamma.html, "", ['gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob'])
 	);
 	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,intToGreekLetter[i], "", ['instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 'paraphernalia'])
+		new PerpetualMotionMachine(i,greek.delta.html, "", ['instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 'paraphernalia'])
 	);
 	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,intToGreekLetter[i], "", ['thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'])
+		new PerpetualMotionMachine(i,greek.epsilon.html, "", ['thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'])
 	);
 };
 

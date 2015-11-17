@@ -22,11 +22,10 @@ var message_div = document.getElementById('message-wrapper');
 
 options_div.addEventListener('click', function(e){
 	//its.clearAll();
-
-  	if (e.target.nodeName === 'BUTTON'){
-	  	var btnClass = e.target.className;
+	if (e.target.nodeName === 'BUTTON'){
+	  	var btnID = e.target.id;
 	  	
-	  	switch (btnClass) {
+	  	switch (btnID) {
 	  		case "save_button":
 				saveState();
 			break;
@@ -70,7 +69,7 @@ options_div.addEventListener('click', function(e){
     		break;
 
 	  		default:
-	  			addMessage('no handler for ', btnClass);
+	  			addMessage('no handler for ', btnID);
 	  		break;
 	  	}    
   }

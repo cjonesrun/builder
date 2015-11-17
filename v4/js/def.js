@@ -95,11 +95,12 @@ PerpetualMotionMachine.prototype.decay = function(i) {
 	// N1=N0* (1/2)^(t/halflife)
 	return Math.pow(0.5, 1 / (this.state[i].halflife));
 	//var lamda = Math.log(2)/item.halflife;
-
-	//console.log("hl:", item.halflife, hl, "lamda:", lamda, Math.exp(-1*lamda));
-	//return item.count * hl;
 }
 
+PerpetualMotionMachine.prototype.efficiencyCalc = function(i){
+	
+	return 0;
+}
 
 function App(){
 	this.NAME = "PMM";

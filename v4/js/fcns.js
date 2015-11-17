@@ -6,19 +6,28 @@ function autoBuild(pmm, item, enabled){
 function build(pmm_id, item_id, howmany){
 	var pmm = app.pmm_defs[pmm_id];
 	var item = pmm.state[item_id];
-	console.log( "build", pmm.name, item.name, howmany, item, pmm.decay(item_id));
+	var prev = pmm.state[item.previous];
+	//console.log( "build", pmm.name, item.name, howmany, item.count, pmm.decay(item_id));
 
 	for (var i=0;i<howmany;i++){
 		var decay = pmm.decay(item_id);
-		item.count*= 1+(1-decay);
-		updateItem(pmm_id, item_id);
-		
-		if (item.previous !== null){
+		if (item.count === 0) { // first unit free
+			if (item.previous === null || prev.count >= prev.base)
+				item.count = 1;
+		} else if (item.previous === null){
+			item.count /= decay;
+		} else {
 			var prev = pmm.state[item.previous];
-			prev.count *= decay;
+
+			if (prev.count >= prev.base){
+				prev.count *= pmm.decay(prev.id);
+				item.count /= decay;
+			}
 			updateItem(pmm_id, prev.id);
 		}
+		updateItem(pmm_id, item_id);
 	}
+
 }
 
 function updateUI(){
@@ -78,20 +87,9 @@ function calculate() {
 					var next = machine.state[item.next]
 					next.active = true;
 
-					// N1=N0*Math.exp(-1*Math.log(2)/75) - decay constant (lamda) 
-					// N1=N0* (1/2)^(t/halflife)
-					/*var hl =  Math.pow(0.5, 1 / (item.halflife));
-					var lamda = Math.log(2)/item.halflife;*/
-
-					//console.log("hl:", item.halflife, hl, "lamda:", lamda, Math.exp(-1*lamda));
-
 					var hl = machine.decay(item.id);
 		            item.count = item.count * hl;
-
-	            	//next.count += 1;
-	            	if (next.count === 0) 
-	            		next.count = 1; // first one is free
-	            	next.count *= 1+(1-hl);
+	            	next.count /= hl;
 	            }
 			}
 			/*if( item.active )

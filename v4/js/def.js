@@ -30,10 +30,9 @@ var greek = {
 	omega: { html:"&omega;", small:"ω" }
 }
 
-function PerpetualMotionMachine(id, name, description, items_arr) {
+function PerpetualMotionMachine(id, items_arr) {
 	this.id = id;
-	this.NAME = name;
-	this.DESCRIPTION = description;
+	this.name = greekKeys[this.id];
 	this.items = items_arr;
 	this.active = false;
 	
@@ -84,11 +83,21 @@ PerpetualMotionMachine.prototype.halfLifeCalc = function(pmm, item) {
 
 PerpetualMotionMachine.prototype.display = function() {
 	//"machine:"+this.NAME+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0"
-	return "machine:"+greek[greekKeys[this.id]].small + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency+" | sentience:" + this.sentience;
+	return "machine:"+greek[this.name].small + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency+" | sentience:" + this.sentience;
 };
 
 PerpetualMotionMachine.prototype.autoBuildLevel = function(i) {
 	return this.state[i].base;
+}
+
+PerpetualMotionMachine.prototype.decay = function(i) {
+	// N1=N0*Math.exp(-1*Math.log(2)/75) - decay constant (lamda) 
+	// N1=N0* (1/2)^(t/halflife)
+	return Math.pow(0.5, 1 / (this.state[i].halflife));
+	//var lamda = Math.log(2)/item.halflife;
+
+	//console.log("hl:", item.halflife, hl, "lamda:", lamda, Math.exp(-1*lamda));
+	//return item.count * hl;
 }
 
 
@@ -100,26 +109,21 @@ function App(){
 
 	this.last_save = new Date().getTime();
 	this.pmm_defs = [];
-	console.log(greek)
-	var i=0;
+	
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i, greek.alpha.html, "", ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget'])
+		new PerpetualMotionMachine(0, ['bit', 'part', 'piece', 'block', 'thing', 'object', 'widget'])
 	);
-	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i, greek.beta.html, "", ['device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil'])
+		new PerpetualMotionMachine(1, ['device', 'gear', 'contraption', 'gimmick', 'dingbat','utensil'])
 	);
-	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,greek.gamma.html, "", ['gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob'])
+		new PerpetualMotionMachine(2, ['gadget', 'tool', 'doohickey', 'gismo', 'doodad', 'thingamabob'])
 	);
-	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,greek.delta.html, "", ['instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 'paraphernalia'])
+		new PerpetualMotionMachine(3, ['instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 'paraphernalia'])
 	);
-	i++;
 	this.pmm_defs.push(
-		new PerpetualMotionMachine(i,greek.epsilon.html, "", ['thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'])
+		new PerpetualMotionMachine(4, ['thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'])
 	);
 };
 

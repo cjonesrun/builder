@@ -65,8 +65,7 @@ else {
 	var app = extend(new App(), loaded_state);
 	for (var i=0; i<app.pmm_defs.length; i++){
 		var p = app.pmm_defs[i];
-		app.pmm_defs[i] = extend(new PerpetualMotionMachine(p.id, p.NAME, p.DESCRIPTION, p.items), p);
-		console.log(app.pmm_defs[i].NAME, app.pmm_defs[i].active);
+		app.pmm_defs[i] = extend(new PerpetualMotionMachine(p.id, p.items), p);
 	}
 }
 

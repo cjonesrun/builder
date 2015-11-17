@@ -3,10 +3,22 @@ function autoBuild(pmm, item, enabled){
 	app.pmm_defs[pmm].state[item].auto_build = enabled;
 }
 
-function build(pmm, item, howmany){
-	//console.log( "build", pmm, item, howmany, app.pmm_defs[pmm].state[item]);
-	app.pmm_defs[pmm].state[item].count+=howmany;
-	updateItem(pmm, item);
+function build(pmm_id, item_id, howmany){
+	var pmm = app.pmm_defs[pmm_id];
+	var item = pmm.state[item_id];
+	console.log( "build", pmm.name, item.name, howmany, item, pmm.decay(item_id));
+
+	for (var i=0;i<howmany;i++){
+		var decay = pmm.decay(item_id);
+		item.count*= 1+(1-decay);
+		updateItem(pmm_id, item_id);
+		
+		if (item.previous !== null){
+			var prev = pmm.state[item.previous];
+			prev.count *= decay;
+			updateItem(pmm_id, prev.id);
+		}
+	}
 }
 
 function updateUI(){
@@ -30,11 +42,11 @@ function updateUI(){
 	}
 }
 
-function updateItem(pmm, item_id){
+function updateItem(pmm_id, item_id){
 	/*var machine = machines_div.querySelector("[data-pmm='"+pmm+"']");
 	console.log(machine);*/
-	var item = app.pmm_defs[pmm].state[item_id];
-	var row = getItemDiv(pmm, item_id);
+	var item = app.pmm_defs[pmm_id].state[item_id];
+	var row = getItemDiv(pmm_id, item_id);
 	row.querySelector(".pmm-item-name").innerHTML = item.name + " [" + item.base + "]";
 	row.querySelector(".pmm-item-name").title = "" + item.name + " | " + item.base + " | " + item.halflife;
 	row.querySelector(".pmm-item-count").innerHTML = numberFormat( item.count );
@@ -68,12 +80,12 @@ function calculate() {
 
 					// N1=N0*Math.exp(-1*Math.log(2)/75) - decay constant (lamda) 
 					// N1=N0* (1/2)^(t/halflife)
-					var hl =  Math.pow(0.5, 1 / (item.halflife));
-					var lamda = Math.log(2)/item.halflife;
+					/*var hl =  Math.pow(0.5, 1 / (item.halflife));
+					var lamda = Math.log(2)/item.halflife;*/
 
-					console.log("hl:", item.halflife, hl, "lamda:", lamda, Math.exp(-1*lamda));
+					//console.log("hl:", item.halflife, hl, "lamda:", lamda, Math.exp(-1*lamda));
 
-
+					var hl = machine.decay(item.id);
 		            item.count = item.count * hl;
 
 	            	//next.count += 1;
@@ -134,15 +146,11 @@ function showGameStats(){
 				break;
 			}
 			var stats = machine.state[j].stats;
-			finalDump += machine.NAME +":"+machine.state[j].name + " " + JSON.stringify(stats, null, "\t")+"\n";
+			finalDump += machine.display() +"\n"+machine.state[j].name + " " + JSON.stringify(stats, null, "\t")+"\n";
 		}
 	}
 
 
 	// bypass the MESSAGE_WINDOW_LINES limit for this
 	setMessage( finalDump );
-
-	for (var i=0; i<intToGreekLetter.length; i++) {
-		addMessage(intToGreekLetter[i]);
-	}
 }

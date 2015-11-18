@@ -36,7 +36,7 @@ function PerpetualMotionMachine(id, items_arr) {
 	this.items = items_arr;
 	this.active = false;
 	
-	this.efficiency = 0.0;
+	this.efficiency = 0.01;
 	this.sentience = 0.0;
 	this.perpetual = false;
 
@@ -78,12 +78,12 @@ PerpetualMotionMachine.prototype.baseCalc = function(pmm, item) {
 
 PerpetualMotionMachine.prototype.halfLifeCalc = function(pmm, item) {
 	// inverse the base
-	return Math.round( (1+pmm) * GAME_BASE * Math.pow(ITEM_BASE, this.items.length-item-1));
+	return Math.round( (1+pmm) * Math.pow(GAME_BASE,1) * Math.pow(ITEM_BASE, this.items.length-item-1));
 };
 
 PerpetualMotionMachine.prototype.display = function() {
 	//"machine:"+this.NAME+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0"
-	return "machine:"+greek[this.name].small + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency+" | sentience:" + this.sentience;
+	return "machine:"+greek[this.name].small + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency*100+"% | sentience:" + this.sentience;
 };
 
 PerpetualMotionMachine.prototype.autoBuildLevel = function(i) {
@@ -97,10 +97,27 @@ PerpetualMotionMachine.prototype.decay = function(i) {
 	//var lamda = Math.log(2)/item.halflife;
 }
 
-PerpetualMotionMachine.prototype.efficiencyCalc = function(i){
-	
-	return 0;
+PerpetualMotionMachine.prototype.exp_grow = function(i, ignore_eff){
+	var item = this.state[i];
+	var hl = this.decay(i);
+	//var hl = Math.pow(0.25, 1 / (this.state[i].halflife));
+
+	// ignore_eff penalty for manual clicks
+	var adjustment = (item.count/hl-item.count)*(ignore_eff?1:this.efficiency);
+	//var adjustment = (item.count/hl-item.count);
+	//console.log(item.name, hl, item.count, item.count/hl, (item.count/hl-item.count), this.efficiency, (item.count/hl-item.count)*this.efficiency );
+
+	this.state[i].count += adjustment;
+
+	 console.log( (item.count/Math.pow(0.25, 1 / (this.state[i].halflife))-item.count),  
+	 	(item.count/Math.pow(0.5, 1 / (this.state[i].halflife))-item.count), 
+	 	(item.count/Math.pow(0.75, 1 / (this.state[i].halflife))-item.count));
 }
+
+PerpetualMotionMachine.prototype.exp_decay = function(i){
+	this.state[i].count *= this.decay(i);
+}
+
 
 function App(){
 	this.NAME = "PMM";

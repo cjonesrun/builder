@@ -10,18 +10,20 @@ function build(pmm_id, item_id, howmany){
 	//console.log( "build", pmm.name, item.name, howmany, item.count, pmm.decay(item_id));
 
 	for (var i=0;i<howmany;i++){
-		var decay = pmm.decay(item_id);
+		
 		if (item.count === 0) { // first unit free
 			if (item.previous === null || prev.count >= prev.base)
 				item.count = 1;
 		} else if (item.previous === null){
-			item.count /= decay;
+			//var decay = pmm.decay(item_id);
+			//item.count /= pmm.decay(item_id);
+			item.count ++;
 		} else {
 			var prev = pmm.state[item.previous];
 
 			if (prev.count >= prev.base){
-				prev.count *= pmm.decay(prev.id);
-				item.count /= decay;
+				pmm.exp_decay(prev.id);
+				pmm.exp_grow(item.id, true);
 			}
 			updateItem(pmm_id, prev.id);
 		}
@@ -85,11 +87,12 @@ function calculate() {
 			if (item.count >= item.base && item.next !== null){
 				if (item.auto_build ) {
 					var next = machine.state[item.next]
-					next.active = true;
-
-					var hl = machine.decay(item.id);
-		            item.count = item.count * hl;
-	            	next.count /= hl;
+					if (!next.active) {
+						next.active = true;
+						next.count = 1;
+					}
+					machine.exp_decay(item.id);
+					machine.exp_grow(next.id);
 	            }
 			}
 			/*if( item.active )

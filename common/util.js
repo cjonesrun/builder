@@ -138,18 +138,23 @@ function numberFormat(number, precision) {
     } else
         NUMERICAL_DISPLAY_PRECISION = precision;
 
-    if (number === undefined || typeof number === 'undefined')
+    if (number === undefined || number === null)
         return;
     else if (number === Infinity)
         return "∞";
-    else if (number == 0 || number == Math.floor(number)){
-        /*if (number > Math.pow(game.base, NUMERICAL_DISPLAY_PRECISION+3)) {
-            return number.toPrecision(4);//.replace(/0+$/g, "")
-        }*/
+    /*else if (number === 0 || number === Math.floor(number)){
+        //if (number > Math.pow(game.base, NUMERICAL_DISPLAY_PRECISION+3)) {
+        //    return number.toPrecision(4);//.replace(/0+$/g, "")
+        //}
+
         return numeral(number).format('0,0');
-    }
-    var ret = number.toPrecision(NUMERICAL_DISPLAY_PRECISION+3);
-    return ret.indexOf("e")>=0?ret:ret.replace(/0+$/g, "");
+    } else {
+        return Number(number.toPrecision(NUMERICAL_DISPLAY_PRECISION+3));
+    }*/
+    if (number > Math.pow(10, NUMERICAL_DISPLAY_PRECISION+3))
+        return number.toExponential(NUMERICAL_DISPLAY_PRECISION);
+    else
+        return Number(number.toPrecision(NUMERICAL_DISPLAY_PRECISION+3));
 }
 
 // create a checkbox element

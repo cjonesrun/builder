@@ -16,8 +16,9 @@ function build(pmm_id, item_id, howmany){
 				item.count = 1;
 		} else if (item.previous === null){
 			//var decay = pmm.decay(item_id);
-			for (var j=0; j<pmm.manual_click_bonus_multiplier; j++) {
-				console.log(j, item.name, 'grew', pmm.exp_grow(item.id, true));
+			for (var j=0; j<pmm.manual_click_bonus_tick_equivalent; j++) {
+				//console.log(j, item.name, 'grew', 
+				pmm.exp_grow(item.id, true);//);
 			}
 			//item.count /= pmm.decay(item_id);
 			//item.count ++;
@@ -26,9 +27,11 @@ function build(pmm_id, item_id, howmany){
 
 			//if (prev.count >= prev.base){
 			if (prev.count >= 1){
-				for (var j=0; j<pmm.manual_click_bonus_multiplier; j++){
-					console.log(j, prev.name, 'decayed', pmm.exp_decay(prev.id));
-					console.log(j, item.name, 'grew', pmm.exp_grow(item.id, true));
+				for (var j=0; j<pmm.manual_click_bonus_tick_equivalent; j++){
+					//console.log(j, prev.name, 'decayed', 
+					pmm.exp_decay(prev.id);//);
+					//console.log(j, item.name, 'grew', 
+					pmm.exp_grow(item.id, true)//);
 				}
 			}
 			updateItem(pmm_id, prev.id);
@@ -101,9 +104,14 @@ function calculate() {
 					machine.exp_grow(next.id);
 	            }
 			}
-			/*if( item.active )
-				console.log('updating', machine.NAME, 'item', item.name, item.count);*/
 		}
+		// item at this point is that last one for the machine
+		if (item.count >= item.base){
+			if (item.auto_build) {
+				machine.exp_decay(item.id);
+				machine.exp_grow(machine.state[0].id);
+			}
+		} 
 	}
 }
 
@@ -127,6 +135,28 @@ function toggleContentVis(el){
 	var content = clicked.parentNode.querySelector(".pmm-content");
 	//setVisible(content, !isVisible(content))
 	clicked.parentNode.setAttribute("data-pmm-active",""+isVisible(content));
+}
+
+function handlePerpetualMotion(machine_id, enabled){
+	var machine = app.pmm_defs[machine_id];
+	//console.log(machine.name, "setting perpetual motion to", enabled?"enabled":"disabled");
+	machine.perpetual = enabled;
+}
+
+function enablePMM(machine){
+	
+	var container = getPMMContainer(machine.id);
+	var item = machine.state[machine.items.length-1];
+
+	if (container.querySelector(".pmm-enable-pm") === null) {
+		var d_check = div(null, "pmm-enable-pm", null, null, {"data-pmm":machine.id, "data-pmm-item":item.id});
+			d_check.appendChild( check("pmm-enable-pm"+machine.id, "pmm-enable-pm", "ENABLEPMM", 
+				"click to enable perpetual motion for "+machine.name, {"data-pmm":machine.id, "data-pmm-item":item.id}) );
+
+		var item_div = getItemDiv(machine.id, machine.items.length-1);
+		item_div.appendChild(d_check);
+		//console.log(machine.name, 'is perpetual motion ready! enable it now.', item_div);
+	}
 }
 
 function saveState(){

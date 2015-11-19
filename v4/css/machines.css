@@ -60,7 +60,7 @@ div,table,tr,td{
 	display: table;
 }
 
-.pmm-item-id, .pmm-item-name, .pmm-item-count, .pmm-item-auto-build{
+.pmm-item-id, .pmm-item-name, .pmm-item-count, .pmm-item-auto-build, .pmm-enable-pm{
 	display: table-cell;
 	//border: 1px solid gray;
 	padding: 1px;
@@ -79,6 +79,10 @@ div,table,tr,td{
 }
 
 .pmm-item-auto-build{
+	width: 1em;
+}
+
+.pmm-enable-pm{
 	width: 1em;
 }
 

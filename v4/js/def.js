@@ -36,11 +36,11 @@ function PerpetualMotionMachine(id, items_arr) {
 	this.items = items_arr;
 	this.active = false;
 	
-	this.efficiency = 0.01;
+	this.efficiency = 0.1;
 	this.sentience = 0.0;
 	this.perpetual = false;
 
-	this.manual_click_bonus_multiplier = 2;
+	this.manual_click_bonus_tick_equivalent = 2; // manual clicks are equivalet to this many clock ticks, >= 1.
 	this.state = [];
 	for (var i=0; i < this.items.length; i++) {
 		this.state.push( {

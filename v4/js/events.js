@@ -13,6 +13,8 @@ machines_div.addEventListener('click', function(e){
 		build(e.target.getAttribute("data-pmm"), e.target.getAttribute("data-pmm-item"), 1);
 	} else if (hasClass(e.target,"pmm-item-auto-build") && e.target.type==="checkbox") {
 		autoBuild( e.target.getAttribute("data-pmm"), e.target.getAttribute("data-pmm-item"), e.target.checked);
+	} else if (hasClass(e.target,"pmm-enable-pm") && e.target.type==="checkbox") {
+		handlePerpetualMotion( e.target.getAttribute("data-pmm"), e.target.checked );
 	}
 
 });

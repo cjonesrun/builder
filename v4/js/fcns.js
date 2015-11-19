@@ -10,20 +10,26 @@ function build(pmm_id, item_id, howmany){
 	//console.log( "build", pmm.name, item.name, howmany, item.count, pmm.decay(item_id));
 
 	for (var i=0;i<howmany;i++){
-		
 		if (item.count === 0) { // first unit free
-			if (item.previous === null || prev.count >= prev.base)
+			//if (item.previous === null || prev.count >= prev.base)
+			if (item.previous === null || prev.count >= 1)
 				item.count = 1;
 		} else if (item.previous === null){
 			//var decay = pmm.decay(item_id);
+			for (var j=0; j<pmm.manual_click_bonus_multiplier; j++) {
+				console.log(j, item.name, 'grew', pmm.exp_grow(item.id, true));
+			}
 			//item.count /= pmm.decay(item_id);
-			item.count ++;
+			//item.count ++;
 		} else {
 			var prev = pmm.state[item.previous];
 
-			if (prev.count >= prev.base){
-				pmm.exp_decay(prev.id);
-				pmm.exp_grow(item.id, true);
+			//if (prev.count >= prev.base){
+			if (prev.count >= 1){
+				for (var j=0; j<pmm.manual_click_bonus_multiplier; j++){
+					console.log(j, prev.name, 'decayed', pmm.exp_decay(prev.id));
+					console.log(j, item.name, 'grew', pmm.exp_grow(item.id, true));
+				}
 			}
 			updateItem(pmm_id, prev.id);
 		}

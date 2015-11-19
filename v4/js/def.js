@@ -40,6 +40,7 @@ function PerpetualMotionMachine(id, items_arr) {
 	this.sentience = 0.0;
 	this.perpetual = false;
 
+	this.manual_click_bonus_multiplier = 2;
 	this.state = [];
 	for (var i=0; i < this.items.length; i++) {
 		this.state.push( {
@@ -107,15 +108,21 @@ PerpetualMotionMachine.prototype.exp_grow = function(i, ignore_eff){
 	//var adjustment = (item.count/hl-item.count);
 	//console.log(item.name, hl, item.count, item.count/hl, (item.count/hl-item.count), this.efficiency, (item.count/hl-item.count)*this.efficiency );
 
+	//console.log(item.name, 'grew', adjustment);
 	this.state[i].count += adjustment;
+	return adjustment;
 
-	 console.log( (item.count/Math.pow(0.25, 1 / (this.state[i].halflife))-item.count),  
-	 	(item.count/Math.pow(0.5, 1 / (this.state[i].halflife))-item.count), 
-	 	(item.count/Math.pow(0.75, 1 / (this.state[i].halflife))-item.count));
+	 //console.log( (item.count/Math.pow(0.25, 1 / (this.state[i].halflife))-item.count),  
+	 	//(item.count/Math.pow(0.5, 1 / (this.state[i].halflife))-item.count), 
+	 	//(item.count/Math.pow(0.75, 1 / (this.state[i].halflife))-item.count));
 }
 
 PerpetualMotionMachine.prototype.exp_decay = function(i){
-	this.state[i].count *= this.decay(i);
+	//console.log(this.state[i].name, 'decayed', this.state[i].count*(1-this.decay(i)));
+	//this.state[i].count *= this.decay(i);
+	var adjustment = this.state[i].count - (this.state[i].count*this.decay(i));
+	this.state[i].count -= adjustment;
+	return adjustment;
 }
 
 

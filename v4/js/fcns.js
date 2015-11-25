@@ -92,6 +92,7 @@ var min_val = Number.MAX_VALUE;
 var last_total = 0;
 function calculate() {
 	var total_val = 0;
+	var stop = 1e-323;
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		var machine = app.pmm_defs[i];
 		if ( !app.pmm_defs[i].active ) {
@@ -101,8 +102,7 @@ function calculate() {
 		for (var j=0; j<app.pmm_defs[i].state.length; j++) {
 
 			var item = machine.state[j];
-			var stop = 1;
-			if (item.count >= stop && item.next !== null){
+			if (item.count > stop && item.next !== null){
 				if (item.auto_build ) {
 					var next = machine.state[item.next]
 					if (!next.active) {
@@ -117,7 +117,7 @@ function calculate() {
 			total_val += item.count * item.value;
 		}
 		// item at this point is that last one for the machine
-		if (item.count >= stop){
+		if (item.count > stop){
 			if (item.auto_build) {
 				//machine.state[0].count += machine.exp_decay(item.id);
 				machine.exp_decay(item.id);

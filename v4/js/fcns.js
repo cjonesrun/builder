@@ -12,26 +12,32 @@ function build(pmm_id, item_id, howmany){
 	for (var i=0;i<howmany;i++){
 		if (item.count === 0) { // first unit free
 			//if (item.previous === null || prev.count >= prev.base)
-			if (item.previous === null || prev.count >= 1)
+			if (item.previous === null || prev.count >= prev.base)
 				item.count = 1;
 		} else if (item.previous === null){
+			var last = pmm.state[app.pmm_defs[i].state.length-1];
 			//var decay = pmm.decay(item_id);
 			for (var j=0; j<pmm.manual_click_bonus_tick_equivalent; j++) {
-				//console.log(j, item.name, 'grew', 
-				pmm.exp_grow(item.id, true);//);
+				if (last.count >= last.base){
+					/*item.count += */
+					pmm.exp_decay(last.id);
+				} 
+				pmm.exp_grow(item.id, true);
 			}
+			updateItem(pmm_id, last.id);
 			//item.count /= pmm.decay(item_id);
 			//item.count ++;
 		} else {
 			var prev = pmm.state[item.previous];
 
 			//if (prev.count >= prev.base){
-			if (prev.count >= 1){
+			if (prev.count >= prev.base){
 				for (var j=0; j<pmm.manual_click_bonus_tick_equivalent; j++){
 					//console.log(j, prev.name, 'decayed', 
-					pmm.exp_decay(prev.id);//);
+					//item.count += pmm.exp_decay(prev.id);//);
 					//console.log(j, item.name, 'grew', 
-					pmm.exp_grow(item.id, true)//);
+					pmm.exp_decay(prev.id);
+					pmm.exp_grow(item.id, true);
 				}
 			}
 			updateItem(pmm_id, prev.id);
@@ -82,7 +88,10 @@ function getItemDiv(pmm, item){
 	return machines_div.querySelector(".pmm-item-row[data-pmm='"+pmm+"'][data-pmm-item='"+item+"']");
 }
 
+var min_val = Number.MAX_VALUE;
+var last_total = 0;
 function calculate() {
+	var total_val = 0;
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		var machine = app.pmm_defs[i];
 		if ( !app.pmm_defs[i].active ) {
@@ -92,27 +101,54 @@ function calculate() {
 		for (var j=0; j<app.pmm_defs[i].state.length; j++) {
 
 			var item = machine.state[j];
-
-			if (item.count >= item.base && item.next !== null){
+			var stop = 1;
+			if (item.count >= stop && item.next !== null){
 				if (item.auto_build ) {
 					var next = machine.state[item.next]
 					if (!next.active) {
 						next.active = true;
 						next.count = 1;
 					}
+					//next.count += machine.exp_decay(item.id);
 					machine.exp_decay(item.id);
 					machine.exp_grow(next.id);
 	            }
 			}
+			total_val += item.count * item.value;
 		}
 		// item at this point is that last one for the machine
-		if (item.count >= item.base){
+		if (item.count >= stop){
 			if (item.auto_build) {
+				//machine.state[0].count += machine.exp_decay(item.id);
 				machine.exp_decay(item.id);
 				machine.exp_grow(machine.state[0].id);
 			}
 		} 
 	}
+	last_total = total_val;
+	if (total_val < min_val){
+		addMessage(prettyDate(new Date())+":", "min val:", total_val);
+		min_val = total_val;
+	}
+}
+
+function calcVal(){
+	var tot = 0;
+	for (var i=0; i<app.pmm_defs.length; i++) {
+		var machine = app.pmm_defs[i];
+		if ( !machine.active ) {
+			break;
+		}
+
+		for (var j=0; j<machine.state.length; j++) {
+			var item = machine.state[j];
+			if (!item.active){
+				break;
+			}
+			tot += item.count*item.base;
+		}
+	}
+	return tot;
 }
 
 function toggleContentVis(el){

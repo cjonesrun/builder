@@ -110,6 +110,9 @@ function lzw_decode(s) {
     return out.join("");
 }
 
+function prettyDate(date){
+    return new Date().toDateString() + " " + new Date().toLocaleTimeString();
+}
 function timeFormat(numberInMillis) {
     var millis = numberInMillis;
     var hours = Math.floor( millis / (60*60*1000) );

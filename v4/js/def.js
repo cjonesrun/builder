@@ -40,14 +40,14 @@ function PerpetualMotionMachine(id, items_arr) {
 	this.sentience = 0.0;
 	this.perpetual = false;
 
-	this.manual_click_bonus_tick_equivalent = 2; // manual clicks are equivalet to this many clock ticks, >= 1.
+	this.manual_click_bonus_tick_equivalent = 1; // manual clicks are equivalet to this many clock ticks, >= 1.
 	this.state = [];
 	for (var i=0; i < this.items.length; i++) {
 		this.state.push( {
 			id: i,
 			name: this.items[i],
 			base: this.baseCalc(this.id, i),
-			value: 10*(i+1),
+			value: this.baseCalc(this.id, i),
 
 			upgrades : 1,
 			multiplier : 10,

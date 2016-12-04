@@ -118,7 +118,7 @@ PerpetualMotionMachine.prototype.exp_grow = function(i, ignore_eff){
 }
 
 PerpetualMotionMachine.prototype.exp_decay = function(i){
-	//console.log(this.state[i].name, 'decayed', this.state[i].count*(1-this.decay(i)));
+	console.log(this.state[i].name, 'decayed', this.state[i].count*(1-this.decay(i)));
 	//this.state[i].count *= this.decay(i);
 	var adjustment = this.state[i].count - (this.state[i].count*this.decay(i));
 	this.state[i].count -= adjustment;

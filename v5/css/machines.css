@@ -5,14 +5,22 @@
 
 .options{
 	width: 100%;
-	float: left;
-	border: 1px solid black;
+	//float: left;
+	//border: 1px solid black;
+	clear:both;
 }
 
 .option_button{
-	display: table-cell;
+	//display: table-cell;
 	background: lightgray;
 	//border: 1px solid black;
+	border-radius: 5px 5px 5px 5px; /* top-left, top-right, bottom-right, bottom-left */
+	padding-left: 1em;
+	padding-right: 1em;
+	padding-bottom: 0em;
+	margin-bottom: 0em;
+	margin-right: 1em;
+	
 }
 .option_button:hover {	
 	background: gray;

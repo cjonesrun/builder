@@ -37,3 +37,18 @@ var machineParts = [
 	'instrument', 'harness', 'kit', 'accessory', 'whatchamacalit', 'paraphernalia',
 	'thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'
 ];
+
+// id, innerHTML, title
+var optionsButtons = [
+		["message_button","show messages","show message box"],
+		["pause_button","pause","pause/resume game ticker"],
+		["save_button","save","save game state"],
+		["clear_button","clear messages","clear messages"],
+		["export_button","export","export serialized game state to messages"],
+		["load_button","load","load serialized game state from messages"],
+		["export_json_button","JSON","show game state JSON"],
+		["stats","stats","show game stats"],
+		["config","config","config rbg parameters"],
+		["reset_button","reset","reset game"],
+		["hard_reset","hard","blow away local storage"]
+	];

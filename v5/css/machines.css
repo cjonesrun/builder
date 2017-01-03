@@ -1,0 +1,19 @@
+/* Invisible Container */
+[data-visible="false"]{
+  display: none;
+}
+
+.options{
+	width: 100%;
+	float: left;
+	border: 1px solid black;
+}
+
+.option_button{
+	display: table-cell;
+	background: lightgray;
+	//border: 1px solid black;
+}
+.option_button:hover {	
+	background: gray;
+}

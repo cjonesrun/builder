@@ -9,27 +9,27 @@ if ( document.getElementById('message-wrapper') ) {
 }
 
 // Styles Config
-( function () {
-	  var style_tag = document.createElement('style');
-	  var styles = [
-	  '#message-wrapper{',
-	    'box-sizing: border-box;',
-	    'position: relative;',
-	    'z-index: 100;',
-	    'max-width: 100%;',
-	    'margin: 0px auto;',
-	    'line-height: 1.35;',
-	    'background: lightgray;',
-	    'font-family: "Lucida Sans Typewriter";',
-	    'overflow-y: scroll;',
-	    'overflow-x: scroll;',
-    	'max-height: 10em;',
-    	'min-height: 10em;',
-	  '}'].join('');
+// ( function () {
+// 	  var style_tag = document.createElement('style');
+// 	  var styles = [
+// 	  '#message-wrapper{',
+// 	    'box-sizing: border-box;',
+// 	    'position: relative;',
+// 	    'z-index: 100;',
+// 	    'max-width: 100%;',
+// 	    'margin: 0px auto;',
+// 	    'line-height: 1.35;',
+// 	    'background: lightgray;',
+// 	    'font-family: "Lucida Sans Typewriter";',
+// 	    'overflow-y: scroll;',
+// 	    'overflow-x: scroll;',
+//     	'max-height: 10em;',
+//     	'min-height: 10em;',
+// 	  '}'].join('');
 
-	  style_tag.innerHTML = styles;
-	  document.getElementsByTagName('head')[0].appendChild(style_tag);
-  })();
+// 	  style_tag.innerHTML = styles;
+// 	  document.getElementsByTagName('head')[0].appendChild(style_tag);
+//   })();
 
 // arguments is a list of literals to join with single-spaces, then added to the top of the 
 // message window with a limit of MESSAGE_WINDOW_LINES lines

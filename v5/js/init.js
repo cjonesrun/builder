@@ -21,6 +21,11 @@ function buildOptionsDiv() {
 
 		var d = div(c[0], className, c[1], c[2]);
 		options_div.appendChild(d);
+
+		if (i<optionsButtons.length-1) {
+			var e = div("x", "option_button_spacer", "", "");
+			options_div.appendChild(e);
+		}
 	}
 
 	// var x = div("message-wrapper", "top-level-div", "", "", {"data-visible":"false"});

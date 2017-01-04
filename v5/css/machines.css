@@ -5,13 +5,12 @@
 
 .options{
 	width: 100%;
-	//float: left;
-	//border: 1px solid black;
-	clear:both;
+	float: left;
+	margin-bottom: 0.5em;
 }
 
 .option_button{
-	//display: table-cell;
+	display: table-cell;
 	background: lightgray;
 	//border: 1px solid black;
 	border-radius: 5px 5px 5px 5px; /* top-left, top-right, bottom-right, bottom-left */
@@ -20,8 +19,28 @@
 	padding-bottom: 0em;
 	margin-bottom: 0em;
 	margin-right: 1em;
-	
+}
+
+.option_button_spacer{
+	display: table-cell;
+	background: white;
+	width:0.25em;
 }
 .option_button:hover {	
 	background: gray;
+}
+
+.message_wrapper{
+	border: 1px inset lightgray;
+	background: lightgray;
+	box-sizing: border-box;
+	position: relative;
+	z-index: 100;
+	max-width: 100%;
+	margin: 1em auto;
+	line-height: 1.35;
+	overflow-y: scroll;
+	overflow-x: scroll;
+    max-height: 10em;
+    min-height: 10em;
 }

@@ -1,6 +1,6 @@
 var machines_div = document.getElementById("machines_div");
 var options_div = document.getElementById('options_div');
-var message_div = document.getElementById('message-wrapper');
+var message_div = document.getElementById('message_wrapper');
 
 
 // prevents text select when clicking
@@ -36,7 +36,7 @@ options_div.addEventListener('click', function(e){
 	  		case "message_button":
     			
     			setVisible(message_div, !isVisible(message_div));
-    			e.target.innerHTML= (isVisible(message_div)?"hide":"show") + " message box";
+    			e.target.innerHTML= (isVisible(message_div)?"hide":"show") + " message";
     		break;
 
     		default:

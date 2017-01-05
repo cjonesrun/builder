@@ -1,6 +1,6 @@
 var machines_div = document.getElementById("machines_div");
 var options_div = document.getElementById('options_div');
-var message_div = document.getElementById('message_wrapper');
+var message_div = document.getElementById('message_div');
 
 
 // prevents text select when clicking

@@ -32,7 +32,7 @@
 	background: gray;
 }
 
-.message_wrapper{
+#message_div{
 	border: 1px inset lightgray;
 	background: lightgray;
 	box-sizing: border-box;

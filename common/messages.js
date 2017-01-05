@@ -2,10 +2,9 @@ var message_wrapper;
 
 if ( document.getElementById('message-wrapper') ) {
   message_wrapper = document.getElementById('message-wrapper');
-} else if ( document.getElementById('message_wrapper') ) {
-  message_wrapper = document.getElementById('message_wrapper');
-}  
-else {
+} else if ( document.getElementById('message_div') ) {
+  message_wrapper = document.getElementById('message_div');
+} else {
   message_wrapper = document.createElement('div');
   message_wrapper.setAttribute("id", "message-wrapper");
   document.body.insertBefore(message_wrapper, document.body.firstChild);

@@ -5,6 +5,8 @@ var message_div = document.getElementById('message_wrapper');
 
 // prevents text select when clicking
 machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+options_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+message_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
 
 machines_div.addEventListener('click', function(e){
 	if (hasClass(e.target,"pmm-title")) {
@@ -34,11 +36,14 @@ options_div.addEventListener('click', function(e){
     		break;
 
 	  		case "message_button":
-    			
     			setVisible(message_div, !isVisible(message_div));
-    			e.target.innerHTML= (isVisible(message_div)?"hide":"show") + " message";
+    			e.target.innerHTML= (isVisible(message_div)?"hide":"show");
     		break;
 
+    		case "clear_button":
+				clearMessages();
+    		break;
+    		
     		default:
 	  			addMessage('no handler for ', btnID);
 	  		break;

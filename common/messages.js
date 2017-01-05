@@ -2,7 +2,10 @@ var message_wrapper;
 
 if ( document.getElementById('message-wrapper') ) {
   message_wrapper = document.getElementById('message-wrapper');
-} else {
+} else if ( document.getElementById('message_wrapper') ) {
+  message_wrapper = document.getElementById('message_wrapper');
+}  
+else {
   message_wrapper = document.createElement('div');
   message_wrapper.setAttribute("id", "message-wrapper");
   document.body.insertBefore(message_wrapper, document.body.firstChild);
@@ -37,14 +40,14 @@ var MESSAGE_WINDOW_LINES = 200;
 
 function addMessage(){
 	var new_line = [].slice.apply(arguments).join(" ");
-	var lines = document.getElementById( 'message-wrapper' ).innerText.split("\n", MESSAGE_WINDOW_LINES-1);
+	var lines = message_wrapper.innerText.split("\n", MESSAGE_WINDOW_LINES-1);
 	//console.log(lines);
 	lines.unshift(new_line);
-	document.getElementById( 'message-wrapper' ).innerText = lines.join("\n");
+	message_wrapper.innerText = lines.join("\n");
 }
 
 function setMessage() {
-	document.getElementById( 'message-wrapper' ).innerText = "";
+	message_wrapper.innerText = "";
 	var new_line = [].slice.apply(arguments).join(" ");
 	addMessage(new_line);
 }

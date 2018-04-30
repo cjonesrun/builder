@@ -92,7 +92,7 @@ var min_val = Number.MAX_VALUE;
 var last_total = 0;
 function calculate() {
 	var total_val = 0;
-	var stop = 1e-323;
+	var stop = 1;
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		var machine = app.pmm_defs[i];
 		if ( !app.pmm_defs[i].active ) {

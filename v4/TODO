@@ -1,0 +1,45 @@
+initial:
+
+c-values: c0=0.00, c1=5.00
+c-rates: c0-rate=1.00, c1-rate=0.0
+
+z-units: z0..zN
+
+unit	build cost					produces		upgrade production	manual build multiplier
+z0		1 z0 costs c0,c1			c1				costs z0			n/a
+for i>0
+zi 		1 zi costs c0, c1, zi-1		zi-1			costs zi 			costs zi+1
+
+
+2nd phase:
+
+add 3 more production units
+c2=0.0, c3=0.0, c4=0.0
+c2-rate=0.0, c3-rate=0.0. c4-rate=0.0
+
+y-units: y0..yM
+x-units: x0..xM
+w-units: w0..wM
+
+unit	build cost					produces		upgrade production	manual build multiplier
+y0		1 y0 costs c0,c2			c2				costs y0			n/a
+x0		1 x0 costs c0,c3			c3				costs x0			n/a
+w0		1 w0 costs c0,c4			c4				costs w0			n/a
+
+for i>0
+yi 		1 yi costs c0, c2, yi-1		yi-1			costs yi 			costs yi+1
+xi 		1 xi costs c0, c3, xi-1		xi-1			costs xi 			costs xi+1
+wi 		1 wi costs c0, c4, wi-1		wi-1			costs wi 			costs wi+1
+
+
+
+Notes:
+c0 is a time-based increment with a rate determined by total value (or "level"), c0-rate. this will be the game rate limiter. everything else will be 
+z-units main role is to produce c1 at c1-rate
+y,x,w units produce c2,c3,c4 respectively (at c2-rate, c3-rate, c4-rate)
+
+c2,c3,c4 can be used to increase z-unit production via additional upgrades
+
+additional upgrades
+use c2,c3,c4 to buy c1 
+

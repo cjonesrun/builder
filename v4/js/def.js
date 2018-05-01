@@ -49,6 +49,12 @@ function PerpetualMotionMachine(id, items_arr) {
 			base: this.baseCalc(this.id, i),
 			value: this.baseCalc(this.id, i),
 
+			cost: {
+				c0: this.baseCalc(this.id, i),
+				c1: 1,
+				c2: 0
+			},
+			test: 1234,
 			upgrades : 1,
 			multiplier : 10,
 			count: 0,
@@ -61,8 +67,9 @@ function PerpetualMotionMachine(id, items_arr) {
 			active: i===0 ? true : false,
 			
 			stats: {
-				manual_build: 0,
-				manual_upgrade: 0,
+				manual_build_clicks: 0,
+				upgrade_production: 0,
+				upgrade_manual_build: 0,
 				auto_build: 0
 			}
 		});		
@@ -84,6 +91,7 @@ PerpetualMotionMachine.prototype.halfLifeCalc = function(pmm, item) {
 
 PerpetualMotionMachine.prototype.display = function() {
 	//"machine:"+this.NAME+" | 0 | 0/s | 0/s<sup>2</sup> | time:0s | perpetual:false | efficiency:0.0 | sentience:0"
+	//console.log("app c-values=" + app.c0_value,app.c1_value,app.c2_value);
 	return "machine:"+greek[this.name].small + " | perpetual:" + this.perpetual + " | efficiency:"+ this.efficiency*100+"% | sentience:" + this.sentience;
 };
 
@@ -91,46 +99,63 @@ PerpetualMotionMachine.prototype.autoBuildLevel = function(i) {
 	return this.state[i].base;
 }
 
-PerpetualMotionMachine.prototype.decay = function(i) {
-	// N1=N0*Math.exp(-1*Math.log(2)/75) - decay constant (lamda) 
-	// N1=N0* (1/2)^(t/halflife)
-	return Math.pow(0.5, 1 / (this.state[i].halflife));
-	//var lamda = Math.log(2)/item.halflife;
+PerpetualMotionMachine.prototype.consume = function(i) 
+{
+	// nothing to do right now
 }
 
-PerpetualMotionMachine.prototype.exp_grow = function(i, ignore_eff){
+
+PerpetualMotionMachine.prototype.build = function(i, ignore_eff){
 	var item = this.state[i];
-	var hl = this.decay(i);
-	//var hl = Math.pow(0.25, 1 / (this.state[i].halflife));
 
-	// ignore_eff penalty for manual clicks
-	var adjustment = (item.count/hl-item.count)*(ignore_eff?1:this.efficiency);
-	//var adjustment = (item.count/hl-item.count);
-	//console.log(item.name, hl, item.count, item.count/hl, (item.count/hl-item.count), this.efficiency, (item.count/hl-item.count)*this.efficiency );
-
-	//console.log(item.name, 'grew', adjustment);
-	this.state[i].count += adjustment;
-	return adjustment;
-
-	 //console.log( (item.count/Math.pow(0.25, 1 / (this.state[i].halflife))-item.count),  
-	 	//(item.count/Math.pow(0.5, 1 / (this.state[i].halflife))-item.count), 
-	 	//(item.count/Math.pow(0.75, 1 / (this.state[i].halflife))-item.count));
+	if (item.prev ===null)
+	{
+		console.log(item.name, "increasing total value", item.count);
+		this.value += item.count;
+	}
+	else
+	{
+		var prev = this.state[item.prev]
+		prev.count += this.state[i].count;
+		console.log(item.name, "building", prev.name, item.count, prev.count);
+		//this.state[i].count += 1;
+	}
 }
 
-PerpetualMotionMachine.prototype.exp_decay = function(i){
-	console.log(this.state[i].name, 'decayed', this.state[i].count*(1-this.decay(i)));
-	//this.state[i].count *= this.decay(i);
-	var adjustment = this.state[i].count - (this.state[i].count*this.decay(i));
-	this.state[i].count -= adjustment;
-	return adjustment;
+PerpetualMotionMachine.prototype.manual_build = function(i, count){
+	var item = this.state[i];
+	//console.log(item.cost.c0, item.cost.c1, item.cost.c2);
+	
+	if (i == 0)
+	{
+		console.log("manual build", item.name, "costs", item.cost);
+		if (app.c0_value>item.value)
+		{
+			++item.count;
+			app.c0_value-=item.value;
+		}
+	}
 }
 
+PerpetualMotionMachine.prototype.tick_calc = function(){
+	var x = this.state[0].count + app.c1_base_rate;
+	//console.log("tick_calc", this.state[0].name, "produces", x, "c1 units");
+
+}
 
 function App(){
 	this.NAME = "PMM";
 	this.TICK_INTERVAL = 1000;
 	this.UI_REFRESH_INTERVAL = 1000;
 	this.SAVE_INTERVAL = 5000;
+	this.c0_value=0;
+	this.c1_value=5;
+	this.c2_value=0;
+
+	this.c0_base_rate=1.0;
+	this.c1_base_rate=0.0;
+	this.c2_base_rate=0;
+
 
 	this.last_save = new Date().getTime();
 	this.pmm_defs = [];
@@ -151,6 +176,15 @@ function App(){
 		new PerpetualMotionMachine(4, ['thingamajig','apparatus', 'appliance', 'furnishing', 'rig', 'rube goldberg'])
 	);
 };
+
+App.prototype.display = function() {
+	return "c-values: c0:"+this.c0_value+" ["+this.c0_base_rate+"/s] c1:"+
+	this.c1_value+" ["+this.c1_base_rate+"/s]" + " c2"+this.c2_value+" ["+this.c2_base_rate+"/s]";
+}
+
+App.prototype.update_c0 = function() {
+	this.c0_value+=this.c0_base_rate;
+}
 
 var app = new App();
 

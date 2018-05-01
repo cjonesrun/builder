@@ -6,10 +6,14 @@ c-rates: c0-rate=1.00, c1-rate=0.0
 z-units: z0..zN
 
 unit	build cost					produces		upgrade production	manual build multiplier
-z0		1 z0 costs c0,c1			c1				costs z0			n/a
+z0		1 z0 costs c0,c1			c1				costs z0			n/al
 for i>0
 zi 		1 zi costs c0, c1, zi-1		zi-1			costs zi 			costs zi+1
 
+function for cost calc
+
+i=0: 1xc0 and 10xc1
+i>0: 1xc0 and f(i, c1) and g(zi-1)
 
 2nd phase:
 

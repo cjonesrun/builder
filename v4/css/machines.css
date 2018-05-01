@@ -17,6 +17,12 @@ div,table,tr,td{
 	//border: 1px solid black;
 }
 
+.pmm-header {
+	padding-left: 1em;
+	padding-right: 1em;
+	padding-bottom: 1em;
+	padding-top: 1em;
+}
 .pmm-container {
 	min-width: 25em;
 	//height: 15em;

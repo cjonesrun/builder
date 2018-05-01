@@ -16,6 +16,7 @@ function getFromLocalStorage(param) {
 function saveObj(key, val)
 {
     var json = JSON.stringify(val);
+    console.log(json);
     window.localStorage[key] = btoa(json);
     return window.localStorage[key];
 }

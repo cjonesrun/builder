@@ -1,4 +1,5 @@
 var machines_div = document.getElementById("machines_div");
+var header_div = document.getElementById("header_div");
 
 // prevents text select when clicking
 machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);

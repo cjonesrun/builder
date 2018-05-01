@@ -3,51 +3,9 @@ function autoBuild(pmm, item, enabled){
 	app.pmm_defs[pmm].state[item].auto_build = enabled;
 }
 
-function build(pmm_id, item_id, howmany){
-	var pmm = app.pmm_defs[pmm_id];
-	var item = pmm.state[item_id];
-	var prev = pmm.state[item.previous];
-	//console.log( "build", pmm.name, item.name, howmany, item.count, pmm.decay(item_id));
-
-	for (var i=0;i<howmany;i++){
-		if (item.count === 0) { // first unit free
-			//if (item.previous === null || prev.count >= prev.base)
-			if (item.previous === null || prev.count >= prev.base)
-				item.count = 1;
-		} else if (item.previous === null){
-			var last = pmm.state[app.pmm_defs[i].state.length-1];
-			//var decay = pmm.decay(item_id);
-			for (var j=0; j<pmm.manual_click_bonus_tick_equivalent; j++) {
-				if (last.count >= last.base){
-					/*item.count += */
-					pmm.exp_decay(last.id);
-				} 
-				pmm.exp_grow(item.id, true);
-			}
-			updateItem(pmm_id, last.id);
-			//item.count /= pmm.decay(item_id);
-			//item.count ++;
-		} else {
-			var prev = pmm.state[item.previous];
-
-			//if (prev.count >= prev.base){
-			if (prev.count >= prev.base){
-				for (var j=0; j<pmm.manual_click_bonus_tick_equivalent; j++){
-					//console.log(j, prev.name, 'decayed', 
-					//item.count += pmm.exp_decay(prev.id);//);
-					//console.log(j, item.name, 'grew', 
-					pmm.exp_decay(prev.id);
-					pmm.exp_grow(item.id, true);
-				}
-			}
-			updateItem(pmm_id, prev.id);
-		}
-		updateItem(pmm_id, item_id);
-	}
-
-}
-
 function updateUI(){
+	header_div.innerHTML = app.display();
+
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		//console.log(app.pmm_defs[i].NAME, app.pmm_defs[i].active);
 
@@ -74,7 +32,14 @@ function updateItem(pmm_id, item_id){
 	var item = app.pmm_defs[pmm_id].state[item_id];
 	var row = getItemDiv(pmm_id, item_id);
 	row.querySelector(".pmm-item-name").innerHTML = item.name + " [" + item.base + "]";
-	row.querySelector(".pmm-item-name").title = "" + item.name + " | " + item.base + " | " + item.halflife;
+
+	if (item_id === 0) {
+		row.querySelector(".pmm-item-name").title = "build 1 " + item.name + " for " + item.base + "c0";
+	}
+	else {
+		var prev = app.pmm_defs[pmm_id].state[item_id - 1];
+		row.querySelector(".pmm-item-name").title = "build 1 " + item.name + " for " + item.base + " " + prev.name;
+	}
 	row.querySelector(".pmm-item-count").innerHTML = numberFormat( item.count );
 	row.querySelector(".pmm-item-auto-build[type='checkbox']").checked = item.auto_build;
 
@@ -88,13 +53,24 @@ function getItemDiv(pmm, item){
 	return machines_div.querySelector(".pmm-item-row[data-pmm='"+pmm+"'][data-pmm-item='"+item+"']");
 }
 
+function build(pmm_index,item_index,count)
+{
+	app.pmm_defs[pmm_index].manual_build(item_index, count);
+}
+
 var min_val = Number.MAX_VALUE;
 var last_total = 0;
-function calculate() {
+function calculate() 
+{
+
+	app.update_c0();
+
 	var total_val = 0;
-	var stop = 1;
+
 	for (var i=0; i<app.pmm_defs.length; i++) {
 		var machine = app.pmm_defs[i];
+
+		machine.tick_calc();
 		if ( !app.pmm_defs[i].active ) {
 			break;
 		}
@@ -102,26 +78,26 @@ function calculate() {
 		for (var j=0; j<app.pmm_defs[i].state.length; j++) {
 
 			var item = machine.state[j];
-			if (item.count > stop && item.next !== null){
-				if (item.auto_build ) {
-					var next = machine.state[item.next]
-					if (!next.active) {
-						next.active = true;
-						next.count = 1;
-					}
-					//next.count += machine.exp_decay(item.id);
-					machine.exp_decay(item.id);
-					machine.exp_grow(next.id);
-	            }
-			}
+
+			if ( item.auto_build ) {
+				var next = machine.state[item.next]
+				if (!next.active) {
+					next.active = true;
+					next.count = 0;
+				}
+				//next.count += machine.exp_decay(item.id);
+				machine.consume(item.id);
+				machine.build(next.id);
+            }
+
 			total_val += item.count * item.value;
 		}
 		// item at this point is that last one for the machine
 		if (item.count > stop){
 			if (item.auto_build) {
 				//machine.state[0].count += machine.exp_decay(item.id);
-				machine.exp_decay(item.id);
-				machine.exp_grow(machine.state[0].id);
+				machine.consume(item.id);
+				machine.build(machine.state[0].id);
 			}
 		} 
 	}

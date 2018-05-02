@@ -25,6 +25,7 @@ div,table,tr,td{
 }
 .pmm-container {
 	min-width: 25em;
+	width:95%;
 	//height: 15em;
 	min-height: 10em;
 	border: 1px solid black;

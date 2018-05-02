@@ -40,7 +40,6 @@ function PerpetualMotionMachine(id, items_arr) {
 	this.sentience = 0.0;
 	this.perpetual = false;
 
-	this.manual_click_bonus_tick_equivalent = 1; // manual clicks are equivalet to this many clock ticks, >= 1
 	this.state = [];
 	for (var i=0; i < this.items.length; i++) {
 		this.state.push( {
@@ -50,16 +49,21 @@ function PerpetualMotionMachine(id, items_arr) {
 			value: this.baseCalc(this.id, i),
 
 			cost: {
-				c0: this.baseCalc(this.id, i),
-				c1: 1,
-				c2: 0
+				c0: 1,
+				c1: Math.round( this.baseCalc(this.id, i)*Math.pow(GAME_BASE,2*i) ),
+				c2: 0,
+				item: (i===0) ? null : { id: i-1, count: this.baseCalc(this.id, i) }
 			},
-			test: 1234,
-			upgrades : 1,
+			production: {
+				c0: 0,
+				c1: (i===0)?1:0,
+				c2: 0,
+				item: (i===0) ? null : { id: i-1, count: 1 },
+				level: 1
+			},
+			
 			multiplier : 10,
 			count: 0,
-			halflife: this.halfLifeCalc(this.id, i),
-			
 			auto_build: false,
 			
 			previous: (i>0) ? i-1 : null,
@@ -68,8 +72,6 @@ function PerpetualMotionMachine(id, items_arr) {
 			
 			stats: {
 				manual_build_clicks: 0,
-				upgrade_production: 0,
-				upgrade_manual_build: 0,
 				auto_build: 0
 			}
 		});		
@@ -125,15 +127,30 @@ PerpetualMotionMachine.prototype.build = function(i, ignore_eff){
 PerpetualMotionMachine.prototype.manual_build = function(i, count){
 	var item = this.state[i];
 	//console.log(item.cost.c0, item.cost.c1, item.cost.c2);
-	
+	//console.log("manual build", item.name, "costs", JSON.stringify( item.cost ));
 	if (i == 0)
 	{
-		console.log("manual build", item.name, "costs", item.cost);
-		if (app.c0_value>item.value)
+		console.log(app.c0_value, app.c1_value,app.c2_value,item.cost);
+		if (app.c0_value>=item.cost.c0 && app.c1_value>=item.cost.c1 && app.c2_value>=item.cost.c2) 
 		{
 			++item.count;
-			app.c0_value-=item.value;
-		}
+			app.c0_value-=item.cost.c0;
+			app.c1_value-=item.cost.c1;
+			app.c2_value-=item.cost.c2;
+		} else
+			console.log("can't build", item.name);
+	}
+	else {
+		console.log(app.c0_value, app.c1_value,app.c2_value,item.cost);
+		if (app.c0_value>=item.cost.c0 && app.c1_value>=item.cost.c1 && app.c2_value>=item.cost.c2 && this.state[item.cost.item.id].count >= item.cost.item.count) 
+		{
+			++item.count;
+			app.c0_value-=item.cost.c0;
+			app.c1_value-=item.cost.c1;
+			app.c2_value-=item.cost.c2;
+			this.state[item.cost.item.id].count -= item.cost.item.count;
+		} else
+			console.log("can't build", item.name);
 	}
 }
 
@@ -149,7 +166,7 @@ function App(){
 	this.UI_REFRESH_INTERVAL = 1000;
 	this.SAVE_INTERVAL = 5000;
 	this.c0_value=0;
-	this.c1_value=5;
+	this.c1_value=35;
 	this.c2_value=0;
 
 	this.c0_base_rate=1.0;
@@ -179,11 +196,45 @@ function App(){
 
 App.prototype.display = function() {
 	return "c-values: c0:"+this.c0_value+" ["+this.c0_base_rate+"/s] c1:"+
-	this.c1_value+" ["+this.c1_base_rate+"/s]" + " c2"+this.c2_value+" ["+this.c2_base_rate+"/s]";
+	this.c1_value+" ["+this.c1_base_rate+"/s]" + " c2:"+this.c2_value+" ["+this.c2_base_rate+"/s]";
 }
 
-App.prototype.update_c0 = function() {
-	this.c0_value+=this.c0_base_rate;
+App.prototype.update_app = function() {
+
+	var c0_adjustment = 0;
+	var c1_adjustment = 0;
+	var c2_adjustment = 0;
+
+	for (var i=0; i < this.pmm_defs.length; i++) {
+		if (this.pmm_defs[i].active)
+		{
+			c0_adjustment += this.pmm_defs[i].state[0].count * this.pmm_defs[i].state[0].production.c0;
+			c1_adjustment += this.pmm_defs[i].state[0].count * this.pmm_defs[i].state[0].production.c1;
+			c2_adjustment += this.pmm_defs[i].state[0].count * this.pmm_defs[i].state[0].production.c2;
+
+			//console.log("adding in", this.pmm_defs[i].state[0].count, "from", 
+			//	this.pmm_defs[i].state[0].name, JSON.stringify(this.pmm_defs[i].state[0].production));
+
+			for (var j=1; j<this.pmm_defs[i].state.length-1; j++)
+			{
+				var item = this.pmm_defs[i].state[j];
+				if (item.count>0)
+				{
+					var produced = this.pmm_defs[i].state[item.production.item.id];
+					produced.count += item.count * item.production.item.count;
+				}
+			}
+
+
+		}
+	}
+
+	this.c0_value += c0_adjustment + this.c0_base_rate;
+	this.c0_base_rate += c0_adjustment;
+	this.c1_value +=c1_adjustment;
+	this.c1_base_rate = c1_adjustment;
+	this.c2_value +=c2_adjustment;
+	this.c2_base_rate = c2_adjustment;
 }
 
 var app = new App();

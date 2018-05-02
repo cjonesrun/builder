@@ -32,17 +32,44 @@ function updateItem(pmm_id, item_id){
 	var item = app.pmm_defs[pmm_id].state[item_id];
 	var row = getItemDiv(pmm_id, item_id);
 	row.querySelector(".pmm-item-name").innerHTML = item.name + " [" + item.base + "]";
-
-	if (item_id === 0) {
-		row.querySelector(".pmm-item-name").title = "build 1 " + item.name + " for " + item.base + "c0";
-	}
-	else {
-		var prev = app.pmm_defs[pmm_id].state[item_id - 1];
-		row.querySelector(".pmm-item-name").title = "build 1 " + item.name + " for " + item.base + " " + prev.name;
-	}
+	row.querySelector(".pmm-item-name").title =  itemTitle(pmm_id, item);
 	row.querySelector(".pmm-item-count").innerHTML = numberFormat( item.count );
 	row.querySelector(".pmm-item-auto-build[type='checkbox']").checked = item.auto_build;
 
+}
+
+function itemTitle(pmm_id, item) {
+	var str = "build 1 " + item.name + " for: ";
+	var c = []
+	if (item.cost.c0 >0)
+		c.push(item.cost.c0 + " c0");
+	if (item.cost.c1 >0)
+		c.push(item.cost.c1 + " c1");
+	if (item.cost.c2 >0)
+		c.push(item.cost.c2 + " c2");
+	if (item.cost.item != null)
+	{
+		var cost = app.pmm_defs[pmm_id].state[item.cost.item.id];
+		c.push(item.cost.item.count + " " + cost.name);
+	}
+
+	str += c.join(" and ");
+
+	str += ". each " + item.name+ " produces: ";
+	var d = []
+	if (item.production.c0 >0)
+		d.push(item.production.c0 + " c0");
+	if (item.production.c1 >0)
+		d.push(item.production.c1 + " c1");
+	if (item.production.c2 >0)
+		d.push(item.production.c2 + " c2");
+	if (item.production.item != null)
+	{
+		var prod = app.pmm_defs[pmm_id].state[item.production.item.id];
+		d.push("1 " + prod.name);
+	}
+	str += d.join(" and ");
+	return str.trim();
 }
 
 function getPMMContainer(pmm){
@@ -63,7 +90,7 @@ var last_total = 0;
 function calculate() 
 {
 
-	app.update_c0();
+	app.update_app();
 
 	var total_val = 0;
 

@@ -215,7 +215,7 @@ App.prototype.update_app = function() {
 			//console.log("adding in", this.pmm_defs[i].state[0].count, "from", 
 			//	this.pmm_defs[i].state[0].name, JSON.stringify(this.pmm_defs[i].state[0].production));
 
-			for (var j=1; j<this.pmm_defs[i].state.length-1; j++)
+			for (var j=1; j<this.pmm_defs[i].state.length; j++)
 			{
 				var item = this.pmm_defs[i].state[j];
 				if (item.count>0)

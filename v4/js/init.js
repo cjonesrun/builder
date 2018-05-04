@@ -30,7 +30,11 @@ function buildMachineDiv() {
 			d1.appendChild(d_name);
 			d1.appendChild(d_count);
 			d1.appendChild(d_check);
-
+			/*d1.appendChild(text("", "", "build", "build", null));
+			d1.appendChild(div("pmm-item-build-all"+item, "pmm-item-build", "all", "title", {"data-pmm":i, "data-pmm-item":item}));
+			d1.appendChild(div("pmm-item-upgrade-build"+item, "pmm-item-build", "build+", "title", {"data-pmm":i, "data-pmm-item":item}));
+			d1.appendChild(div("pmm-item-upgrade-production"+item, "pmm-item-build", "rate+", "title", {"data-pmm":i, "data-pmm-item":item}));*/
+			
 			content.appendChild(d1);
 		}
 		

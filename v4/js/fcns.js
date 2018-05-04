@@ -42,15 +42,15 @@ function itemTitle(pmm_id, item) {
 	var str = "build 1 " + item.name + " for: ";
 	var c = []
 	if (item.cost.c0 >0)
-		c.push(item.cost.c0 + " c0");
+		c.push(numberFormat(item.cost.c0) + " c0");
 	if (item.cost.c1 >0)
-		c.push(item.cost.c1 + " c1");
+		c.push(numberFormat(item.cost.c1) + " c1");
 	if (item.cost.c2 >0)
-		c.push(item.cost.c2 + " c2");
+		c.push(numberFormat(item.cost.c2) + " c2");
 	if (item.cost.item != null)
 	{
 		var cost = app.pmm_defs[pmm_id].state[item.cost.item.id];
-		c.push(item.cost.item.count + " " + cost.name);
+		c.push(numberFormat(item.cost.item.count) + " " + cost.name);
 	}
 
 	str += c.join(" and ");
@@ -58,11 +58,11 @@ function itemTitle(pmm_id, item) {
 	str += ". each " + item.name+ " produces: ";
 	var d = []
 	if (item.production.c0 >0)
-		d.push(item.production.c0 + " c0");
+		d.push(numberFormat(item.production.c0) + " c0");
 	if (item.production.c1 >0)
-		d.push(item.production.c1 + " c1");
+		d.push(numberFormat(item.production.c1) + " c1");
 	if (item.production.c2 >0)
-		d.push(item.production.c2 + " c2");
+		d.push(numberFormat(item.production.c2) + " c2");
 	if (item.production.item != null)
 	{
 		var prod = app.pmm_defs[pmm_id].state[item.production.item.id];
@@ -107,16 +107,19 @@ function calculate()
 			var item = machine.state[j];
 
 			if ( item.auto_build ) {
-				var next = machine.state[item.next]
-				if (!next.active) {
-					next.active = true;
-					next.count = 0;
-				}
-				//next.count += machine.exp_decay(item.id);
-				machine.consume(item.id);
-				machine.build(next.id);
-            }
+				var count = Math.min( app.c0_value, Math.floor(app.c1_value / item.cost.c1));
+				if (j>0) {
+					count = Math.min( count, Math.floor( machine.state[item.cost.item.id].count / item.cost.item.count ));
+				} 
+				var str = count + "c0 ["+app.c0_value+"] "+ count*item.cost.c1 + "c1 ["+app.c1_value+"]";
+				if (j>0)
+					str += " " + count*item.cost.item.count+" "+machine.state[item.cost.item.id].name +" ["+machine.state[item.cost.item.id].count+"] ";
+				if (count > 0)
+					console.log("building", count, item.name, "cost", str);
 
+				build(i,j,count);
+            }
+			item.auto_build = false;
 			total_val += item.count * item.value;
 		}
 		// item at this point is that last one for the machine
@@ -229,4 +232,10 @@ function showGameStats(){
 
 	// bypass the MESSAGE_WINDOW_LINES limit for this
 	setMessage( finalDump );
+}
+
+
+
+function costCalculate(cost) {
+
 }

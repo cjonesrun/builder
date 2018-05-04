@@ -5,8 +5,6 @@ body, .option_button {
 	//font-family: sans-serif;
 }
 
-
-
 div,table,tr,td{
 	//border: 1px solid black;
 }
@@ -65,9 +63,11 @@ div,table,tr,td{
 
 .pmm-item-row{
 	display: table;
+	//width: 100%;
+	//border: 1px solid black;
 }
 
-.pmm-item-id, .pmm-item-name, .pmm-item-count, .pmm-item-auto-build, .pmm-enable-pm{
+.pmm-item-id, .pmm-item-name, .pmm-item-count, .pmm-item-auto-build, .pmm-item-build, .pmm-enable-pm{
 	display: table-cell;
 	//border: 1px solid gray;
 	padding: 1px;
@@ -87,6 +87,18 @@ div,table,tr,td{
 
 .pmm-item-auto-build{
 	width: 1em;
+}
+
+.pmm-item-build{
+	background: lightgray;
+	border-radius: 5px 5px 5px 5px; /* top-left, top-right, bottom-right, bottom-left */
+	//width: 5em;
+	//border: 1px solid black;
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+	//padding-bottom: 0.25em;
+	//padding-top: 0.25em;
+	margin-left: 10px;
 }
 
 .pmm-enable-pm{

@@ -57,7 +57,7 @@ function PerpetualMotionMachine(id, items_arr) {
 			production: {
 				c0: 0,
 				c1: (i===0)?1:0,
-				c2: 0,
+				c2: (i < this.items.length-1) ? 0 : 1,
 				item: (i===0) ? null : { id: i-1, count: 1 },
 				level: 1
 			},
@@ -126,31 +126,20 @@ PerpetualMotionMachine.prototype.build = function(i, ignore_eff){
 
 PerpetualMotionMachine.prototype.manual_build = function(i, count){
 	var item = this.state[i];
-	//console.log(item.cost.c0, item.cost.c1, item.cost.c2);
-	//console.log("manual build", item.name, "costs", JSON.stringify( item.cost ));
-	if (i == 0)
+	
+	//console.log("building", count, item.name, "at cost:", JSON.stringify( item.cost ));
+	//console.log(app.c0_value, app.c1_value,app.c2_value,item.cost);
+
+	if (app.c0_value>= count*item.cost.c0 && app.c1_value>=count*item.cost.c1 && app.c2_value>=count*item.cost.c2) 
 	{
-		console.log(app.c0_value, app.c1_value,app.c2_value,item.cost);
-		if (app.c0_value>=item.cost.c0 && app.c1_value>=item.cost.c1 && app.c2_value>=item.cost.c2) 
-		{
-			++item.count;
-			app.c0_value-=item.cost.c0;
-			app.c1_value-=item.cost.c1;
-			app.c2_value-=item.cost.c2;
-		} else
-			console.log("can't build", item.name);
-	}
-	else {
-		console.log(app.c0_value, app.c1_value,app.c2_value,item.cost);
-		if (app.c0_value>=item.cost.c0 && app.c1_value>=item.cost.c1 && app.c2_value>=item.cost.c2 && this.state[item.cost.item.id].count >= item.cost.item.count) 
-		{
-			++item.count;
-			app.c0_value-=item.cost.c0;
-			app.c1_value-=item.cost.c1;
-			app.c2_value-=item.cost.c2;
-			this.state[item.cost.item.id].count -= item.cost.item.count;
-		} else
-			console.log("can't build", item.name);
+		item.count+= count;
+		app.c0_value-=count * item.cost.c0;
+		app.c1_value-=count * item.cost.c1;
+		app.c2_value-=count * item.cost.c2;
+		if (i>0 && this.state[item.cost.item.id].count >= count*item.cost.item.count) 
+			this.state[item.cost.item.id].count -= count * item.cost.item.count;
+	} else {
+		console.log("can't build", item.name);
 	}
 }
 
@@ -195,8 +184,8 @@ function App(){
 };
 
 App.prototype.display = function() {
-	return "c-values: c0:"+this.c0_value+" ["+this.c0_base_rate+"/s] c1:"+
-	this.c1_value+" ["+this.c1_base_rate+"/s]" + " c2:"+this.c2_value+" ["+this.c2_base_rate+"/s]";
+	return "c-values: c0:"+numberFormat(this.c0_value)+" ["+numberFormat(this.c0_base_rate)+"/s] c1:"+
+	numberFormat(this.c1_value)+" ["+numberFormat(this.c1_base_rate)+"/s]" + " c2:"+numberFormat(this.c2_value)+" ["+numberFormat(this.c2_base_rate)+"/s]";
 }
 
 App.prototype.update_app = function() {
@@ -208,17 +197,22 @@ App.prototype.update_app = function() {
 	for (var i=0; i < this.pmm_defs.length; i++) {
 		if (this.pmm_defs[i].active)
 		{
-			c0_adjustment += this.pmm_defs[i].state[0].count * this.pmm_defs[i].state[0].production.c0;
-			c1_adjustment += this.pmm_defs[i].state[0].count * this.pmm_defs[i].state[0].production.c1;
-			c2_adjustment += this.pmm_defs[i].state[0].count * this.pmm_defs[i].state[0].production.c2;
+			
 
 			//console.log("adding in", this.pmm_defs[i].state[0].count, "from", 
 			//	this.pmm_defs[i].state[0].name, JSON.stringify(this.pmm_defs[i].state[0].production));
 
-			for (var j=1; j<this.pmm_defs[i].state.length; j++)
+			for (var j=0; j<this.pmm_defs[i].state.length; j++)
 			{
 				var item = this.pmm_defs[i].state[j];
-				if (item.count>0)
+				
+				//if (j===0)
+				//	console.log(item.name, item.count, item.production.c0, item.production.c1, item.production.c2, item.production.item);
+				c0_adjustment += item.count * item.production.c0;
+				c1_adjustment += item.count * item.production.c1;
+				c2_adjustment += item.count * item.production.c2;
+
+				if (item.production.item != null)
 				{
 					var produced = this.pmm_defs[i].state[item.production.item.id];
 					produced.count += item.count * item.production.item.count;

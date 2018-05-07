@@ -5,16 +5,24 @@ function initApp() {
 function buildUI() {
 
 	buildOptionsDiv();
-
+	buildTabBar();
+	buildHeader();
+	buildMachineDiv();
+	buildFooter();
 }
 
-//function div(id, className, innerHTML, title, attr_map){
+
+function buildMachineDiv(){
+	var div = document.getElementById("machines_div");
+	
+	for (var i=0; i<app.pmm_defs.length; i++) {
+		console.log(app.pmm_defs[0]);
+	}
+}
 
 function buildOptionsDiv() {
 	var className = "option_button";
 	
-	
-
 	var options_div = document.getElementById("options_div");
 	for (var i=0; i<optionsButtons.length; i++) {
 		c=optionsButtons[i];
@@ -35,5 +43,23 @@ function buildOptionsDiv() {
 	// Slider
 	// <input type="range" id='tick_rate_slider' min="100" value="100" max="5000" step="100"></input-->
 	// <div id="message-wrapper" class="top-level-div" data-visible="false"></div>
+
+}
+
+function buildHeader() {
+	var div = document.getElementById("header_div");
+	div.innerHTML="header content here";
+
+}
+
+function buildTabBar() {
+	var div = document.getElementById("tab_bar_div");
+	div.innerHTML="tab content here";
+
+}
+
+function buildFooter() {
+	var div = document.getElementById("footer_div");
+	div.innerHTML="footer content here";
 
 }

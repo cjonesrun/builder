@@ -29,5 +29,37 @@ function App(){
 
 // Perpetural Motion Machine
 function PerpetualMotionMachine(id, items_arr) {
+	this.id = id;
+	this.name = greekKeys[this.id];
+	this.items = items_arr;
+	
+	// machine properties
+	this.active = false;
+	this.efficiency = 0.1;
+	this.sentience = 0.0;
+	this.perpetual = false;
 
+	// machine state
+	this.state = [];
+	this.cost = new CostCalculator();
+	this.production = new ProductionCalculator();
+	this.stats = new StatsAccumulator();
+	this.currency = new Currencies(0);
+}
+
+function Currencies(i) {
+	this.name="Currency " +i;
+	this.level = i;
+}
+
+function CostCalculator(){
+	this.name="Cost Calculator";
+}
+
+function ProductionCalculator() {
+	this.name="Production Calculator";
+}
+
+function StatsAccumulator() {
+	this.name="Stats Calculator";
 }

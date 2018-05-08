@@ -63,3 +63,18 @@ function ProductionCalculator() {
 function StatsAccumulator() {
 	this.name="Stats Calculator";
 }
+
+function Engine() {
+	this.last_save = new Date().getTime();
+
+	// calculate
+
+	function runCalculator(){
+    	console.log('calculating');
+    	calculator_timer = setTimeout(runCalculator, TICK_INTERVAL);
+	}
+
+}
+
+var engine = new Engine();
+engine.runCalculator();

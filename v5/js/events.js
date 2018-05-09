@@ -25,7 +25,7 @@ machines_div.addEventListener('click', function(e){
 
 options_div.addEventListener('click', function(e){
 	//its.clearAll();
-	console.log();
+	//console.log();
 	
 	if (hasClass(e.target, "option_button")){
 	  	var btnID = e.target.id;
@@ -44,6 +44,10 @@ options_div.addEventListener('click', function(e){
 				clearMessages();
     		break;
     		
+    		case "pause_button":
+    			toggleTimers();
+    		break;
+
     		default:
 	  			addMessage('no handler for ', btnID);
 	  		break;

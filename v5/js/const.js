@@ -1,3 +1,9 @@
+var MATH_MODE = {
+	LINEAR : {value: 0, name: "Linear", value: 5}, 
+	EXPONENTIAL : {value: 1, name: "Exponential", value: 1.05}, 
+ 	LOGARITHMIC : {value: 2, name: "Logarithmic", value: 2.71}
+};
+
 var greekKeys = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu"
 				, "nu", "xi", "omicron", "pi", "rho", "sigmaf", "sigma", "tau", "upsilon", "phi", "chi;", "psi", "omega"];
 
@@ -52,3 +58,6 @@ var optionsButtons = [
 		["reset_button","reset","reset game"],
 		["hard_reset","hard","blow away local storage"]
 	];
+
+
+

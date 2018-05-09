@@ -1,5 +1,5 @@
 function initApp() {
-	return new App();
+	return new Machine();
 }
 
 function buildUI() {
@@ -15,8 +15,8 @@ function buildUI() {
 function buildMachineDiv(){
 	var div = document.getElementById("machines_div");
 	
-	for (var i=0; i<app.pmm_defs.length; i++) {
-		console.log(app.pmm_defs[0]);
+	for (var i=0; i<app.components.length; i++) {
+		console.log(app.components[0]);
 	}
 }
 

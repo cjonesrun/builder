@@ -2,11 +2,18 @@ var machines_div = document.getElementById("machines_div");
 var options_div = document.getElementById('options_div');
 var message_div = document.getElementById('message_div');
 
+var header_div = document.getElementById('header_div');
+var footer_div = document.getElementById('footer_div');
+var tab_div = document.getElementById('tab_bar_div');
+
 
 // prevents text select when clicking
-machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+
+[machines_div, options_div, message_div, header_div, footer_div, tab_div].forEach(
+	function(div){ div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false); });
+/*machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
 options_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
-message_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
+message_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);*/
 
 machines_div.addEventListener('click', function(e){
 	if (hasClass(e.target,"pmm-title")) {
@@ -45,7 +52,7 @@ options_div.addEventListener('click', function(e){
     		break;
     		
     		case "pause_button":
-    			toggleTimers();
+    			app.getTimerController().toggleTimers();
     		break;
 
     		default:

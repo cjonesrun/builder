@@ -1,5 +1,5 @@
 // machine timing constants
-var TICK_INTERVAL = 1000;
+var TICK_INTERVAL = 100;
 var UI_REFRESH_INTERVAL = 1000;
 var SAVE_INTERVAL = 5000;
 
@@ -48,16 +48,6 @@ function UIUpdate() {
 }
 
 
-function Machine() {
-	this.id = 0;
-	this.name = "machine0";
-	this.components = [];
-
-	this.components.push(new State(0));
-	this.components.push(new State(1));
-	this.components.push(new State(2));
-}
-
 function State(i) {
 	this.id = i;
 	this.calc = function (ms) {
@@ -78,66 +68,86 @@ function State(i) {
 	this.manual_build_multiplier = 1;
 }
 
-var calc_timer, ui_timer;
-var t1, t2;
 
-function calc_timer() {
+// Main Calulator Engine
+function Calculator() {
+	this.calculate = function() {
+		//console.log("calculating", new Date().getTime());
+	}
+}
+
+// Handle the update of ui components
+function UIUpdateController() {
+	this.update = function() {
+		//console.log("-->updating ui", new Date().getTime());
+	}
+}
+
+function SaveController() {
+	this.save = function() {
+		//console.log("---->saving...", new Date().getTime());
+	}
+}
+
+function EventController() {
+	this.handle = function() {
+
+	}
+}
+
+// Main App
+function Rube(index, calc, ui, save, event) {
 	
-	engine.calculate(machine);
-	
-	t1 = setTimeout(calc_timer, TICK_INTERVAL);
+	var timer_controller = new TimerController(calc, ui, save);
+	var calc_controller = calc;
+	var save_controllor = save;
+	var ui_update = ui;
+	var event_controller = event;
+
+	this.index = index;
+	this.machines = [];
+
+	this.machines.push(new Machine(0));
+	this.machines.push(new Machine(1));
+	this.machines.push(new Machine(2));
+
+	this.init = function() {
+		console.log("initializing Rube state", this.index);
+		timer_controller.startTimers();
+	};
+
+	this.getTimerController = function() {
+		return timer_controller;
+	}
+	this.getCalculatorController = function() {
+		return calc_controller;
+	}
+	this.getSaveController = function() {
+		return save_controller;
+	}
+	this.getUIUpdateController = function() {
+		return ui_update;
+	}
+	this.getEventController = function() {
+		return event_controller;
+	}
 }
 
-function ui_timer() {	
-	ui_update.update();
+// Machine
+function Machine(index) {
+	this.id = 0;
+	this.name = "machine0";
+	this.components = [];
 
-	t2 = setTimeout(ui_timer, UI_REFRESH_INTERVAL);
+	this.components.push(new Component(0));
+	this.components.push(new Component(1));
+	this.components.push(new Component(2));
+	this.components.push(new Component(3));
+	this.components.push(new Component(4));
+	this.components.push(new Component(5));
 }
 
-// timers
-function startTimers() {
-	if (typeof t2 != "number") {
-        ui_timer();
-    }
-	if (typeof t1 != "number") {
-    	calc_timer();
-    }
+// Components
+function Component(index) {
+	this.index = index;
 }
-
-function pauseTimers() {
-	if (typeof t1 == "number") {
-        clearTimeout(t1);
-        t1 = false;
-    }
-
-	if (typeof t2 == "number") {
-        clearTimeout(t2);
-        t2 = false;
-    }
-}
-
-function toggleTimers() {
-	if (typeof t2 != "number") {
-        ui_timer();
-    } else {
- 		clearTimeout(t2);
-		t2 = false;
-    }
-
-	if (typeof t1 != "number") {
-    	calc_timer();
-    } else {
-		clearTimeout(t1);
-		t1 = false;
-    }
-
-}
-
-
-
-
-var engine = new Engine();
-var machine = new Machine(0);
-var ui_update = new UIUpdate();
-
-startTimers();

@@ -1,5 +1,10 @@
-function initApp() {
-	return new Machine();
+function buildApp() {
+
+	var app = new Rube(0,  new Calculator(), new UIUpdateController(), new SaveController());
+	console.log(app);
+	app.init();
+
+	return app;
 }
 
 function buildUI() {
@@ -15,8 +20,8 @@ function buildUI() {
 function buildMachineDiv(){
 	var div = document.getElementById("machines_div");
 	
-	for (var i=0; i<app.components.length; i++) {
-		console.log(app.components[0]);
+	for (var i=0; i<app.machines.length; i++) {
+		//console.log(app.components[0]);
 	}
 }
 

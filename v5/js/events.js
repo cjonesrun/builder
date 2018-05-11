@@ -6,14 +6,10 @@ var header_div = document.getElementById('header_div');
 var footer_div = document.getElementById('footer_div');
 var tab_div = document.getElementById('tab_bar_div');
 
-
 // prevents text select when clicking
-
 [machines_div, options_div, message_div, header_div, footer_div, tab_div].forEach(
 	function(div){ div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false); });
-/*machines_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
-options_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);
-message_div.addEventListener('mousedown', function(e){ e.preventDefault(); }, false);*/
+
 
 machines_div.addEventListener('click', function(e){
 	if (hasClass(e.target,"pmm-title")) {
@@ -27,7 +23,6 @@ machines_div.addEventListener('click', function(e){
 	} else if (hasClass(e.target,"pmm-enable-pm") && e.target.type==="checkbox") {
 		handlePerpetualMotion( e.target.getAttribute("data-pmm"), e.target.checked );
 	}
-
 });
 
 options_div.addEventListener('click', function(e){
@@ -38,13 +33,12 @@ options_div.addEventListener('click', function(e){
 	  	var btnID = e.target.id;
 	  	switch (btnID) {
 	  		case "config":
-    			
     			console.log("show config params")
     		break;
 
 	  		case "message_button":
     			setVisible(message_div, !isVisible(message_div));
-    			e.target.innerHTML= (isVisible(message_div)?"hide":"show");
+    			e.target.innerHTML= (isVisible(message_div) ? "hide" : "show" );
     		break;
 
     		case "clear_button":
@@ -52,7 +46,7 @@ options_div.addEventListener('click', function(e){
     		break;
     		
     		case "pause_button":
-    			app.getTimerController().toggleTimers();
+    			e.target.innerHTML = app.timer_controller.toggleTimers() ? "pause" : "resume";
     		break;
 
     		default:

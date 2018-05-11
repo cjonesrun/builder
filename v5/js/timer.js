@@ -1,30 +1,26 @@
 // Timer Controller
-function TimerController(calc_cont, ui_cont, save_cont) {
+function TimerController(application) {
 	var tick_state, ui_state, save_state;
-	var calc_controller = calc_cont;
-	var ui_controller = ui_cont;
-	var save_controller = save_cont;
+	var app = application;
 
 	var started = false;
 
 	// private
 	function tick() {
-		calc_controller.calculate();
-	
-		tick_state = setTimeout(tick, TICK_INTERVAL);
+		app.calc_controller.calculate();
+		tick_state = setTimeout(tick, Config.TICK_INTERVAL);
 	}
 
 	// private
 	function ui() {
-		ui_controller.update();
-	
-		ui_state = setTimeout(ui, UI_REFRESH_INTERVAL);
+		app.ui_update_controller.update();
+		ui_state = setTimeout(ui, Config.UI_REFRESH_INTERVAL);
 	}
 
 	// private
 	function save() {
-		save_controller.save();
-		save_state = setTimeout(save, SAVE_INTERVAL);
+		app.save_controller.save();
+		save_state = setTimeout(save, Config.SAVE_INTERVAL);
 	}
 
 	// public
@@ -65,5 +61,6 @@ function TimerController(calc_cont, ui_cont, save_cont) {
 			this.startTimers();
 		}
 		console.log("timers running:", started);
+		return started;
 	}
 }

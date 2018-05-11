@@ -1,8 +1,26 @@
 function buildApp() {
 
-	var app = new Rube(0,  new Calculator(), new UIUpdateController(), new SaveController());
-	console.log(app);
+	// initialize the main application
+	var app = new Rube(0);
+
+	// initialize the controllers
+	app.calc_controller = new Calculator(app);
+	app.save_controller = new SaveController(app);
+	app.ui_update_controller = new UIUpdateController(app);
+	app.event_controller = new EventController(app);
+	app.timer_controller = new TimerController(app);
+
+	
 	app.init();
+
+	console.log(app);
+
+	console.log(Config);
+	var json = JSON.stringify(Config);
+	console.log(json);	
+	Config = JSON.parse(json);
+	console.log(Config);
+
 
 	return app;
 }

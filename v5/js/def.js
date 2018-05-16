@@ -9,7 +9,20 @@ var  Config = {
 	PMM_BASE: 1.3,
 	ITEM_BASE: 1.4,
 
-	MACHINE_MATH_MODE: MATH_MODE["EXPONENTIAL"]
+	MACHINE_MATH_MODE: MATH_MODE["EXPONENTIAL"],
+
+	NUMBERFORMAT: {
+		format: 'standard',  // ['standard', 'hybrid', 'longScale']
+		flavor: 'short', // ['full', 'short']
+		sigfigs: 3
+	}
+}
+
+var formatter = new  numberformat.Formatter({ sigfigs: Config.NUMBERFORMAT.sigfigs, 
+	backend: 'decimal.js', format: Config.NUMBERFORMAT.format, flavor: Config.NUMBERFORMAT.flavor });
+
+function nf(x) {
+	return formatter.format(x);
 }
 
 // Main Calulator Engine

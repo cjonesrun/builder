@@ -60,4 +60,11 @@ var optionsButtons = [
 	];
 
 
+var numberFormat = 'standard';  // ['standard', 'hybrid', 'longScale']
+var numberFlavor = 'short'; // ['full', 'short']
+var significantFigures = 3;
+var formatter = new  numberformat.Formatter({sigfigs: significantFigures, backend: 'decimal.js', format: numberFormat, flavor: numberFlavor})
 
+function nf(x) {
+	return formatter.format(x);
+}

@@ -15,20 +15,37 @@
 		    <button class="build" id="gather-scrap">Gather</button>
 		</div>
 
-		<h2>Robots</h2>
-		<div class="panel robot">Type-E: <span id="rob-e">0</span><br/>
-		    <span class="info">Gathers 1 Scrap / s</span><br />
-		    <button class="build" id="build-rob-e">Build (10)</button>
+		<div class="panel res">
+		    People: <span id="res-people">0</span><br/>
+		    <button class="build" id="call-people">Call</button>
 		</div>
-		<div class="panel robot">Type-Z: <span id="rob-z">0</span><br />
+
+		<h2>Robots</h2>
+		<div class="panel robot">Type-E: <span id="rob">0</span><br/>
+		    <span class="info">Gathers 1 Scrap / s</span><br />
+		    <button class="build" id="build-rob-e" >Build (10)</button>
+		</div>
+		<div class="panel robot">Type-Z: <span id="rob">0</span><br />
 		    <span class="info">Gathers 10 Scrap / s</span><br/>
 		    <button class="build" id="build-rob-z">Build (250)</button>
 		</div>
 
-		<h2>Cheats</h2>
-		<div class="panel cheat">Double # of Type-Z robots: <span id="rob-z">0</span><br />
-		    <span class="info">Doubles the # of Type-Z robots / s</span><br/>
-		    <button class="add" id="add-rob-z">I'm OK being a cheater</button>
+		<div class="panel robot">Robo0: <span id="robot0">0</span><br/>
+		    <span class="info">Gathers 1 Scrap / s</span><br />
+		    <button class="build" id="build-robot0" >Build (10)</button>
+		</div>
+
+		<div class="panel robot" data-visible="false">Robo1: <span id="robot1">0</span><br/>
+		    <span class="info">Recruits 1 Person / s</span><br />
+		    <button class="build" id="build-robot1" >Build (10)</button>
+		</div>
+
+		<div data-visible="false">
+			<h2>Cheats</h2>
+			<div class="panel cheat">Double # of Type-Z robots: <span id="rob-z">0</span><br />
+			    <span class="info">Doubles the # of Type-Z robots / s</span><br/>
+			    <button class="add" id="add-rob-z">I'm OK being a cheater</button>
+			</div>
 		</div>
 	</body>
 </html>

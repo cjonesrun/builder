@@ -7,13 +7,10 @@ function Robot(type, c, co, s)
 	this.cost = co;
 	this.scrap = s;
 
-	this.clicks = 0;
+	this.clicks = new Decimal(0);
 }
 
-
-window.addEventListener('load', function(global) {
-
-	console.log("global", global);
+window.addEventListener('load', function() {
     var elements = {
         txtScrap: document.querySelector("#res-scrap"),
         txtRobotsTypeE: document.querySelector("#rob-e"),
@@ -22,41 +19,44 @@ window.addEventListener('load', function(global) {
         btnRobotsTypeZ: document.querySelector("#build-rob-z")
     };
     
-    var numScrap = 0;
+    var numScrap = new Decimal(0);
     
-    var robotsTypeE = new Robot("E", 0, 10, 1);
-    var robotsTypeZ = new Robot("Z", 0, 250, 10);
+    var robotsTypeE = new Robot("E", new Decimal(0), new Decimal(10), new Decimal(1));
+    var robotsTypeZ = new Robot("Z", new Decimal(0), new Decimal(250), new Decimal(10));
     
     document.querySelector("#gather-scrap").addEventListener('click', function(evt) {
-        numScrap++;
+        numScrap = numScrap.plus(1);
         updateScrapText();
     });
     
     document.querySelector("#build-rob-e").addEventListener('click', function(evt) {
+        console.log(evt.target);
         if (numScrap < robotsTypeE.cost) return;
         
-        robotsTypeE.count += 1;
-        numScrap -= robotsTypeE.cost;
-        robotsTypeE.cost = Math.ceil(robotsTypeE.cost * 1.25);
+        robotsTypeE.count = robotsTypeE.count.plus(1);
+        numScrap = numScrap.minus(robotsTypeE.cost);
+
+        robotsTypeE.cost = robotsTypeE.times(1.25).ceil();
         updateTypeEText();
         updateScrapText();
     });
     
     document.querySelector("#build-rob-z").addEventListener('click', function(evt) {
+        console.log(evt.target);
         if (numScrap < robotsTypeZ.cost) return;
         
-        robotsTypeZ.count += 1;
-        numScrap -= robotsTypeZ.cost;
-        robotsTypeZ.cost = Math.ceil(robotsTypeZ.cost * 1.25);
+        robotsTypeZ.count = robotsTypeZ.cost.plus(1);
+        numScrap = numScrap.minus(robotsTypeZ.cost);
+        robotsTypeZ.cost = robotsTypeZ.times(1.25).ceil();
         updateTypeZText();
         updateScrapText();
     });
 
     document.querySelector("#add-rob-z").addEventListener('click', function(evt) {
-    	if (robotsTypeZ.count === 0)
-    		robotsTypeZ.count += 1;
+    	if (robotsTypeZ.count.isZero())
+    		robotsTypeZ.count = robotsTypeZ.count.plus(1);
     	else 
-    		robotsTypeZ.count *= 2;
+    		robotsTypeZ.count = robotsTypeZ.count.times(2);
         //numScrap -= robotsTypeZ.cost;
         //robotsTypeZ.cost = Math.ceil(robotsTypeZ.cost * 1.25);
         updateTypeZText();
@@ -83,12 +83,9 @@ window.addEventListener('load', function(global) {
     }
     
     function gameLoop() {
-        //numScrap += Math.ceil(robotsTypeE.count * robotsTypeE.scrap);
-        //numScrap += Math.ceil(robotsTypeZ.count * robotsTypeZ.scrap);
-
-        var x = robotsTypeE.count * robotsTypeE.scrap / TICKS_PER_SECOND;
-        x += robotsTypeZ.count * robotsTypeZ.scrap / TICKS_PER_SECOND;
-        numScrap += x;
+        var x = robotsTypeE.count.times( robotsTypeE.scrap ).dividedBy( TICKS_PER_SECOND );
+        x = x.plus(robotsTypeZ.count.times( robotsTypeZ.scrap ).dividedBy( TICKS_PER_SECOND ));
+        numScrap = numScrap.plus(x);
 
         updateScrapText();
         window.setTimeout(gameLoop, 1000 / TICKS_PER_SECOND);
@@ -112,4 +109,5 @@ var formatter = new  numberformat.Formatter({ sigfigs: NUMBERFORMAT.sigfigs,
 
 function nf(x) {
 	return formatter.format(x);
+    //return x;
 }

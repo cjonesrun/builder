@@ -1,5 +1,10 @@
 <!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+
 <meta content="utf-8" http-equiv="encoding">
 
 <html>
@@ -9,42 +14,29 @@
 	</head>
 
 	<body>
-		<h2>Resources</h2>
-		<div class="panel res">
-		    Scrap: <span id="res-scrap">0</span><br/>
-		    <button class="build" id="gather-scrap">Gather</button>
+		<h2 id="res-header">Resources</h2>
+		<div id="resource-container">
+			<div class="panel res" data-visible="true">
+			    Scrap: <span id="res-scrap">0</span><br/>
+			    <button class="build" id="gather-scrap">Gather</button>
+			</div>
+
+			<div class="panel res" data-visible="false">
+			    People: <span id="res-people">0</span><br/>
+			    <button class="build" id="call-people">Call</button>
+			</div>
 		</div>
 
-		<div class="panel res">
-		    People: <span id="res-people">0</span><br/>
-		    <button class="build" id="call-people">Call</button>
+		<h2 id="robots-header">Robots</h2>
+		<div id="robot-container">
 		</div>
 
-		<h2>Robots</h2>
-		<div class="panel robot">Type-E: <span id="rob">0</span><br/>
-		    <span class="info">Gathers 1 Scrap / s</span><br />
-		    <button class="build" id="build-rob-e" >Build (10)</button>
-		</div>
-		<div class="panel robot">Type-Z: <span id="rob">0</span><br />
-		    <span class="info">Gathers 10 Scrap / s</span><br/>
-		    <button class="build" id="build-rob-z">Build (250)</button>
-		</div>
-
-		<div class="panel robot">Robo0: <span id="robot0">0</span><br/>
-		    <span class="info">Gathers 1 Scrap / s</span><br />
-		    <button class="build" id="build-robot0" >Build (10)</button>
-		</div>
-
-		<div class="panel robot" data-visible="false">Robo1: <span id="robot1">0</span><br/>
-		    <span class="info">Recruits 1 Person / s</span><br />
-		    <button class="build" id="build-robot1" >Build (10)</button>
-		</div>
-
-		<div data-visible="false">
-			<h2>Cheats</h2>
-			<div class="panel cheat">Double # of Type-Z robots: <span id="rob-z">0</span><br />
-			    <span class="info">Doubles the # of Type-Z robots / s</span><br/>
-			    <button class="add" id="add-rob-z">I'm OK being a cheater</button>
+		<h2 id="controls-header">Controls</h2>
+		<div id="controls-container">
+			<div class="panel res" data-visible="true">
+				<input type="button" class="build" id="export-state" value="Export State" title="Export Game State" />
+				<input type="button" class="build" id="save-state" value="Save State" title="Save Game State to Local Storage" />
+				<input type="button" class="build" id="clear-state" value="Clear State" title="Clear Game State from to Local Storage" />
 			</div>
 		</div>
 	</body>

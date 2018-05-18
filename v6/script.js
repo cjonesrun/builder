@@ -12,7 +12,7 @@ function R(id, name, type, cost, prod)
     this.type = type;
 
     this.stats = {
-        build_clicks: 0
+        build_clicks: new Decimal(0)
     };
 }
 
@@ -150,6 +150,8 @@ robots_div.addEventListener('click', function(evt){
             consume.count = consume.count.minus(robot.build_cost.qty);
             robot.build_cost.qty = robot.build_cost.qty.times(robot.build_cost.mult).ceil();
             
+            robot.stats.build_clicks = robot.stats.build_clicks.plus(1);
+
             // update related UI
             updateUI();
             break;
@@ -163,7 +165,9 @@ resources_div.addEventListener('click', function(evt){
     
     switch (evt.target.id) {
         case "gather-scrap":
-            app.robots['scrap'].count = app.robots['scrap'].count.plus(1);
+            var robot = evt.target.getAttribute("robot");
+            app.robots[robot].count = app.robots[robot].count.plus(1);
+            app.robots[robot].stats.build_clicks = app.robots[robot].stats.build_clicks.plus(1); 
             updateUI();
         break;
 
@@ -182,6 +186,9 @@ controls_div.addEventListener('click', function(evt){
             break;
         case "clear-state":
             // var state = JSON.parse( atob(encodedState) );
+            break;
+        case "export-stats":
+                console.log('export stats');
             break;
         default:
             console.log("no handler for", evt.target.id);
@@ -214,7 +221,7 @@ function decimalify(val)
     }
     catch (e)
     {
-        console.log("invalid number", val, e);
+        console.log("invalid number. defaulting zero.", val, e);
         return new Decimal(0);
     }
 }
@@ -225,10 +232,7 @@ function tickCalc() {
     for (var rid in app.robots) {
         var builder = app.robots[rid];
         var built = app.robots[builder.produces.id];
-
-        built.count = built.count.plus(builder.count.times(builder.produces.qty)).dividedBy(TICKS_PER_SECOND);
-       // var r = app.robots[rid];
-        //x = x.plus( r.count.times( r.scrap ).dividedBy( TICKS_PER_SECOND ));
+        built.count = built.count.plus(builder.count.times(builder.produces.qty)).dividedBy(TICKS_PER_SECOND);       
     }
 }
 

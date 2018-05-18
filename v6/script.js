@@ -1,12 +1,19 @@
 var TICKS_PER_SECOND = 1;
+var TYPE = { RESOURCE: 0, MACHINE: 1 };
+var RES = { SCRAP: { name: 'Scrap', id: 'scrap', code: 0} }; // RESOURCES
 
-function R(id, name, cost, prod)
+function R(id, name, type, cost, prod)
 {
     this.name = name;
     this.id = id;
     this.count = new Decimal(0);
     this.build_cost = cost;
     this.produces = prod;
+    this.type = type;
+
+    this.stats = {
+        build_clicks: 0
+    };
 }
 
 function cost(type, qty, mult){
@@ -19,20 +26,20 @@ function prod(type, qty, mult){
 
 function App() {
     this.NAME = 'builder';
-    this.numScrap = new Decimal(0);
     this.robots = {};
 
-    this.robots['robot0'] =new R("robot0", "Type E", cost('scrap', 10, 1.25), prod('scrap', 1, 1));
-    this.robots['robot1'] = new R("robot1", "Type Z", cost('robot0', 25, 1.25), prod('scrap', 10, 1));
-    this.robots['robot2'] = new R("robot2", "Type Q", cost('robot1', 120, 1.25), prod('scrap', 100, 1));
-    this.robots['robot3'] = new R("robot3", "Type R", cost('robot2', 900, 1.25), prod('scrap', 1000, 1));
+    this.robots['scrap'] = new R("scrap", RES.SCRAP.name, TYPE.RESOURCE, cost(RES.SCRAP.id, 0, 1), prod(RES.SCRAP.id, 0, 0));
+    this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, cost(RES.SCRAP.id, 10, 1.25), prod(RES.SCRAP.id, 1, 1));
+    this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, cost('robot0', 25, 1.25), prod(RES.SCRAP.id, 10, 1));
+    this.robots['robot2'] = new R("robot2", "Type Q", TYPE.MACHINE, cost('robot1', 120, 1.25), prod(RES.SCRAP.id, 100, 1));
+    this.robots['robot3'] = new R("robot3", "Type R", TYPE.MACHINE, cost('robot2', 900, 1.25), prod(RES.SCRAP.id, 1000, 1));
 
     this.calc = function() {
 
         for (var rid in this.robots)
         {
             var r = this.robots[rid];
-            console.log("building 1", r.name, "costs", nf(r.build_cost.qty), r.build_cost.id,
+            console.log(r, "building 1", r.name, "costs", nf(r.build_cost.qty), r.build_cost.id,
                 "- next will cost", nf(r.build_cost.qty.times(r.build_cost.mult)), r.build_cost.id);
             console.log("each",r.id, "produces", nf(r.produces.qty.times(r.produces.mult)), 
                 r.produces.id, "/s" );
@@ -60,7 +67,14 @@ window.addEventListener('load', function() {
         var robots_container = document.getElementById('robot-container');
 
         for (var r in app.robots) {
-            //console.log(app.robots[r]);
+            if (!isMachine(app.robots[r]))
+                continue;
+
+             /*<div class="panel robot">Robo1: <span id="count-robot1">0</span><br/>
+                <span class="info">Gathers 10 Scrap / s</span><br />
+                <button class="build" id="build-robot1" robot="robot1" >Build (250)</button>
+            </div>*/
+
             var r_span = document.createElement("span");
             r_span.setAttribute("id","count-"+r);
             r_span.innerHTML = "0";
@@ -89,14 +103,7 @@ window.addEventListener('load', function() {
             r_div.appendChild(r_btn);
 
             robots_container.appendChild(r_div);
-            /*<div class="panel robot">Robo1: <span id="count-robot1">0</span><br/>
-                <span class="info">Gathers 10 Scrap / s</span><br />
-                <button class="build" id="build-robot1" robot="robot1" >Build (250)</button>
-            </div>*/
         }
-
-        
-
     }
 
     buildUI();
@@ -131,16 +138,17 @@ robots_div.addEventListener('click', function(evt){
         case "build":
             var robotid = evt.target.getAttribute('robot')
             var robot = app.robots[robotid];
-
+            var consume = app.robots[robot.build_cost.id];
             //console.log(robotid, evt.target, evt.target.parentElement, robot);
 
-            if (app.numScrap.lt(robot.cost)) {
-                console.log("can't build", robot.robottype, nf(app.numScrap), "<",nf(robot.cost));
+            if (consume.count.lt(robot.build_cost.qty)) {
+                console.log("can't build", robot.id, nf(robot.build_cost.qty), "<",nf(consume.count),robot.build_cost.id);
                 return;
             }
             robot.count = robot.count.plus(1);
-            app.numScrap = app.numScrap.minus(robot.cost);
-            robot.cost = robot.cost.times(1.25).ceil();
+
+            consume.count = consume.count.minus(robot.build_cost.qty);
+            robot.build_cost.qty = robot.build_cost.qty.times(robot.build_cost.mult).ceil();
             
             // update related UI
             updateUI();
@@ -155,7 +163,7 @@ resources_div.addEventListener('click', function(evt){
     
     switch (evt.target.id) {
         case "gather-scrap":
-            app.numScrap = app.numScrap.plus(1);
+            app.robots['scrap'].count = app.robots['scrap'].count.plus(1);
             updateUI();
         break;
 
@@ -183,10 +191,9 @@ controls_div.addEventListener('click', function(evt){
 
 function checkAppNumbers()
 {
-    app.numScrap = decimalify(app.numScrap);
     for (var rid in app.robots) {
         var r = app.robots[rid];
-
+        
         r.count = decimalify(r.count);
         r.build_cost.qty = decimalify(r.build_cost.qty);
         r.build_cost.mult = decimalify(r.build_cost.mult);
@@ -216,11 +223,13 @@ function tickCalc() {
     var x = new Decimal(0);
 
     for (var rid in app.robots) {
+        var builder = app.robots[rid];
+        var built = app.robots[builder.produces.id];
+
+        built.count = built.count.plus(builder.count.times(builder.produces.qty)).dividedBy(TICKS_PER_SECOND);
        // var r = app.robots[rid];
         //x = x.plus( r.count.times( r.scrap ).dividedBy( TICKS_PER_SECOND ));
     }
-
-    app.numScrap = app.numScrap.plus(x);
 }
 
 function clickCalc() {
@@ -229,24 +238,47 @@ function clickCalc() {
 
 function updateUI()
 {
-    var scrapPerSec = new Decimal(0);
-    for (var robotid in app.robots) {
-        var robot = app.robots[robotid];
-        document.querySelector("#count-"+robotid).innerHTML = nf(robot.count);
-        
-        var y = new Decimal(0);
-        document.querySelector("#gather-"+robotid).innerHTML = "Gathers " + nf(robot.produces.qty) 
-            + "/s [Total: " + nf(y) + "/s]";
+    var accrualPerSec = {};
+    for (var r in app.robots){
+        var robot = app.robots[r];
+        var r2 = app.robots[robot.produces.id];
 
-        document.querySelector("#build-"+robotid).value = "Build (" + nf(robot.build_cost.qty) + ")";
-        document.querySelector("#build-"+robotid).disabled = robot.build_cost.qty.gt(app.numScrap);
+        accrualPerSec[r] = new Decimal(0);
 
-        scrapPerSec = scrapPerSec.plus(y);
+        var y = robot.count.times(robot.produces.qty);
+        //console.log(robotid,"produces", nf(robot.produces.qty.times(robot.count)), robot.produces.id);
+        accrualPerSec[robot.produces.id] = accrualPerSec[robot.produces.id].plus(robot.produces.qty.times(robot.count));
     }
 
-    // update resources
-    document.querySelector("#res-scrap").innerHTML = nf(app.numScrap);
-    document.querySelector("#res-header").innerHTML = "Resources [" + nf(scrapPerSec.times(TICKS_PER_SECOND)) + "/s]";
+    //Object.keys(accrualPerSec).forEach((y)=>{console.log(y, nf(accrualPerSec[y]));});
+
+    for (var robotid in app.robots) {
+        var robot = app.robots[robotid];
+        var r2 = app.robots[robot.produces.id];
+        
+        if (!isMachine(robot)) 
+            continue;
+
+        var y = robot.count.times(robot.produces.qty);
+        document.querySelector("#count-"+robotid).innerHTML = nf(robot.count);
+        document.querySelector("#gather-"+robotid).innerHTML = "Gathers " + nf(robot.produces.qty) +" " +r2.name 
+            + "/s [Total: " + nf(y) + "/s]";
+
+        var buildBtn = document.querySelector("#build-"+robotid);
+        buildBtn.value = "Build (" + nf(robot.build_cost.qty) + ")";
+        buildBtn.title = "costs " + nf(robot.build_cost.qty) + " " + robot.build_cost.id;
+        buildBtn.disabled = robot.build_cost.qty.gt(app.robots[robot.build_cost.id].count);
+    }
+
+    // update resources header
+    var header = "Resources [";
+    for (var res in RES)
+    {
+        var resID = RES[res].id;
+        document.querySelector("#res-" + resID).innerHTML = nf(app.robots[resID].count);
+        header += RES[res].name + ": " + nf(accrualPerSec[resID].times(TICKS_PER_SECOND));
+    }
+    document.querySelector("#res-header").innerHTML = header + "/s]";
 }
 
 function load(encodedState) {
@@ -262,4 +294,9 @@ function load(encodedState) {
     checkAppNumbers();
 
     updateUI();
+}
+
+function isMachine(r)
+{
+    return r.type == TYPE.MACHINE;
 }

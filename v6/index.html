@@ -14,35 +14,17 @@
 	</head>
 
 	<body>
-		<h2 id="res-header">Resources</h2>
-		<div id="resource-container">
-			<div class="panel res" data-visible="true">
-			    Scrap: <span id="res-scrap">0</span><br/>
-			    <button class="build" id="gather-scrap" robot="scrap">Gather</button>
-			</div>
+		<div id="resource-container" class="container"></div>
 
-			<div class="panel res" data-visible="false">
-			    People: <span id="res-people">0</span><br/>
-			    <button class="build" id="call-people">Call</button>
-			</div>
-		</div>
+		<div id="robot-container" class="container"></div>
 
-		<h2 id="robots-header">Robots</h2>
-		<div id="robot-container">
-		</div>
-
-		<h2 id="controls-header">Controls</h2>
-		<div id="controls-container">
-			<div class="panel res" data-visible="true">
-				<input type="button" class="build" id="export-state" value="Export State" title="Export Game State" />
-				<input type="button" class="build" id="save-state" value="Save State" title="Save Game State to Local Storage" />
-				<input type="button" class="build" id="clear-state" value="Clear State" title="Clear Game State from to Local Storage" />
-			</div>
-		</div>
+		<div id="controls-container" class="container"></div>
 	</body>
 </html>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/7.1.1/decimal.min.js"></script>
 <script src="https://cdn.rawgit.com/erosson/swarm-numberformat/v0.4.0/dist/swarm-numberformat.min.js"></script>
 
+
+<script type="text/javascript" src="ui.js"></script>
 <script type="text/javascript" src="script.js"></script>

@@ -1,6 +1,8 @@
-var TICKS_PER_SECOND = 1;
+var TICKS_PER_SECOND = 2;
 var TYPE = { RESOURCE: 0, MACHINE: 1 };
-var RES = { SCRAP: { name: 'Scrap', id: 'scrap', code: 0} }; // RESOURCES
+var RES = { SCRAP: { name: 'Scrap', id: 'scrap', code: 0},
+            PEOPLE: { name: 'People', id: 'people', code: 1},
+            MONEY: { name: 'Money', id: 'money', code: 2} }; // RESOURCES
 
 function R(id, name, type, cost, prod)
 {
@@ -12,7 +14,8 @@ function R(id, name, type, cost, prod)
     this.type = type;
 
     this.stats = {
-        build_clicks: new Decimal(0)
+        build_clicks: new Decimal(0),
+        total_built: new Decimal(0)
     };
 }
 
@@ -28,7 +31,10 @@ function App() {
     this.NAME = 'builder';
     this.robots = {};
 
-    this.robots['scrap'] = new R("scrap", RES.SCRAP.name, TYPE.RESOURCE, cost(RES.SCRAP.id, 0, 1), prod(RES.SCRAP.id, 0, 0));
+    this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, cost(RES.SCRAP.id, 0, 0), prod(RES.SCRAP.id, 0, 0));
+    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, cost(RES.PEOPLE.id, 0, 0), prod(RES.PEOPLE.id, 0, 0));
+    this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, cost(RES.MONEY.id, 0, 0), prod(RES.MONEY.id, 0, 0));
+
     this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, cost(RES.SCRAP.id, 10, 1.25), prod(RES.SCRAP.id, 1, 1));
     this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, cost('robot0', 25, 1.25), prod(RES.SCRAP.id, 10, 1));
     this.robots['robot2'] = new R("robot2", "Type Q", TYPE.MACHINE, cost('robot1', 120, 1.25), prod(RES.SCRAP.id, 100, 1));
@@ -52,7 +58,7 @@ window.addEventListener('load', function() {
     
 
     function gameLoop() {
-        checkAppNumbers();
+        checkAppNumbers(); // might not need to do this every tick, just on game load.
 
         tickCalc();
 
@@ -61,51 +67,6 @@ window.addEventListener('load', function() {
         window.setTimeout(gameLoop, 1000 / TICKS_PER_SECOND);
     }
     
-
-    function buildUI() {
-
-        var robots_container = document.getElementById('robot-container');
-
-        for (var r in app.robots) {
-            if (!isMachine(app.robots[r]))
-                continue;
-
-             /*<div class="panel robot">Robo1: <span id="count-robot1">0</span><br/>
-                <span class="info">Gathers 10 Scrap / s</span><br />
-                <button class="build" id="build-robot1" robot="robot1" >Build (250)</button>
-            </div>*/
-
-            var r_span = document.createElement("span");
-            r_span.setAttribute("id","count-"+r);
-            r_span.innerHTML = "0";
-
-            var r_span2 = document.createElement("span");
-            r_span2.setAttribute("id","gather-"+r);
-            r_span2.setAttribute("class","info");
-            r_span2.innerHTML = "Gathers " + app.robots[r].scrap + "/s";
-
-            var r_btn = document.createElement("input");
-            r_btn.type = "button";
-            r_btn.setAttribute("class", "build");
-            r_btn.setAttribute("id", "build-"+r);
-            r_btn.value = "Build (" + app.robots[r].cost + ")";
-            r_btn.setAttribute("robot", r);
-
-            var r_div = document.createElement("div");
-            r_div.setAttribute("class", "panel robot");
-            
-            r_div.innerHTML = app.robots[r].name + ": ";
-            r_div.appendChild(r_span);
-            r_div.appendChild(document.createElement("br"));
-            r_div.appendChild(r_span2);
-            r_div.appendChild(document.createElement("br"));
-            
-            r_div.appendChild(r_btn);
-
-            robots_container.appendChild(r_div);
-        }
-    }
-
     buildUI();
     gameLoop();
 });
@@ -133,42 +94,24 @@ var resources_div = document.getElementById('resource-container');
 var controls_div = document.getElementById('controls-container');
 
 robots_div.addEventListener('click', function(evt){
-    var cla = evt.target.className;
-    switch (cla) {
+    var op = evt.target.getAttribute("operation");
+    switch (op) {
         case "build":
-            var robotid = evt.target.getAttribute('robot')
-            var robot = app.robots[robotid];
-            var consume = app.robots[robot.build_cost.id];
-            //console.log(robotid, evt.target, evt.target.parentElement, robot);
-
-            if (consume.count.lt(robot.build_cost.qty)) {
-                console.log("can't build", robot.id, nf(robot.build_cost.qty), "<",nf(consume.count),robot.build_cost.id);
-                return;
-            }
-            robot.count = robot.count.plus(1);
-
-            consume.count = consume.count.minus(robot.build_cost.qty);
-            robot.build_cost.qty = robot.build_cost.qty.times(robot.build_cost.mult).ceil();
-            
-            robot.stats.build_clicks = robot.stats.build_clicks.plus(1);
-
-            // update related UI
-            updateUI();
+            var robotid = evt.target.getAttribute('robot');
+            clickCalc(app.robots[robotid]);
             break;
         default:
-            // do nothing
+            console.log("no handler for", evt.target.id);
     }
 });
 
 
 resources_div.addEventListener('click', function(evt){
-    
-    switch (evt.target.id) {
-        case "gather-scrap":
-            var robot = evt.target.getAttribute("robot");
-            app.robots[robot].count = app.robots[robot].count.plus(1);
-            app.robots[robot].stats.build_clicks = app.robots[robot].stats.build_clicks.plus(1); 
-            updateUI();
+    var op = evt.target.getAttribute("operation");
+    switch (op) {
+        case "build":
+            var robotid = evt.target.getAttribute("robot");
+            clickCalc(app.robots[robotid]);
         break;
 
     }
@@ -177,25 +120,17 @@ resources_div.addEventListener('click', function(evt){
 controls_div.addEventListener('click', function(evt){
     
     switch (evt.target.id) {
-        case "export-state":
-            console.log( btoa( JSON.stringify(app) ));
+        case "export":
+            exportState();
             // atob(encodedState);
-            break;
-        case "save-state":
-            //window.localStorage['builder'] =  btoa( JSON.stringify(app) );
-            break;
-        case "clear-state":
-            // var state = JSON.parse( atob(encodedState) );
-            break;
-        case "export-stats":
-                console.log('export stats');
             break;
         default:
             console.log("no handler for", evt.target.id);
     }
 });
 
-
+/* Verify that all the numbers in the app state are Decimal objects
+*/
 function checkAppNumbers()
 {
     for (var rid in app.robots) {
@@ -232,12 +167,27 @@ function tickCalc() {
     for (var rid in app.robots) {
         var builder = app.robots[rid];
         var built = app.robots[builder.produces.id];
-        built.count = built.count.plus(builder.count.times(builder.produces.qty)).dividedBy(TICKS_PER_SECOND);       
+        var inc = builder.count.times(builder.produces.qty).dividedBy(TICKS_PER_SECOND);
+        built.count = built.count.plus(inc);
+        built.stats.total_built = built.stats.total_built.plus(inc);
     }
 }
 
-function clickCalc() {
+function clickCalc(robot) {
+    var consume = app.robots[robot.build_cost.id];
 
+    if (consume.count.lt(robot.build_cost.qty)) {
+        console.log("can't build", robot.id, nf(robot.build_cost.qty), "<",nf(consume.count),robot.build_cost.id);
+        return;
+    }
+
+    robot.count = robot.count.plus(1);
+    robot.stats.build_clicks = robot.stats.build_clicks.plus(1); 
+    robot.stats.total_built = robot.stats.total_built.plus(1);
+    consume.count = consume.count.minus(robot.build_cost.qty);
+    robot.build_cost.qty = robot.build_cost.qty.times(robot.build_cost.mult).ceil();
+
+    updateUI();
 }
 
 function updateUI()
@@ -251,7 +201,7 @@ function updateUI()
 
         var y = robot.count.times(robot.produces.qty);
         //console.log(robotid,"produces", nf(robot.produces.qty.times(robot.count)), robot.produces.id);
-        accrualPerSec[robot.produces.id] = accrualPerSec[robot.produces.id].plus(robot.produces.qty.times(robot.count));
+        accrualPerSec[robot.produces.id] = accrualPerSec[robot.produces.id].plus(robot.produces.qty.times(robot.count).dividedBy(TICKS_PER_SECOND));
     }
 
     //Object.keys(accrualPerSec).forEach((y)=>{console.log(y, nf(accrualPerSec[y]));});
@@ -269,20 +219,45 @@ function updateUI()
             + "/s [Total: " + nf(y) + "/s]";
 
         var buildBtn = document.querySelector("#build-"+robotid);
-        buildBtn.value = "Build (" + nf(robot.build_cost.qty) + ")";
+
+        var enabled = !robot.build_cost.qty.gt(app.robots[robot.build_cost.id].count);
+        if (enabled)
+            buildBtn.innerHTML = "Build (" + nf(robot.build_cost.qty) + ")";
+        else
+            buildBtn.innerHTML = "Nope";
         buildBtn.title = "costs " + nf(robot.build_cost.qty) + " " + robot.build_cost.id;
-        buildBtn.disabled = robot.build_cost.qty.gt(app.robots[robot.build_cost.id].count);
+        buildBtn.disabled = true;
     }
 
     // update resources header
     var header = "Resources [";
+    var count = 0;
     for (var res in RES)
     {
+        if (count++ > 0)
+            header += ", ";
+
         var resID = RES[res].id;
+        
+        if (app.robots[resID] == null)
+            continue; // no resource defined
+
         document.querySelector("#res-" + resID).innerHTML = nf(app.robots[resID].count);
-        header += RES[res].name + ": " + nf(accrualPerSec[resID].times(TICKS_PER_SECOND));
+        header += RES[res].name + ": " + nf(accrualPerSec[resID].times(TICKS_PER_SECOND))+"/s";
     }
-    document.querySelector("#res-header").innerHTML = header + "/s]";
+    document.querySelector("#res-header").innerHTML = header + "]";
+}
+
+function exportState() {
+    var out = {};
+    for (var robotid in app.robots) {
+        var r = app.robots[robotid];
+        out[robotid] = r.stats;
+    }
+    console.log( "stats:", JSON.stringify( out ) );
+
+    //console.log( "JSON:", JSON.stringify(app));
+    //console.log( "encoded:", btoa( JSON.stringify(app) ));
 }
 
 function load(encodedState) {

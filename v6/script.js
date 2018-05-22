@@ -1,21 +1,38 @@
-var TICKS_PER_SECOND = 2;
-var TYPE = { RESOURCE: 0, MACHINE: 1 };
-var RES = { SCRAP: { name: 'Scrap', id: 'scrap', code: 0},
-            PEOPLE: { name: 'People', id: 'people', code: 1},
-            MONEY: { name: 'Money', id: 'money', code: 2} }; // RESOURCES
+var Config = {
+    numberformat: {
+        format: 'standard',  // ['standard', 'hybrid', 'longScale', 'engineering']
+        flavor: 'short', // ['full', 'short']
+        sigfigs: 3,
+        maxSmall: 100,
+        backend: 'decimal.js'
+    },
+    ticks_per_second: 2,
+};
+
+var TYPE = { RESOURCE: 0, MACHINE: 1, GENERATOR: 2 };
+var RESOURCES = ['solar', 'scrap', 'people', 'money'];
+
+
+var RES = { SOLAR: { name: 'Solar', id: 'solar', code: 3},
+            SCRAP: { name: 'Scrap', id: 'scrap', code: 0},
+            MONEY: { name: 'Money', id: 'money', code: 2},
+            PEOPLE: { name: 'People', id: 'people', code: 1} }; // RESOURCES
+
+var formatter = new numberformat.Formatter(Config.numberformat);
 
 function R(id, name, type, cost, prod)
 {
     this.name = name;
     this.id = id;
     this.count = new Decimal(0);
-    this.build_cost = cost;
-    this.produces = prod;
+    this.build_cost = Array.isArray(cost) ? cost : [cost];
+    this.produces = Array.isArray(prod) ? prod : [prod];
     this.type = type;
 
     this.stats = {
         build_clicks: new Decimal(0),
-        total_built: new Decimal(0)
+        total_built: new Decimal(0),
+        accrual_per_sec: new Decimal(0)
     };
 }
 
@@ -31,27 +48,36 @@ function App() {
     this.NAME = 'builder';
     this.robots = {};
 
-    this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, cost(RES.SCRAP.id, 0, 0), prod(RES.SCRAP.id, 0, 0));
-    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, cost(RES.PEOPLE.id, 0, 0), prod(RES.PEOPLE.id, 0, 0));
-    this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, cost(RES.MONEY.id, 0, 0), prod(RES.MONEY.id, 0, 0));
+    this.robots[RES.SOLAR.id] = new R(RES.SOLAR.id, RES.SOLAR.name, TYPE.RESOURCE, [], []);
+    this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, [], []);
+    
+    this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, [], []);
+    this.robots[RES.MONEY.id].count = 10;
 
-    this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, cost(RES.SCRAP.id, 10, 1.25), prod(RES.SCRAP.id, 1, 1));
-    this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, cost('robot0', 25, 1.25), prod(RES.SCRAP.id, 10, 1));
-    this.robots['robot2'] = new R("robot2", "Type Q", TYPE.MACHINE, cost('robot1', 120, 1.25), prod(RES.SCRAP.id, 100, 1));
-    this.robots['robot3'] = new R("robot3", "Type R", TYPE.MACHINE, cost('robot2', 900, 1.25), prod(RES.SCRAP.id, 1000, 1));
+    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, cost(RES.PEOPLE.id, 0, 0), prod('gyro', 0.01, 1));
+    
+    this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], prod(RES.SOLAR.id, 1, 1));
+    this.robots['sun'].count = new Decimal(1);
 
-    this.calc = function() {
+    this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [], prod(RES.SCRAP.id, 1, 1));
+    this.robots['gyro'].count = new Decimal(1);
 
-        for (var rid in this.robots)
-        {
-            var r = this.robots[rid];
-            console.log(r, "building 1", r.name, "costs", nf(r.build_cost.qty), r.build_cost.id,
-                "- next will cost", nf(r.build_cost.qty.times(r.build_cost.mult)), r.build_cost.id);
-            console.log("each",r.id, "produces", nf(r.produces.qty.times(r.produces.mult)), 
-                r.produces.id, "/s" );
-            console.log("have", nf(this.robots[r.build_cost.id].count), "available");
-        }
-    }
+    this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, 
+        [ cost(RES.SCRAP.id, 1, 1), cost(RES.MONEY.id, 10, 1) ],
+        [ prod(RES.MONEY.id, 1, 1) ]);
+
+    this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, 
+        [ cost('scrap', 1, 1), cost('robot0', 10, 1), cost('money', 100, 1) ], 
+        [ prod('robot0', 1, 1) ]);
+
+    this.robots['robot2'] = new R("robot2", "Type Q", TYPE.MACHINE, 
+        [ cost('scrap', 1, 1), cost('robot1', 100, 1), cost('money', 100000, 1) ], 
+        [ prod('robot1', 1, 1) ]);
+
+    this.robots['robot3'] = new R("robot3", "Type R", TYPE.MACHINE, 
+        [ cost('scrap', 1, 1), cost('robot2', 1000, 1), cost('money', 1000000, 1) ], 
+        [ prod('robot2', 1, 1) ]);
+
 }
 
 window.addEventListener('load', function() {
@@ -64,30 +90,19 @@ window.addEventListener('load', function() {
 
         updateUI();
 
-        window.setTimeout(gameLoop, 1000 / TICKS_PER_SECOND);
+        window.setTimeout(gameLoop, 1000 / Config.ticks_per_second);
     }
     
     buildUI();
     gameLoop();
 });
 
-
 var app = new App();
-
-var NUMBERFORMAT = {
-	format: 'standard',  // ['standard', 'hybrid', 'longScale']
-	flavor: 'short', // ['full', 'short']
-	sigfigs: 3
-}
-
-var formatter = new  numberformat.Formatter({ sigfigs: NUMBERFORMAT.sigfigs, 
-	backend: 'decimal.js', format: NUMBERFORMAT.format, flavor: NUMBERFORMAT.flavor });
 
 function nf(x) {
 	return formatter.format(x);
     //return x;
 }
-
 
 var robots_div = document.getElementById('robot-container');
 var resources_div = document.getElementById('resource-container');
@@ -98,13 +113,20 @@ robots_div.addEventListener('click', function(evt){
     switch (op) {
         case "build":
             var robotid = evt.target.getAttribute('robot');
-            clickCalc(app.robots[robotid]);
+            clickCalc(app.robots[robotid], "one");
+            break;
+        case "build-half":
+            var robotid = evt.target.getAttribute('robot');
+            clickCalc(app.robots[robotid], "half");
+            break;
+        case "build-all":
+            var robotid = evt.target.getAttribute('robot');
+            clickCalc(app.robots[robotid], "all");
             break;
         default:
             console.log("no handler for", evt.target.id);
     }
 });
-
 
 resources_div.addEventListener('click', function(evt){
     var op = evt.target.getAttribute("operation");
@@ -137,11 +159,13 @@ function checkAppNumbers()
         var r = app.robots[rid];
         
         r.count = decimalify(r.count);
-        r.build_cost.qty = decimalify(r.build_cost.qty);
-        r.build_cost.mult = decimalify(r.build_cost.mult);
-
-        r.produces.qty = decimalify(r.produces.qty);
-        r.produces.mult = decimalify(r.produces.mult);
+        
+        [r.build_cost, r.produces].forEach((x) => {
+            x.forEach((z) => {
+                z.qty = decimalify(z.qty);
+                z.mult = decimalify(z.mult);
+            });
+        });
     }
 }
 
@@ -162,90 +186,153 @@ function decimalify(val)
 }
 
 function tickCalc() {
-    var x = new Decimal(0);
-
     for (var rid in app.robots) {
-        var builder = app.robots[rid];
-        var built = app.robots[builder.produces.id];
-        var inc = builder.count.times(builder.produces.qty).dividedBy(TICKS_PER_SECOND);
-        built.count = built.count.plus(inc);
-        built.stats.total_built = built.stats.total_built.plus(inc);
+        var r = app.robots[rid];
+        r.produces.forEach((x) => {
+            var built = app.robots[x.id];
+            var inc = r.count.times(x.qty).dividedBy(Config.ticks_per_second);
+
+            built.count = built.count.plus(inc);
+            built.stats.total_built = built.stats.total_built.plus(inc);
+        });   
+        //r.stats.accrual_per_sec = new Decimal(0); 
+    }
+
+    // update accrual rates
+    for (var rid in app.robots){
+        var r = app.robots[rid];
+        
+        r.produces.forEach((x) => {
+            app.robots[x.id].stats.accrual_per_sec = x.qty.times(r.count).dividedBy(Config.ticks_per_second);
+        });
+    }
+
+
+}
+
+function calcHowMany(robot, howmany)
+{
+    var maxBuildable = null;
+
+    var ignore = robot.build_cost.some((x) => {
+        var consume = app.robots[x.id];
+
+        var z = x.qty.eq(0) ? new Decimal(1) : consume.count.dividedBy(x.qty);
+        maxBuildable = maxBuildable == null ? z : Decimal.min(maxBuildable, z);
+        //console.log("building",nf(maxBuildable),robot.id, "from", nf(consume.count), consume.id, nf(x.qty), nf(z));
+
+        if (maxBuildable.lt(1)) {
+            console.log("can't build", howmany, robot.id, "need", nf(x.qty), x.id, "have",nf(consume.count));
+            return true; // bail out
+        }
+    });
+
+    if (ignore)
+        return new Decimal(0);
+
+    maxBuildable = maxBuildable === null?new Decimal(0):maxBuildable;
+    switch (howmany){
+        case "all":
+            return maxBuildable.floor();
+        break;
+        case "half":
+            return maxBuildable.dividedBy(2).floor();
+        break;
+        default: // one
+            return maxBuildable.gte(1)? new Decimal(1) : new Decimal(0);;
     }
 }
 
-function clickCalc(robot) {
-    var consume = app.robots[robot.build_cost.id];
+function clickCalc(robot, howmany = "one") {
 
-    if (consume.count.lt(robot.build_cost.qty)) {
-        console.log("can't build", robot.id, nf(robot.build_cost.qty), "<",nf(consume.count),robot.build_cost.id);
-        return;
+    var count = calcHowMany(robot, howmany);
+    console.log("building", howmany, "["+count+"]", robot.id);
+    if (count.gte(1)) {
+        robot.build_cost.forEach((x) => {
+            var consume = app.robots[x.id];
+            consume.count = consume.count.minus(count.times(x.qty));
+            x.qty = x.qty.times(x.mult).ceil();
+        });
+
+        robot.count = robot.count.plus(count);
+        robot.stats.build_clicks = robot.stats.build_clicks.plus(count); 
+        robot.stats.total_built = robot.stats.total_built.plus(count);
     }
-
-    robot.count = robot.count.plus(1);
-    robot.stats.build_clicks = robot.stats.build_clicks.plus(1); 
-    robot.stats.total_built = robot.stats.total_built.plus(1);
-    consume.count = consume.count.minus(robot.build_cost.qty);
-    robot.build_cost.qty = robot.build_cost.qty.times(robot.build_cost.mult).ceil();
 
     updateUI();
 }
 
+
 function updateUI()
 {
-    var accrualPerSec = {};
-    for (var r in app.robots){
-        var robot = app.robots[r];
-        var r2 = app.robots[robot.produces.id];
-
-        accrualPerSec[r] = new Decimal(0);
-
-        var y = robot.count.times(robot.produces.qty);
-        //console.log(robotid,"produces", nf(robot.produces.qty.times(robot.count)), robot.produces.id);
-        accrualPerSec[robot.produces.id] = accrualPerSec[robot.produces.id].plus(robot.produces.qty.times(robot.count).dividedBy(TICKS_PER_SECOND));
-    }
-
-    //Object.keys(accrualPerSec).forEach((y)=>{console.log(y, nf(accrualPerSec[y]));});
-
     for (var robotid in app.robots) {
         var robot = app.robots[robotid];
-        var r2 = app.robots[robot.produces.id];
+
+        switch (robot.type) {
+            case TYPE.RESOURCE:
+                updateUIResource(robot);
+                break;
+            case TYPE.MACHINE:
+                updateUIMachine(robot);
+                break;
+            case TYPE.GENERATOR:
+                updateUIGenerator(robot);
+                break;
+        }
+        /*var r2 = app.robots[robot.produces.id];
         
         if (!isMachine(robot)) 
             continue;
-
-        var y = robot.count.times(robot.produces.qty);
+        
+        var y = "Gathers ";
+        robot.produces.forEach((x) => {
+            y += "["+ nf(x.qty) + " " + x.id+"/s] ";
+        });
+        y = y.trim();
+        
+        console.log("count-"+robotid);
         document.querySelector("#count-"+robotid).innerHTML = nf(robot.count);
-        document.querySelector("#gather-"+robotid).innerHTML = "Gathers " + nf(robot.produces.qty) +" " +r2.name 
-            + "/s [Total: " + nf(y) + "/s]";
+        document.querySelector("#gather-"+robotid).innerHTML = y;
+        //document.querySelector("#gather-"+robotid).innerHTML = "Gathers " + nf(robot.produces.qty) +" " +r2.name 
+        //    + "/s [Total: " + nf(y) + "/s]";
 
-        var buildBtn = document.querySelector("#build-"+robotid);
+        y = "";
+        var enabled = true;
+        robot.build_cost.forEach((x) => {
+            y += "["+ nf(x.qty) + " " + app.robots[x.id].name +"] ";
+            enabled = enabled && (x.qty.lte(app.robots[x.id].count));
+        });
+        y = y.trim();
 
-        var enabled = !robot.build_cost.qty.gt(app.robots[robot.build_cost.id].count);
-        if (enabled)
-            buildBtn.innerHTML = "Build (" + nf(robot.build_cost.qty) + ")";
-        else
-            buildBtn.innerHTML = "Nope";
-        buildBtn.title = "costs " + nf(robot.build_cost.qty) + " " + robot.build_cost.id;
-        buildBtn.disabled = true;
+        [document.querySelector("#build-"+robotid), document.querySelector("#build-all-"+robotid), document.querySelector("#build-half-"+robotid)]
+            .forEach((x) => {
+                x.title = "costs " + y;
+                x.setAttribute("button-disabled", !enabled); 
+            });
+        */
+
     }
 
     // update resources header
-    var header = "Resources [";
+    /*var header = "Resources [";
     var count = 0;
     for (var res in RES)
     {
-        if (count++ > 0)
-            header += ", ";
-
         var resID = RES[res].id;
-        
         if (app.robots[resID] == null)
             continue; // no resource defined
 
+        if (count++ > 0)
+            header += ", ";
+
         document.querySelector("#res-" + resID).innerHTML = nf(app.robots[resID].count);
-        header += RES[res].name + ": " + nf(accrualPerSec[resID].times(TICKS_PER_SECOND))+"/s";
+        header += RES[res].name + ": " + nf(app.robots[resID].stats.accrual_per_sec.times(Config.ticks_per_second))+"/s";
     }
     document.querySelector("#res-header").innerHTML = header + "]";
+
+    document.querySelector("#admin-container").innerHTML = "config: " + JSON.stringify( Config ) + "<BR>" +
+        exportState();*/
+
 }
 
 function exportState() {
@@ -254,8 +341,8 @@ function exportState() {
         var r = app.robots[robotid];
         out[robotid] = r.stats;
     }
-    console.log( "stats:", JSON.stringify( out ) );
-
+    //console.log( "stats:", JSON.stringify( out ) );
+    return "stats: " + JSON.stringify( out );
     //console.log( "JSON:", JSON.stringify(app));
     //console.log( "encoded:", btoa( JSON.stringify(app) ));
 }

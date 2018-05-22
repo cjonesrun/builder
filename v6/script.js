@@ -119,9 +119,9 @@ robots_div.addEventListener('click', function(evt){
             var robotid = evt.target.getAttribute('robot');
             clickCalc(app.robots[robotid], "half");
             break;
-        case "build-all":
+        case "build-max":
             var robotid = evt.target.getAttribute('robot');
-            clickCalc(app.robots[robotid], "all");
+            clickCalc(app.robots[robotid], "max");
             break;
         default:
             console.log("no handler for", evt.target.id);
@@ -187,13 +187,16 @@ function decimalify(val)
 
 function tickCalc() {
     for (var rid in app.robots) {
+        
         var r = app.robots[rid];
         r.produces.forEach((x) => {
             var built = app.robots[x.id];
             var inc = r.count.times(x.qty).dividedBy(Config.ticks_per_second);
 
-            built.count = built.count.plus(inc);
-            built.stats.total_built = built.stats.total_built.plus(inc);
+            if (inc.gt(0)) {
+                built.count = built.count.plus(inc);
+                built.stats.total_built = built.stats.total_built.plus(inc);
+            }
         });   
         //r.stats.accrual_per_sec = new Decimal(0); 
     }
@@ -232,7 +235,7 @@ function calcHowMany(robot, howmany)
 
     maxBuildable = maxBuildable === null?new Decimal(0):maxBuildable;
     switch (howmany){
-        case "all":
+        case "max":
             return maxBuildable.floor();
         break;
         case "half":
@@ -246,8 +249,8 @@ function calcHowMany(robot, howmany)
 function clickCalc(robot, howmany = "one") {
 
     var count = calcHowMany(robot, howmany);
-    console.log("building", howmany, "["+count+"]", robot.id);
     if (count.gte(1)) {
+        console.log("building", howmany, "["+count+"]", robot.id);
         robot.build_cost.forEach((x) => {
             var consume = app.robots[x.id];
             consume.count = consume.count.minus(count.times(x.qty));
@@ -265,74 +268,9 @@ function clickCalc(robot, howmany = "one") {
 
 function updateUI()
 {
-    for (var robotid in app.robots) {
-        var robot = app.robots[robotid];
-
-        switch (robot.type) {
-            case TYPE.RESOURCE:
-                updateUIResource(robot);
-                break;
-            case TYPE.MACHINE:
-                updateUIMachine(robot);
-                break;
-            case TYPE.GENERATOR:
-                updateUIGenerator(robot);
-                break;
-        }
-        /*var r2 = app.robots[robot.produces.id];
-        
-        if (!isMachine(robot)) 
-            continue;
-        
-        var y = "Gathers ";
-        robot.produces.forEach((x) => {
-            y += "["+ nf(x.qty) + " " + x.id+"/s] ";
-        });
-        y = y.trim();
-        
-        console.log("count-"+robotid);
-        document.querySelector("#count-"+robotid).innerHTML = nf(robot.count);
-        document.querySelector("#gather-"+robotid).innerHTML = y;
-        //document.querySelector("#gather-"+robotid).innerHTML = "Gathers " + nf(robot.produces.qty) +" " +r2.name 
-        //    + "/s [Total: " + nf(y) + "/s]";
-
-        y = "";
-        var enabled = true;
-        robot.build_cost.forEach((x) => {
-            y += "["+ nf(x.qty) + " " + app.robots[x.id].name +"] ";
-            enabled = enabled && (x.qty.lte(app.robots[x.id].count));
-        });
-        y = y.trim();
-
-        [document.querySelector("#build-"+robotid), document.querySelector("#build-all-"+robotid), document.querySelector("#build-half-"+robotid)]
-            .forEach((x) => {
-                x.title = "costs " + y;
-                x.setAttribute("button-disabled", !enabled); 
-            });
-        */
-
-    }
-
-    // update resources header
-    /*var header = "Resources [";
-    var count = 0;
-    for (var res in RES)
-    {
-        var resID = RES[res].id;
-        if (app.robots[resID] == null)
-            continue; // no resource defined
-
-        if (count++ > 0)
-            header += ", ";
-
-        document.querySelector("#res-" + resID).innerHTML = nf(app.robots[resID].count);
-        header += RES[res].name + ": " + nf(app.robots[resID].stats.accrual_per_sec.times(Config.ticks_per_second))+"/s";
-    }
-    document.querySelector("#res-header").innerHTML = header + "]";
-
-    document.querySelector("#admin-container").innerHTML = "config: " + JSON.stringify( Config ) + "<BR>" +
-        exportState();*/
-
+    updateUIResources();
+    updateUIGenerators();
+    updateUIMachines();
 }
 
 function exportState() {

@@ -289,7 +289,7 @@ function mult(json, z) {
 function pretty(json) {
     var ret = "";
     for (var x in json) {
-        ret += "[" + json[x] + " " + x + "] "
+        ret += "[" + nf(json[x]) + " " + x + "] "
     }
     return ret.trim();
 }

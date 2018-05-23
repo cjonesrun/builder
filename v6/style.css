@@ -71,3 +71,7 @@ div.button[button-disabled="true"] {
     font-style: italic;
     
 }
+
+div#admin-container {
+    font-size: 0.75em;
+}

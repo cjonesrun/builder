@@ -32,7 +32,9 @@ function R(id, name, type, cost, prod)
     this.stats = {
         build_clicks: new Decimal(0),
         total_built: new Decimal(0),
-        accrual_per_sec: new Decimal(0)
+        accrual_per_sec: new Decimal(0),
+        max_buildable: new Decimal(0),
+        half_max_buildable: new Decimal(0),
     };
 }
 
@@ -41,7 +43,7 @@ function cost(type, qty, mult){
 }
 
 function prod(type, qty, mult){
-    return {id: type, qty: new Decimal(qty), mult: new Decimal(mult)};
+    return cost(type, qty, mult);
 }
 
 function App() {
@@ -88,15 +90,21 @@ window.addEventListener('load', function() {
 
         if (!app.paused) {
 
-            checkAppNumbers(); // might not need to do this every tick, just on game load.
-
             tickCalc();
         }
         updateUI();
         window.setTimeout(gameLoop, 1000 / Config.ticks_per_second);
     }
+
+    // verify that the numbers are all Decimal objects
+    checkAppNumbers(); 
     
+    // build ui
     buildUI();
+    // bind the model to the UI
+    bindModel();
+
+    // start game loop
     gameLoop();
 });
 
@@ -105,7 +113,6 @@ var app = new App();
 function nf(x, maxSmallOverride) {
     
 	return maxSmallOverride === undefined ? formatter.format(x) : formatter.format(x, { maxSmall: maxSmallOverride});
-    //return x;
 }
 
 var robots_div = document.getElementById('robot-container');
@@ -167,12 +174,18 @@ function checkAppNumbers()
         
         r.count = decimalify(r.count);
         
+        // build and production
         [r.build_cost, r.produces].forEach((x) => {
             x.forEach((z) => {
                 z.qty = decimalify(z.qty);
                 z.mult = decimalify(z.mult);
             });
         });
+
+        // stats
+        for (var x in r.stats) {
+            r.stats[x] = decimalify(r.stats[x]);
+        }
     }
 }
 
@@ -200,30 +213,51 @@ function tickCalc() {
             var built = app.robots[x.id];
             var inc = r.count.times(x.qty).dividedBy(Config.ticks_per_second);
 
+            console.log(x.id, inc.valueOf(), x.mult.valueOf());
+
             if (inc.gt(0)) {
                 built.count = built.count.plus(inc);
                 built.stats.total_built = built.stats.total_built.plus(inc);
             }
-        });   
+        });
     }
 
+    updateStats();
+}
+
+function updateStats()
+{
     // update accrual rates
     for (var rid in app.robots){
         var r = app.robots[rid];
         
         r.produces.forEach((x) => {
-            app.robots[x.id].stats.accrual_per_sec = x.qty.times(r.count).dividedBy(Config.ticks_per_second);
+            app.robots[x.id].stats.accrual_per_sec = x.qty.times(r.count);
         });
-    }
+    } 
 
-    /*try{
-        console.log("honk",countBind.count.valueOf());
-        countBind.count = countBind.count.plus(1);
-    } catch (e) {
-        console.log(countBind);
-        throw e;
-    }*/
+    // update build costs
+    for (var rid in app.robots) {
+        var robot = app.robots[rid];
+        var maxBuildable = null;
+        var unitCosts = { };
+        
+        robot.build_cost.forEach((x) => {
+            unitCosts[x.id] = x.qty;
+            var z = app.robots[x.id].count.dividedBy(x.qty).floor();
+            maxBuildable = maxBuildable === null ? z : Decimal.min(maxBuildable, z);
+        });
+
+        if (maxBuildable === null || isNaN(maxBuildable)) {
+            robot.stats.max_buildable = 0;
+            robot.stats.half_max_buildable = 0;
+        } else {
+            robot.stats.max_buildable = maxBuildable;
+            robot.stats.half_max_buildable = maxBuildable.dividedBy(2).floor();
+        }
+    }
 }
+
 
 function calcHowMany(robot, howmany)
 {
@@ -273,7 +307,7 @@ function clickCalc(robot, howmany = "one") {
         robot.stats.build_clicks = robot.stats.build_clicks.plus(count); 
         robot.stats.total_built = robot.stats.total_built.plus(count);
     }
-
+    updateStats();
     updateUI();
 }
 
@@ -313,13 +347,64 @@ function load(encodedState) {
     updateUI();
 }
 
-function bindModelInput(obj, property, domElem, domElementProp, formatter) {
-  Object.defineProperty(obj, property, {
-    get: function() { return domElem.value; }, 
-    set: function(newValue) { domElem[domElementProp] = nf(newValue); },
-    configurable: true
-  });
+function Binding(b) {
+    var _this = this;
+    this.element = b.element;
+    this.value = b.object[b.property];
+    this.attribute = b.attribute;
+    this.object = b.object;
+    this.formatter = b.formatter;
+
+    this.valueGetter = function(){
+        return _this.value;
+    }
+    this.valueSetter = function(val){
+        _this.value = val;
+        _this.element[_this.attribute] = (_this.formatter === undefined)?val: _this.formatter(val);
+    }
+
+    Object.defineProperty(b.object, b.property, {
+        get: this.valueGetter,
+        set: this.valueSetter
+    }); 
+    
+    this.toString = function() {
+        return "element:" + _this.element.id;
+    }
 }
 
-user = {}
-bindModelInput(user,'name',document.getElementById('foo'), "innerHTML");
+var bindings = [];
+
+function bindModel()
+{ 
+    console.log("binding model to ui components");
+    for (var r in app.robots)
+    {
+        if (app.robots[r].type === TYPE.RESOURCE) 
+        {
+            bindings.push( bind(app.robots[r], "count", document.getElementById("res-count-"+r), "innerHTML"));
+            bindings.push( bind(app.robots[r].stats, "accrual_per_sec", document.getElementById("res-accrual-"+r), "innerHTML"));
+        } 
+        else if (app.robots[r].type === TYPE.GENERATOR) {
+            bindings.push( bind(app.robots[r], "count", document.getElementById("gen-count-"+r), "innerHTML"));
+        } else if( app.robots[r].type === TYPE.MACHINE) {
+            bindings.push( bind(app.robots[r], "count", document.getElementById("machine-count-"+r), "innerHTML"));
+        }
+        else {
+            console.log("unable to bind", r, "unknown type:", app.robots[r].type);
+            continue;
+        }
+    }
+}
+
+function bind(robot, field, element, attribute, formatter = nf)
+{
+    //console.log("binding", robot.id, "to", element.id );
+    return new Binding({
+        object: robot,
+        property: field,
+        element:  element,
+        attribute: attribute,
+        formatter: nf
+    });
+}

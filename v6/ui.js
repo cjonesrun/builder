@@ -92,12 +92,15 @@ function buildResources(){
         r_span.setAttribute("id","res-"+r);
         r_span.innerHTML = "0";
 
+        var r_span2 = document.createElement("span");
+        r_span2.setAttribute("id","produces-"+r);
+        r_span2.setAttribute("class","info");
+
         var r_btn = document.createElement("div");
         //r_btn.type = "button";
         r_btn.setAttribute("class", "button panel");
         r_btn.setAttribute("operation", "build");
         r_btn.setAttribute("id", "gather-"+r);
-        //r_btn.value = "Gather";
         r_btn.innerHTML = "Gather";
         r_btn.setAttribute("robot", r);
         r_btn.setAttribute("data-visible", robot.build_cost.length > 0);
@@ -108,6 +111,7 @@ function buildResources(){
         r_div.innerHTML = robot.name + ": ";
         r_div.appendChild(r_span);
         r_div.appendChild(document.createElement("br"));
+        r_div.appendChild(r_span2);
         r_div.appendChild(r_btn);
 
         res_container.appendChild(r_div);
@@ -195,12 +199,18 @@ function updateUIResources() {
         if (count++ > 0)
             header += ", ";
 
+        var y = robot.produces.length > 0 ? "Produces " : "";
+        robot.produces.forEach((x) => {
+            y += "["+ nf(x.qty, 100) + " " + x.id+"/s] ";
+        });
+        y = y.trim();
 
+        document.querySelector("#produces-" + robotid).innerHTML = y;
         document.querySelector("#res-" + robotid).innerHTML = nf(robot.count);
         header += robot.name + ": " + nf(robot.stats.accrual_per_sec.times(Config.ticks_per_second))+"/s";
     }
 
-     document.querySelector("#res-header").innerHTML = header + "]";
+    document.querySelector("#res-header").innerHTML = header + "]";
 
     document.querySelector("#admin-container").innerHTML = "config: " + JSON.stringify( Config ) + "<BR>" +
         exportState();
@@ -236,12 +246,12 @@ function updateUIMachines()
         document.querySelector("#build-"+robot.id).title = "build 1 costs: " + pretty(unitCosts);
         document.querySelector("#build-"+robot.id).setAttribute("button-disabled", maxBuildable.lt(1));
 
-        document.querySelector("#build-half-"+robot.id).innerHTML = "Build Half ("+nf(maxBuildable.dividedBy(2).floor()) + ")"
-        document.querySelector("#build-half-"+robot.id).title = "build " + nf(maxBuildable.dividedBy(2).floor())+ " costs: " + pretty(mult(unitCosts, maxBuildable.dividedBy(2).floor()));
+        document.querySelector("#build-half-"+robot.id).innerHTML = "Build Half ("+nf(maxBuildable.dividedBy(2).floor(), 0) + ")"
+        document.querySelector("#build-half-"+robot.id).title = "build " + nf(maxBuildable.dividedBy(2).floor(), 0)+ " costs: " + pretty(mult(unitCosts, maxBuildable.dividedBy(2).floor()));
         document.querySelector("#build-half-"+robot.id).setAttribute("button-disabled", maxBuildable.dividedBy(2).lt(1));
 
-        document.querySelector("#build-max-"+robot.id).innerHTML = "Build Max ("+nf(maxBuildable.floor()) + ")";
-        document.querySelector("#build-max-"+robot.id).title = "build " + nf(maxBuildable.floor())+ " costs: " + pretty(mult(unitCosts, maxBuildable.floor()));
+        document.querySelector("#build-max-"+robot.id).innerHTML = "Build Max ("+nf(maxBuildable.floor(), 0) + ")";
+        document.querySelector("#build-max-"+robot.id).title = "build " + nf(maxBuildable.floor(), 0)+ " costs: " + pretty(mult(unitCosts, maxBuildable.floor()));
         document.querySelector("#build-max-"+robot.id).setAttribute("button-disabled", maxBuildable.lt(1));
         /*[document.querySelector("#build-"+robot.id), document.querySelector("#build-maxall-"+robot.id), document.querySelector("#build-half-"+robot.id)]
             .forEach((x) => {
@@ -278,6 +288,11 @@ function updateUIGenerators()
     }
 }
 
+function updateControls() {
+    document.querySelector("#pause-button").innerHTML = app.paused ? 'Resume' : 'Pause';
+}
+
+
 function mult(json, z) {
     var y = {};
     for (var x in json) {
@@ -294,12 +309,18 @@ function pretty(json) {
     return ret.trim();
 }
 
+var verbs = [
+    ['build','Builds'],
+    ['generator', "Generates"],
+    ['gather', 'Gathers']
+];
 var controlButtons = [
 		['export','Export State','Export Game State'],
 		['save-state','Save State','Save Game State to Local Storage'],
-		['clear-state','Clear State','Game State from to Local Storage']
+		['clear-state','Clear State','Game State from to Local Storage'],
+        ['pause-button','Pause','Pause/Resume game ticker']
 		/*["message_button","show","show message box"],
-		["pause_button","pause","pause/resume game ticker"],
+		
 		["clear_button","clear","clear messages"],
 		["export_button","export","export serialized game state to messages"],
 		["load_button","load","load serialized game state from messages"],
@@ -309,3 +330,14 @@ var controlButtons = [
 		["reset_button","reset","reset game"],
 		["hard_reset","hard","blow away local storage"]*/
 	];
+
+function bindModelInput(obj, property, domElem, domElementProp) {
+  Object.defineProperty(obj, property, {
+    get: function() { return domElem.value; }, 
+    set: function(newValue) { domElem[domElementProp] = nf(newValue); },
+    configurable: true
+  });
+}
+
+user = {}
+bindModelInput(user,'name',document.getElementById('foo'), "innerHTML");

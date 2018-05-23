@@ -3,7 +3,7 @@ var Config = {
         format: 'standard',  // ['standard', 'hybrid', 'longScale', 'engineering']
         flavor: 'short', // ['full', 'short']
         sigfigs: 3,
-        maxSmall: 100,
+        maxSmall: 0,
         backend: 'decimal.js'
     },
     ticks_per_second: 2,
@@ -46,6 +46,7 @@ function prod(type, qty, mult){
 
 function App() {
     this.NAME = 'builder';
+    this.paused = false;
     this.robots = {};
 
     this.robots[RES.SOLAR.id] = new R(RES.SOLAR.id, RES.SOLAR.name, TYPE.RESOURCE, [], []);
@@ -84,12 +85,14 @@ window.addEventListener('load', function() {
     
 
     function gameLoop() {
-        checkAppNumbers(); // might not need to do this every tick, just on game load.
 
-        tickCalc();
+        if (!app.paused) {
 
+            checkAppNumbers(); // might not need to do this every tick, just on game load.
+
+            tickCalc();
+        }
         updateUI();
-
         window.setTimeout(gameLoop, 1000 / Config.ticks_per_second);
     }
     
@@ -99,8 +102,9 @@ window.addEventListener('load', function() {
 
 var app = new App();
 
-function nf(x) {
-	return formatter.format(x);
+function nf(x, maxSmallOverride) {
+    
+	return maxSmallOverride === undefined ? formatter.format(x) : formatter.format(x, { maxSmall: maxSmallOverride});
     //return x;
 }
 
@@ -145,6 +149,9 @@ controls_div.addEventListener('click', function(evt){
         case "export":
             exportState();
             // atob(encodedState);
+            break;
+        case 'pause-button':
+            app.paused = !app.paused;
             break;
         default:
             console.log("no handler for", evt.target.id);
@@ -198,7 +205,6 @@ function tickCalc() {
                 built.stats.total_built = built.stats.total_built.plus(inc);
             }
         });   
-        //r.stats.accrual_per_sec = new Decimal(0); 
     }
 
     // update accrual rates
@@ -210,7 +216,13 @@ function tickCalc() {
         });
     }
 
-
+    /*try{
+        console.log("honk",countBind.count.valueOf());
+        countBind.count = countBind.count.plus(1);
+    } catch (e) {
+        console.log(countBind);
+        throw e;
+    }*/
 }
 
 function calcHowMany(robot, howmany)
@@ -271,6 +283,7 @@ function updateUI()
     updateUIResources();
     updateUIGenerators();
     updateUIMachines();
+    updateControls();
 }
 
 function exportState() {
@@ -300,7 +313,13 @@ function load(encodedState) {
     updateUI();
 }
 
-function isMachine(r)
-{
-    return r.type == TYPE.MACHINE;
+function bindModelInput(obj, property, domElem, domElementProp, formatter) {
+  Object.defineProperty(obj, property, {
+    get: function() { return domElem.value; }, 
+    set: function(newValue) { domElem[domElementProp] = nf(newValue); },
+    configurable: true
+  });
 }
+
+user = {}
+bindModelInput(user,'name',document.getElementById('foo'), "innerHTML");

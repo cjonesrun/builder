@@ -65,9 +65,9 @@ div.button[data-visible="false"] {
     display: none;
 }
 div.button[button-disabled="true"] {
-    background-color: lightgrey;
+    //background-color: lightgrey;
     //text-shadow: 1px 1px black;
-    color: white;
+    opacity: 0.50; 
     font-style: italic;
     
 }

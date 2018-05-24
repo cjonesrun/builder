@@ -11,10 +11,11 @@ var Config = {
 
 var TYPE = { RESOURCE: 0, MACHINE: 1, GENERATOR: 2 };
 
-var RES = { SOLAR: { name: 'Solar', id: 'solar', code: 0},
+var RES = { SPARK: { name: 'Spark', id: 'spark', code: 0},
             SCRAP: { name: 'Scrap', id: 'scrap', code: 1},
             MONEY: { name: 'Money', id: 'money', code: 2},
-            PEOPLE: { name: 'People', id: 'people', code: 3}
+            PEOPLE: { name: 'People', id: 'people', code: 3},
+            FUEL: { name: 'Fuel', id: 'fuel', code: 3}
            }; // RESOURCES
 
 var formatter = new numberformat.Formatter(Config.numberformat);
@@ -26,6 +27,7 @@ function R(id, name, type, cost, prod)
     this.count = new Decimal(0);
     this.build_cost = Array.isArray(cost) ? cost : [cost];
     this.produces = Array.isArray(prod) ? prod : [prod];
+    this.invisible = false;
     this.type = type;
 
     this.stats = {
@@ -51,42 +53,48 @@ function App() {
     this.robots = {};
 
     // resources
+    this.robots[RES.SPARK.id] = new R(RES.SPARK.id, RES.SPARK.name, TYPE.RESOURCE, [], []);
     this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, [], []);
+    this.robots[RES.SCRAP.id].count = new Decimal(10);
     
     this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, [], []);
-    this.robots[RES.MONEY.id].count = 10;
+    this.robots[RES.MONEY.id].count = new Decimal(0);
 
-    this.robots[RES.SOLAR.id] = new R(RES.SOLAR.id, RES.SOLAR.name, TYPE.RESOURCE, [], []);
-    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, [], []);
+    //this.robots[RES.FUEL.id] = new R(RES.FUEL.id, RES.FUEL.name, TYPE.RESOURCE, [], []);
+
+    //this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, [], []);
 
     // generators
-    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [], prod(RES.SCRAP.id, 1, 1));
+    this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], [prod(RES.SPARK.id, 1, 1)]);
+    this.robots['sun'].count = new Decimal(1);
+
+    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [cost('robot0',10,10)], [prod(RES.SPARK.id, 0.01, 1), prod('robot0', 1, 1)]);
     this.robots['nano'].count = new Decimal(0);
 
-    this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [], prod(RES.PEOPLE.id, 0.00001, 1));
-    this.robots['gyro'].count = new Decimal(0);
+    //this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [cost('robot0',10000,1)], prod(RES.PEOPLE.id, 1, 1));
+    //this.robots['gyro'].count = new Decimal(0);
 
-    this.robots['vault'] = new R("vault", "Vault", TYPE.GENERATOR, [], prod(RES.MONEY.id, 1, 1));
+    this.robots['vault'] = new R("vault", "Vault", TYPE.GENERATOR, [cost('robot0',100,100)], prod(RES.MONEY.id, 0.01, 1));
     this.robots['vault'].count = new Decimal(0);
 
-    this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], [prod(RES.SOLAR.id, 1, 1)]);
-    this.robots['sun'].count = new Decimal(1);
+    //this.robots['refinery'] = new R("refinery", "Refinery", TYPE.GENERATOR, [cost('robot0',100000,1)], [prod(RES.FUEL.id, 1, 1)]);
+    //this.robots['refinery'].count = new Decimal(1);
 
     // machines
     this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, 
-        [ cost(RES.MONEY.id, 1, 1), cost(RES.SOLAR.id, 10, 1) ],
+        [ cost(RES.SPARK.id, 1, 1), cost(RES.SCRAP.id, 10, 1) ],
         [ prod(RES.SCRAP.id, 1, 1) ]);
 
     this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, 
-        [ cost('scrap', 1, 1), cost('robot0', 10, 1), cost('money', 100, 1) ], 
+        [ cost(RES.SPARK.id, 1, 1), cost('robot0', 10, 1), cost(RES.SCRAP.id, 100, 1) ], 
         [ prod('robot0', 1, 1) ]);
 
     this.robots['robot2'] = new R("robot2", "Type Q", TYPE.MACHINE, 
-        [ cost('scrap', 1, 1), cost('robot1', 100, 1), cost('money', 100000, 1) ], 
+        [ cost(RES.SPARK.id, 1, 1), cost('robot1', 100, 1), cost(RES.SCRAP.id, 100000, 1) ], 
         [ prod('robot1', 1, 1) ]);
 
     this.robots['robot3'] = new R("robot3", "Type R", TYPE.MACHINE, 
-        [ cost('scrap', 1, 1), cost('robot2', 1000, 1), cost('money', 1000000, 1) ], 
+        [ cost(RES.SPARK.id, 1, 1), cost('robot2', 1000, 1), cost(RES.SCRAP.id, 1000000, 1) ], 
         [ prod('robot2', 1, 1) ]);
 
 }
@@ -127,6 +135,7 @@ function nf(x, maxSmallOverride) {
 
 var robots_div = document.getElementById('robot-container');
 var resources_div = document.getElementById('resource-container');
+var generators_div = document.getElementById('generator-container');
 var controls_div = document.getElementById('controls-container');
 
 robots_div.addEventListener('click', function(evt){
@@ -152,11 +161,24 @@ robots_div.addEventListener('click', function(evt){
 resources_div.addEventListener('click', function(evt){
     var op = evt.target.getAttribute("operation");
     switch (op) {
-        case "build":
+        case "res-build":
             var robotid = evt.target.getAttribute("robot");
             clickCalc(app.robots[robotid]);
         break;
+        default:
+            console.log("no handler for", evt.target.id);
+    }
+});
 
+generators_div.addEventListener('click', function(evt){
+    var op = evt.target.getAttribute("operation");
+    switch (op) {
+        case "gen-build":
+            var robotid = evt.target.getAttribute("robot");
+            clickCalc(app.robots[robotid]);
+        break;
+        default:
+            console.log("no handler for", evt.target.id);
     }
 });
 

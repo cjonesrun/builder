@@ -160,7 +160,7 @@ function buildGenerators(){
 
         var r_btn = document.createElement("div");
         r_btn.setAttribute("class", "button panel");
-        r_btn.setAttribute("operation", "generate");
+        r_btn.setAttribute("operation", "gen-build");
         r_btn.setAttribute("id", "gen-build-"+r);
         r_btn.innerHTML = "Generate";
         r_btn.setAttribute("robot", r);

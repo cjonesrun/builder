@@ -26,7 +26,7 @@ function buildMachines() {
 
         var r_span = document.createElement("span");
         r_span.setAttribute("id","machine-count-"+r);
-        r_span.innerHTML = "0";
+        r_span.innerHTML = nf(robot.count);
 
         var r_span2 = document.createElement("span");
         r_span2.setAttribute("id","machine-info-"+r);
@@ -102,11 +102,11 @@ function buildResources(){
 
         var r_span = document.createElement("span");
         r_span.setAttribute("id","res-count-"+r);
-        r_span.innerHTML = "0";
+        r_span.innerHTML = nf(robot.count);
 
         var acc_span = document.createElement("span");
         acc_span.setAttribute("id", "res-accrual-"+r);
-        acc_span.innerHTML = "0";
+        acc_span.innerHTML = nf(robot.stats.accrual_per_sec);
 
         var r_span2 = document.createElement("span");
         r_span2.setAttribute("id","res-info-"+r);

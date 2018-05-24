@@ -10,13 +10,12 @@ var Config = {
 };
 
 var TYPE = { RESOURCE: 0, MACHINE: 1, GENERATOR: 2 };
-var RESOURCES = ['solar', 'scrap', 'people', 'money'];
 
-
-var RES = { SOLAR: { name: 'Solar', id: 'solar', code: 3},
-            SCRAP: { name: 'Scrap', id: 'scrap', code: 0},
+var RES = { SOLAR: { name: 'Solar', id: 'solar', code: 0},
+            SCRAP: { name: 'Scrap', id: 'scrap', code: 1},
             MONEY: { name: 'Money', id: 'money', code: 2},
-            PEOPLE: { name: 'People', id: 'people', code: 1} }; // RESOURCES
+            PEOPLE: { name: 'People', id: 'people', code: 3}
+           }; // RESOURCES
 
 var formatter = new numberformat.Formatter(Config.numberformat);
 
@@ -51,23 +50,32 @@ function App() {
     this.paused = false;
     this.robots = {};
 
-    this.robots[RES.SOLAR.id] = new R(RES.SOLAR.id, RES.SOLAR.name, TYPE.RESOURCE, [], []);
+    // resources
     this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, [], []);
     
     this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, [], []);
     this.robots[RES.MONEY.id].count = 10;
 
-    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, cost(RES.PEOPLE.id, 0, 0), prod('gyro', 0.01, 1));
-    
-    this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], prod(RES.SOLAR.id, 1, 1));
+    this.robots[RES.SOLAR.id] = new R(RES.SOLAR.id, RES.SOLAR.name, TYPE.RESOURCE, [], []);
+    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, [], []);
+
+    // generators
+    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [], prod(RES.SCRAP.id, 1, 1));
+    this.robots['nano'].count = new Decimal(0);
+
+    this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [], prod(RES.PEOPLE.id, 0.00001, 1));
+    this.robots['gyro'].count = new Decimal(0);
+
+    this.robots['vault'] = new R("vault", "Vault", TYPE.GENERATOR, [], prod(RES.MONEY.id, 1, 1));
+    this.robots['vault'].count = new Decimal(0);
+
+    this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], [prod(RES.SOLAR.id, 1, 1)]);
     this.robots['sun'].count = new Decimal(1);
 
-    this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [], prod(RES.SCRAP.id, 1, 1));
-    this.robots['gyro'].count = new Decimal(1);
-
+    // machines
     this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, 
-        [ cost(RES.SCRAP.id, 1, 1), cost(RES.MONEY.id, 10, 1) ],
-        [ prod(RES.MONEY.id, 1, 1) ]);
+        [ cost(RES.MONEY.id, 1, 1), cost(RES.SOLAR.id, 10, 1) ],
+        [ prod(RES.SCRAP.id, 1, 1) ]);
 
     this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, 
         [ cost('scrap', 1, 1), cost('robot0', 10, 1), cost('money', 100, 1) ], 
@@ -84,8 +92,6 @@ function App() {
 }
 
 window.addEventListener('load', function() {
-    
-
     function gameLoop() {
 
         if (!app.paused) {
@@ -112,7 +118,11 @@ var app = new App();
 
 function nf(x, maxSmallOverride) {
     
-	return maxSmallOverride === undefined ? formatter.format(x) : formatter.format(x, { maxSmall: maxSmallOverride});
+    if (maxSmallOverride === undefined && x.lt(10)) {
+        maxSmallOverride = 10;
+    }
+
+    return maxSmallOverride === undefined ? formatter.format(x) : formatter.format(x, { maxSmall: maxSmallOverride});
 }
 
 var robots_div = document.getElementById('robot-container');
@@ -213,10 +223,10 @@ function tickCalc() {
             var built = app.robots[x.id];
             var inc = r.count.times(x.qty).dividedBy(Config.ticks_per_second);
 
-            console.log(x.id, inc.valueOf(), x.mult.valueOf());
+            //if (x.id === 'money') console.log(x.id, "building:", inc.valueOf(), "mult:",x.mult.valueOf());
 
             if (inc.gt(0)) {
-                built.count = built.count.plus(inc);
+                built.count = built.count.plus(inc.times(x.mult));
                 built.stats.total_built = built.stats.total_built.plus(inc);
             }
         });
@@ -229,10 +239,12 @@ function updateStats()
 {
     // update accrual rates
     for (var rid in app.robots){
+        app.robots[rid].stats.accrual_per_sec = new Decimal(0);
+    }
+    for (var rid in app.robots){
         var r = app.robots[rid];
-        
         r.produces.forEach((x) => {
-            app.robots[x.id].stats.accrual_per_sec = x.qty.times(r.count);
+            app.robots[x.id].stats.accrual_per_sec = x.qty.times(r.count).plus(app.robots[x.id].stats.accrual_per_sec);
         });
     } 
 
@@ -360,7 +372,7 @@ function Binding(b) {
     }
     this.valueSetter = function(val){
         _this.value = val;
-        _this.element[_this.attribute] = (_this.formatter === undefined)?val: _this.formatter(val);
+        _this.element[_this.attribute] = (_this.formatter === undefined)? val: _this.formatter(val);
     }
 
     Object.defineProperty(b.object, b.property, {

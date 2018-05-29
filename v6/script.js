@@ -55,6 +55,7 @@ function App() {
     this.NAME = 'builder';
     this.paused = false;
     this.robots = {};
+    this.last_tick = new Date().getTime();
 
     // resources
     this.robots[RES.SPARK.id] = new R(RES.SPARK.id, RES.SPARK.name, TYPE.RESOURCE, [], []);
@@ -105,11 +106,22 @@ function App() {
 
 window.addEventListener('load', function() {
     function gameLoop() {
-
+        var new_tick = new Date().getTime();
         if (!app.paused) {
-
-            tickCalc();
+            var ticks = Math.floor(Config.ticks_per_second * (new_tick - app.last_tick) / 1000 );
+            
+            if (ticks <= 1)
+                tickCalc();
+            else {
+                console.log('calculating for', ticks, 'ticks.', );
+                for (var i=0; i<ticks; i++)
+                    tickCalc();
+            }
+            app.last_tick = new_tick;
         }
+
+        
+
         updateUI();
         window.setTimeout(gameLoop, 1000 / Config.ticks_per_second);
     }
@@ -156,10 +168,9 @@ robots_div.addEventListener('click', function(evt){
             clickCalc(app.robots[robotid], "max");
             break;
         case "upgrade-faster":
-            console.log("making",robotid,"faster");
             //app.robots[robotid].upgrades.faster = app.robots[robotid].upgrades.faster.plus(1);
             app.robots[robotid].produces[0].qty = math("myMult", app.robots[robotid].produces[0].qty, app.robots[robotid].upgrades.faster); 
-            console.log("increasing",app.robots[robotid].produces[0].id,"by",app.robots[robotid].produces[0].qty);
+            console.log("increasing",robotid,"production rate to",app.robots[robotid].produces.forEach((x)=>{console.log(x.id,x.qty.valueOf())}),"/s");
             
             break;
         case "upgrade-more":
@@ -264,7 +275,7 @@ function decimalify(val)
     }
 }
 
-function tickCalc() {
+function tickCalc(howManyTicks) {
     for (var rid in app.robots) {
         
         var r = app.robots[rid];

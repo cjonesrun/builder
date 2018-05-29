@@ -30,6 +30,10 @@ function R(id, name, type, cost, prod)
     this.invisible = false;
     this.type = type;
 
+    this.upgrades = {
+        faster: new Decimal(2),
+        more: new Decimal(1)
+    };
     this.stats = {
         build_clicks: new Decimal(0),
         total_built: new Decimal(0),
@@ -140,24 +144,47 @@ var controls_div = document.getElementById('controls-container');
 
 robots_div.addEventListener('click', function(evt){
     var op = evt.target.getAttribute("operation");
+    var robotid = evt.target.getAttribute('robot');
     switch (op) {
         case "build":
-            var robotid = evt.target.getAttribute('robot');
             clickCalc(app.robots[robotid], "one");
             break;
         case "build-half":
-            var robotid = evt.target.getAttribute('robot');
             clickCalc(app.robots[robotid], "half");
             break;
         case "build-max":
-            var robotid = evt.target.getAttribute('robot');
             clickCalc(app.robots[robotid], "max");
+            break;
+        case "upgrade-faster":
+            console.log("making",robotid,"faster");
+            //app.robots[robotid].upgrades.faster = app.robots[robotid].upgrades.faster.plus(1);
+            app.robots[robotid].produces[0].qty = math("myMult", app.robots[robotid].produces[0].qty, app.robots[robotid].upgrades.faster); 
+            console.log("increasing",app.robots[robotid].produces[0].id,"by",app.robots[robotid].produces[0].qty);
+            
+            break;
+        case "upgrade-more":
+            console.log("each",robotid,"will make more");
+            console.log(JSON.stringify(app.robots[robotid].build_cost))
             break;
         default:
             console.log("no handler for", evt.target.id);
     }
 });
 
+function math(op, d1, d2) {
+    var fn = window[op];
+    if(typeof fn === 'function') {
+        return fn(d1, d2);
+    }
+}
+
+function myAdd(d1,d2) {
+    return d1.plus(d2);
+}
+
+function myMult(d1,d2) {
+    return d1.times(d2);
+}
 resources_div.addEventListener('click', function(evt){
     var op = evt.target.getAttribute("operation");
     switch (op) {

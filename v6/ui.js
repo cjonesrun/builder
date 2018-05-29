@@ -81,9 +81,41 @@ function buildMachines() {
         r_div.appendChild(r_btn);
         r_div.appendChild(r_btn3);
         r_div.appendChild(r_btn2);
+        r_div.appendChild(buildUpgradeDiv(robot));
 
         robots_container.appendChild(r_div);
     }
+}
+
+function buildUpgradeDiv(robot) {
+    var upgrade_div = document.createElement("div");
+    upgrade_div.setAttribute("class", "panel");
+    upgrade_div.setAttribute("data-visible", "true");
+
+    var span = document.createElement("div");
+    span.setAttribute("id","machine-upgrades-"+robot.id);
+    span.setAttribute("class", "upgrade");
+    span.setAttribute("robot", robot.id);
+    span.innerHTML="Bonus:";
+
+    var r_btn2 = document.createElement("div");
+    r_btn2.setAttribute("class", "button panel");
+    r_btn2.setAttribute("operation", "upgrade-faster");
+    r_btn2.setAttribute("id", "machine-upgrade-faster-"+robot.id);
+    r_btn2.setAttribute("robot", robot.id);
+    r_btn2.innerHTML= "Faster";
+
+    var r_btn3 = document.createElement("div");
+    r_btn3.setAttribute("class", "button panel");
+    r_btn3.setAttribute("operation", "upgrade-more");
+    r_btn3.setAttribute("id", "machine-upgrade-more-"+robot.id);
+    r_btn3.setAttribute("robot", robot.id);
+    r_btn3.innerHTML= "More";
+
+    upgrade_div.appendChild(span);
+    upgrade_div.appendChild(r_btn2);
+    upgrade_div.appendChild(r_btn3);
+    return upgrade_div;
 }
 
 function buildResources(){
@@ -162,7 +194,7 @@ function buildGenerators(){
         r_btn.setAttribute("class", "button panel");
         r_btn.setAttribute("operation", "gen-build");
         r_btn.setAttribute("id", "gen-build-"+r);
-        r_btn.innerHTML = "Generate";
+        r_btn.innerHTML = "Upgrade";
         r_btn.setAttribute("robot", r);
         r_btn.setAttribute("data-visible", robot.build_cost.length > 0);
 

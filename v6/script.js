@@ -31,8 +31,8 @@ function R(id, name, type, cost, prod)
     this.type = type;
 
     this.upgrades = {
-        faster: new Decimal(2),
-        more: new Decimal(1)
+        faster: { const: new Decimal(2), fcn: "upgrade_mult" },
+        more: { const: new Decimal(1), fcn: "upgrade_add" }
     };
     this.stats = {
         build_clicks: new Decimal(0),
@@ -43,8 +43,8 @@ function R(id, name, type, cost, prod)
     };
 }
 
-function cost(type, qty, mult){
-    return {id: type, qty: new Decimal(qty), mult: new Decimal(mult)};
+function cost(type, qty, mult, min = 1){
+    return {id: type, qty: new Decimal(qty), mult: new Decimal(mult), min: new Decimal(min)};
 }
 
 function prod(type, qty, mult){
@@ -60,7 +60,7 @@ function App() {
     // resources
     this.robots[RES.SPARK.id] = new R(RES.SPARK.id, RES.SPARK.name, TYPE.RESOURCE, [], []);
     this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, [], []);
-    this.robots[RES.SCRAP.id].count = new Decimal(10);
+    this.robots[RES.SCRAP.id].count = new Decimal(35);
     
     this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, [], []);
     this.robots[RES.MONEY.id].count = new Decimal(0);
@@ -73,7 +73,7 @@ function App() {
     this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], [prod(RES.SPARK.id, 1, 1)]);
     this.robots['sun'].count = new Decimal(1);
 
-    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [cost('robot0',10,10)], [prod(RES.SPARK.id, 0.01, 1), prod('robot0', 1, 1)]);
+    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [cost('robot0',10,10,11)], [prod(RES.SPARK.id, 0.01, 1)/*, prod('robot0', 1, 1)*/]);
     this.robots['nano'].count = new Decimal(0);
 
     //this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [cost('robot0',10000,1)], prod(RES.PEOPLE.id, 1, 1));
@@ -169,11 +169,31 @@ robots_div.addEventListener('click', function(evt){
             break;
         case "upgrade-faster":
             //app.robots[robotid].upgrades.faster = app.robots[robotid].upgrades.faster.plus(1);
-            app.robots[robotid].produces[0].qty = math("myMult", app.robots[robotid].produces[0].qty, app.robots[robotid].upgrades.faster); 
-            console.log("increasing",robotid,"production rate to",app.robots[robotid].produces.forEach((x)=>{console.log(x.id,x.qty.valueOf())}),"/s");
+            app.robots[robotid].produces.forEach((x)=> {
+
+                console.log("calling", app.robots[robotid].upgrades.faster.fcn, "to increase production rate of", 
+                    x.id, "from", x.qty.valueOf(), "/s to", 
+                    upgrade_calc(app.robots[robotid].upgrades.faster.fcn, app.robots[robotid].upgrades.faster.const, x.qty).valueOf(), "/s");
+                x.qty = upgrade_calc(app.robots[robotid].upgrades.faster.fcn, app.robots[robotid].upgrades.faster.const, x.qty);
+
+            });
+
+//            app.robots[robotid].produces[0].qty = upgradeCalc("myMult", app.robots[robotid].produces[0].qty, app.robots[robotid].upgrades.faster); 
+
+
+  //          console.log("increasing",robotid,"production rate to",app.robots[robotid].produces.forEach((x)=>{console.log(x.id,x.qty.valueOf())}),"/s");
             
             break;
         case "upgrade-more":
+            app.robots[robotid].produces.forEach((x)=> {
+
+                console.log("calling", app.robots[robotid].upgrades.faster.fcn, "to increase production rate of", 
+                    x.id, "from", x.qty.valueOf(), "/s to", 
+                    upgrade_calc(app.robots[robotid].upgrades.faster.fcn, app.robots[robotid].upgrades.faster.const, x.qty).valueOf(), "/s");
+                x.qty = upgrade_calc(app.robots[robotid].upgrades.faster.fcn, app.robots[robotid].upgrades.faster.const, x.qty);
+
+            });
+
             console.log("each",robotid,"will make more");
             console.log(JSON.stringify(app.robots[robotid].build_cost))
             break;
@@ -182,18 +202,18 @@ robots_div.addEventListener('click', function(evt){
     }
 });
 
-function math(op, d1, d2) {
+function upgrade_calc(op, d1, d2) {
     var fn = window[op];
     if(typeof fn === 'function') {
         return fn(d1, d2);
     }
 }
 
-function myAdd(d1,d2) {
+function upgrade_add(d1,d2) {
     return d1.plus(d2);
 }
 
-function myMult(d1,d2) {
+function upgrade_mult(d1,d2) {
     return d1.times(d2);
 }
 resources_div.addEventListener('click', function(evt){
@@ -340,10 +360,10 @@ function calcHowMany(robot, howmany)
 
         var z = x.qty.eq(0) ? new Decimal(1) : consume.count.dividedBy(x.qty);
         maxBuildable = maxBuildable == null ? z : Decimal.min(maxBuildable, z);
-        //console.log("building",nf(maxBuildable),robot.id, "from", nf(consume.count), consume.id, nf(x.qty), nf(z));
+        //console.log("building",nf(maxBuildable),robot.id, "from", nf(consume.count), consume.id, nf(x.qty), nf(z), "need min", x.min.valueOf(), x.id);
 
-        if (maxBuildable.lt(1)) {
-            console.log("can't build", howmany, robot.id, "need", nf(x.qty), x.id, "have",nf(consume.count));
+        if (maxBuildable.lt(1) || consume.count.lt(x.min)) {
+            console.log("can't build", howmany, robot.id, "- costs", nf(x.qty), x.id, "have",nf(consume.count), "and min", nf(x.min), x.id);
             return true; // bail out
         }
     });

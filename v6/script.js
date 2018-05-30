@@ -43,7 +43,7 @@ function R(id, name, type, cost, prod)
     };
 }
 
-function cost(type, qty, mult, min = 1){
+function cost(type, qty, mult, min = 0){
     return {id: type, qty: new Decimal(qty), mult: new Decimal(mult), min: new Decimal(min)};
 }
 
@@ -58,37 +58,34 @@ function App() {
     this.last_tick = new Date().getTime();
 
     // resources
-    this.robots[RES.SPARK.id] = new R(RES.SPARK.id, RES.SPARK.name, TYPE.RESOURCE, [], []);
     this.robots[RES.SCRAP.id] = new R(RES.SCRAP.id, RES.SCRAP.name, TYPE.RESOURCE, [], []);
     this.robots[RES.SCRAP.id].count = new Decimal(35);
     
+    this.robots[RES.SPARK.id] = new R(RES.SPARK.id, RES.SPARK.name, TYPE.RESOURCE, [], []);
     this.robots[RES.MONEY.id] = new R(RES.MONEY.id, RES.MONEY.name, TYPE.RESOURCE, [], []);
-    this.robots[RES.MONEY.id].count = new Decimal(0);
-
-    //this.robots[RES.FUEL.id] = new R(RES.FUEL.id, RES.FUEL.name, TYPE.RESOURCE, [], []);
-
-    //this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, [], []);
+    this.robots[RES.FUEL.id] = new R(RES.FUEL.id, RES.FUEL.name, TYPE.RESOURCE, [], []);
+    this.robots[RES.PEOPLE.id] = new R(RES.PEOPLE.id, RES.PEOPLE.name, TYPE.RESOURCE, [], []);
 
     // generators
-    this.robots['sun'] = new R("sun", "Sun", TYPE.GENERATOR, [], [prod(RES.SPARK.id, 1, 1)]);
-    this.robots['sun'].count = new Decimal(1);
-
-    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [cost('robot0',10,10,11)], [prod(RES.SPARK.id, 0.01, 1)/*, prod('robot0', 1, 1)*/]);
+    this.robots['nano'] = new R("nano", "Nanobot", TYPE.GENERATOR, [cost('robot0',10,10,11)], [prod(RES.SCRAP.id, 1, 1)/*, prod('robot0', 1, 1)*/]);
     this.robots['nano'].count = new Decimal(0);
 
-    //this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [cost('robot0',10000,1)], prod(RES.PEOPLE.id, 1, 1));
-    //this.robots['gyro'].count = new Decimal(0);
+    this.robots['grinder'] = new R("grinder", "Grinder", TYPE.GENERATOR, [cost('scrap',10000,100)], [prod(RES.SPARK.id, 1, 1)]);
+    this.robots['grinder'].count = new Decimal(1);
 
     this.robots['vault'] = new R("vault", "Vault", TYPE.GENERATOR, [cost('robot0',100,100)], prod(RES.MONEY.id, 0.01, 1));
     this.robots['vault'].count = new Decimal(0);
 
-    //this.robots['refinery'] = new R("refinery", "Refinery", TYPE.GENERATOR, [cost('robot0',100000,1)], [prod(RES.FUEL.id, 1, 1)]);
-    //this.robots['refinery'].count = new Decimal(1);
+    this.robots['refinery'] = new R("refinery", "Refinery", TYPE.GENERATOR, [cost('robot0',10000,1)], [prod(RES.FUEL.id, 1, 1)]);
+    this.robots['refinery'].count = new Decimal(0);
+
+    this.robots['gyro'] = new R("gyro", "Gyro", TYPE.GENERATOR, [cost('robot0',100000,1)], prod(RES.PEOPLE.id, 1, 1));
+    this.robots['gyro'].count = new Decimal(0);
 
     // machines
     this.robots['robot0'] = new R("robot0", "Type E", TYPE.MACHINE, 
         [ cost(RES.SPARK.id, 1, 1), cost(RES.SCRAP.id, 10, 1) ],
-        [ prod(RES.SCRAP.id, 1, 1) ]);
+        [ prod('nano', 1, 1) ]);
 
     this.robots['robot1'] = new R("robot1", "Type Z", TYPE.MACHINE, 
         [ cost(RES.SPARK.id, 1, 1), cost('robot0', 10, 1), cost(RES.SCRAP.id, 100, 1) ], 
@@ -363,7 +360,7 @@ function calcHowMany(robot, howmany)
         //console.log("building",nf(maxBuildable),robot.id, "from", nf(consume.count), consume.id, nf(x.qty), nf(z), "need min", x.min.valueOf(), x.id);
 
         if (maxBuildable.lt(1) || consume.count.lt(x.min)) {
-            console.log("can't build", howmany, robot.id, "- costs", nf(x.qty), x.id, "have",nf(consume.count), "and min", nf(x.min), x.id);
+            console.log("can't build", howmany, robot.id, "- costs", nf(x.qty), x.id, "with min", nf(x.min), x.id, "- have",nf(consume.count),x.id);
             return true; // bail out
         }
     });
